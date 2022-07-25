@@ -2,7 +2,6 @@
 'use strict';
 
 import {log} from './log.js';
-import {shiftVotes, vote} from './vote.js';
 import {playSong, sendMessage} from './client.js';
 import * as fb2000 from './foobar2000.js';
 const enable_voting = false;
@@ -17,8 +16,6 @@ function processClick(x, y, id) {
 	}
 
 	let index = Array.from(element.parentNode.children).indexOf(element);
-	if(index > 0 && index < 8)
-		vote(id, index + 1);
 }
 
 export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', userid = undefined, filename = 'cnd2_western_world.mp3', comment ='', index = undefined) {
@@ -34,13 +31,9 @@ export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', use
 	if(!urlExists(filename))
 		return;
 
-	//if entry exists, vote for it and return
+	//if entry exists, return
 	const entry_exists = document.querySelector(`div[data-filename="${filename}"]`);
 	if(entry_exists !== null) {
-		const this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);
-		if(this_index > 0)
-			vote(userid, this_index + 1);
-
 		return;
 	}
 
@@ -102,8 +95,6 @@ export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', use
 				</div>
 			</div>
 		</div>
-
-		<div class="votes"></div>
 	`;
 
 	function temp_name_anim_end(e) {
@@ -122,7 +113,6 @@ export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', use
 			for(let i = this_index; i < children.length; i++) {
 				setFilterDisplay(children[i], i);
 			}
-			shiftVotes(-1);
 			this.parentNode.removeChild(this);
 		}
 	}
@@ -141,8 +131,6 @@ export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', use
 	//	if(child_count < 2)
 	//		sendMessage('Message', 'Request Queue');
 	//}
-
-	vote(userid, id);
 }
 
 function lowerEntry(index = 0) {
@@ -210,7 +198,6 @@ async function updateEntries(){
 			while(this_index > i) {
 				rmEntry(this_index - 1);
 				//
-				shiftVotes(-1);
 				entry_exists.parentNode.removeChild(entry_exists);
 				//
 				this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);

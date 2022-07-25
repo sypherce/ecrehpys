@@ -75,34 +75,6 @@ async function processCommands(user, message, flags, self, extra) {
 			say_wrapper(`Not Found: ${query}`);
 		}
 	}
-	let vote_next_disabled = true;
-	if(vote_next_disabled !== true) {
-		if(message_lower.indexOf('!vote') !== -1) {
-			let info = await twitchInfo.getChannelInformation(user);
-			let broadcaster_id = info.broadcaster_id;
-			log('temp', broadcaster_id);
-
-			const query = Number(getQuery(message_lower, '!vote'));
-			if(query > 0 && query <= 3)
-				sendMessage('Vote', [broadcaster_id, Number(query)+1]);
-			else
-				say_wrapper(`Invalid Number: ${query}`);
-		}
-
-		if(message_lower.indexOf('!next') !== -1) {
-			log('temp', mp3Library.entries);
-			let entry = [mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries())),
-				mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries())),
-				mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries()))];
-
-			//say_wrapper(`${entry[0].album} - ${entry[0].title}`);
-			//say_wrapper(`${entry[1].album} - ${entry[1].title}`);
-			//say_wrapper(`${entry[2].album} - ${entry[2].title}`);
-			sendMessage('Sr', entry[0]);
-			sendMessage('Sr', entry[1]);
-			sendMessage('Sr', entry[2]);
-		}
-	}
 
 	let number = await processCommandsPart2(user, message, flags, self, extra);
 	log('debug', number + ' Commands activated!');
