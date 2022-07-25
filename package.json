@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "comfy.js": "^1.1.16",
+    "dotenv": "^16.0.1",
+    "fuse.js": "^6.6.2",
+    "node-id3": "^0.2.3",
+    "node-twitch": "^0.4.5",
+    "sanitize-filename": "^1.6.3",
+    "websocket": "^1.0.34"
+  },
+  "devDependencies": {
+    "@types/esm": "^3.2.0",
+    "album-art": "^2.0.2",
+    "esm": "^3.2.25"
+  }
+}

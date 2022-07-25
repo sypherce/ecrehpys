@@ -1,0 +1,77 @@
+[
+	{
+		"keyword":	["indexOf('ghostbuster')", "indexOf('ghost buster')", "indexOf('sobr0sBustin')"],
+		"task":		[{"song": "GhostBusters Theme Song.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('tunak')", "indexOf('!sypherce')"],
+		"task":		[{"song": "Tunak Tunak.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('readingrainbow')", "indexOf('reading rainbow')", "indexOf('!rr')"],
+		"task":		[{"song": "Reading Rainbow.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('crab')"],
+		"task":		[{"song": "Crabs- MrWeebl.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('darkwing')", "indexOf('dark wing')"],
+		"task":		[{"song": "Darkwing Duck Theme Song.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('ducktale')", "indexOf('ducktail')","indexOf('duck tale')", "indexOf('duck tail')"],
+		"task":		[{"song": "DuckTales Theme Song.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('gummibear')", "indexOf('gummybear')","indexOf('gummi bear')", "indexOf('gummy bear')"],
+		"task":		[{"song": "Gummi Bears Theme Song.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('jungle boogie')", "indexOf('jungleboogie')"],
+		"task":		[{"song": "Jungle Boogie.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('trevor')"],
+		"task":		[{"song": "Magical Trevor Theme Song.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('talespin')", "indexOf('tailspin')","indexOf('tale spin')", "indexOf('tail spin')"],
+		"task":		[{"song": "DuckTales Theme Song.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('topman')", "indexOf('top man')"],
+		"task":		[{"song": "NES/Mega Man 3/Top Man.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('beatbox')", "indexOf('beat box')"],
+		"task":		[{"song": "Pinball Dreams - Beat Box.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('chimichanga')", "indexOf('chimi changa')"],
+		"task":		[{"song": "Skullmonkeys - Castle De Los Muertos.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('unusual')"],
+		"task":		[{"song": "Tom Jones - It's Not Unusual.mp3"}],
+		"author":	""
+	},
+	{
+		"keyword":	["indexOf('candymountain')", "indexOf('candy mountain')"],
+		"task":		[{"song": "charlie - candy mountain.mp3"}],
+		"author":	""
+	}
+]
