@@ -250,21 +250,3 @@ body {
 	display: inline-block;
 	padding: calc(var(--scale) * 1px) calc(var(--scale) * 16px);
 }
-.votes {
-	border: var(--debug-border-size) solid #24FF50;
-	/*animation: inherit;*/
-	position: absolute;
-	bottom: calc(var(--scale) * 8px);
-	left: calc(var(--scale) * 16px);
-	font-size: calc(var(--scale) * 128px);
-	color: white;
-
-	--pos: calc(var(--scale) * 5px);
-	--neg: calc(var(--pos) * -1.0);
-	text-shadow:
-		black var(--neg) var(--neg) var(--pos),
-		black var(--pos) var(--neg) var(--pos),
-		black var(--pos) var(--pos) var(--pos),
-		black var(--neg) var(--pos) var(--pos);
-	font-weight: bold;
-}
