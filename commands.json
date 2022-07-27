@@ -70,8 +70,13 @@
 		"author":	""
 	},
 	{
+		"keyword":	["indexOf('!magus')"],
+		"task":		[{"song": "Snes/Chrono Trigger/47 - Battle with Magus.mp3"}],
+		"author":	""
+	},
+	{
 		"keyword":	["indexOf('candymountain')", "indexOf('candy mountain')"],
-		"task":		[{"song": "charlie - candy mountain.mp3"}],
+		"task":		[{"song": "Charlie - Candy Mountain.mp3"}],
 		"author":	""
 	}
 ]
