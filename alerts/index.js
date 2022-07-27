@@ -1,22 +1,9 @@
-/*global  document, window, Heat, XMLHttpRequest  */
+/*global  document, window, XMLHttpRequest  */
 'use strict';
 
-import {log} from './log.js';
-import {playSong, sendMessage} from './client.js';
+//import {log} from './log.js';
+//import {playSong, sendMessage} from './client.js';
 import * as fb2000 from './foobar2000.js';
-const enable_voting = false;
-const enable_debug_ui = false;
-
-function processClick(x, y, id) {
-	let pixel_x = window.innerWidth * x,
-		pixel_y = window.innerHeight * y;
-	let element = document.elementFromPoint(pixel_x, pixel_y).closest('.base-entry');
-	if(element === null) {
-		return;
-	}
-
-	let index = Array.from(element.parentNode.children).indexOf(element);
-}
 
 export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', userid = undefined, filename = 'cnd2_western_world.mp3', comment ='', index = undefined) {
 	//probably should check for this elsewhere
@@ -157,8 +144,10 @@ export function rmEntry(index = 0){
 		console.log('Entry doesn\'t  exist');
 		return;
 	}
-	lowerEntry(index);
-	//parent.children[index].classList.add('scroll-left-fade-out');
+
+	//lowerEntry is disabled for now: this needs reworked. the animation is way too complicated.
+	parent.removeChild(parent.children[index]);
+	//lowerEntry(index);
 }
 
 //addEntry(album, title, userid, filename, comment, index)
@@ -184,21 +173,21 @@ async function updateEntries(){
 	}
 	count = entries.playlistItems.items.length;
 
-	let addedEntries = 0;
-	let currentEntries = 0;
-
 	for(let i = 0; i < count; i++) {
 		let filename = entries.playlistItems.items[i].columns[filepath_column];
 		filename = filename.replace(/G:/g, '/mnt/g');
 		filename = filename.replace(/\\/g, '/');
 
+		//this next block is broken
 		const entry_exists = document.querySelector(`div[data-filename="${filename}"]`);
 		if(entry_exists) {
 			let this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);
 			while(this_index > i) {
 				rmEntry(this_index - 1);
 				//
-				entry_exists.parentNode.removeChild(entry_exists);
+				//console.log(0, entry_exists.parentNode);
+				//entry_exists.parentNode.removeChild(entry_exists);
+				//console.log(1, entry_exists.parentNode);
 				//
 				this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);
 			}
@@ -224,56 +213,6 @@ async function updateEntries(){
 }
 
 function init() {
-	if(enable_voting === true) {
-		const channel = 116718924;
-		const heat = new Heat(channel);
-
-		heat.addEventListener('click', (e) => {
-			processClick(e.detail.x, e.detail.y, e.detail.id);
-		});
-
-		// local clicks
-		document.addEventListener('click', (e) => {
-			const x = (e.clientX * 1.0 / window.innerWidth).toPrecision(3);
-			const y = (e.clientY * 1.0 / window.innerHeight).toPrecision(3);
-			const id = -1;
-
-			processClick(x, y, id);
-		});
-	}
-	if(enable_debug_ui === true) {
-		document.querySelector('#add-button').addEventListener('click', function() {
-			addEntry();
-		});
-		document.querySelector('#rm-button0').addEventListener('click', function() {
-			let index = 0;
-			let parent = document.getElementById('container');
-			if(parent.children.length <= index) {
-				console.log('Entry doesn\'t  exist');
-				return;
-			}
-			parent.children[index].classList.add('scroll-left-fade-out');
-		});
-		document.querySelector('#rm-button1').addEventListener('click', function() {
-			rmEntry(1);
-		});
-		document.querySelector('#rm-button2').addEventListener('click', function() {
-			rmEntry(2);
-		});
-		document.querySelector('#rm-button3').addEventListener('click', function() {
-			rmEntry(3);
-		});
-		document.querySelector('#rm-button4').addEventListener('click', function() {
-			rmEntry(4);
-		});
-		document.querySelector('#rm-button5').addEventListener('click', function() {
-			rmEntry(5);
-		});
-		document.querySelector('#rm-button6').addEventListener('click', function() {
-			rmEntry(6);
-		});
-	}
-
 	setInterval(updateEntries, 1000);
 }
 init();
