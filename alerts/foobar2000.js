@@ -50,6 +50,40 @@ async function postJSON(url, data) {
 		return '';
 	}
 }
+async function postSimple(url) {
+	try {
+		const response = await fetch(
+			`${base_url}${url}`,
+			{
+				method: 'POST'
+			}
+		);
+		if(!response.ok)
+			throw new Error(`HTTP error! status: ${response.status}`);
+
+		return await response.json();
+
+	} catch (err) {
+		console.log(err);
+		return '';
+	}
+}
+
+
+async function setPosition(position, absolute = false) {
+	let command = '';
+	if(absolute) {
+		command = `player?position=${position}`;
+	} else {
+		command = `player?relativePosition=${position}`;
+	}
+	postSimple(command);
+}
+//
+//set position to 30
+//
+//curl -X POST "http://192.168.1.212:8880/api/player?position=30" -H "accept: application/json"
+//
 
 let playback_state = 'stopped';
 async function getPlaybackState() {
@@ -67,6 +101,11 @@ async function getActiveItemIndex() {
 	let index = (await getJSON('player'));
 	index = index.player.activeItem.index;
 	return index;
+}
+async function getActiveItemFilename() {
+	let filename = (await getJSON('player?columns=%filename%'));
+	filename = filename.player.activeItem.columns[0];
+	return filename;
 }
 async function getPlaylists() {
 	return (await getJSON('playlists'));
@@ -113,4 +152,4 @@ async function getItems(playlist, range) {
 	return (await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`));
 }
 
-export {getActiveItemIndex, getPlaybackState, getCurrentPlaylist, addItems, getItems};
+export {setPosition, getActiveItemIndex, getActiveItemFilename, getPlaybackState, getCurrentPlaylist, addItems, getItems};
