@@ -156,20 +156,24 @@ async function updateEntries(){
 	let count = 10;
 	let index = await fb2000.getActiveItemIndex();
 	let playlist = await fb2000.getCurrentPlaylist();
-	let entries = await fb2000.getItems(playlist.id, `${index}:${count}`);
-	let playback_state = await fb2000.getPlaybackState();
-	if(playback_state && playback_state === 'stopped') {
-		const container = document.querySelector('#container');
-		for(let i = 0; i < container.children.length; i++)
-			rmEntry(i);
+	let entries = '';
+	if(index !== -1){
+		entries = await fb2000.getItems(playlist.id, `${index}:${count}`);
 	}
-
-	if(typeof entries.playlistItems === 'undefined') {
-		return;
-	}
-	count = entries.playlistItems.items.length;
 
 	const container = document.querySelector('#container');
+	let playback_state = await fb2000.getPlaybackState();
+	if(playback_state && playback_state === 'stopped'
+	|| typeof entries.playlistItems === 'undefined') {
+		for(let i = 0; i < container.children.length; i++){
+			rmEntry(i);
+		}
+		if(typeof entries.playlistItems === 'undefined') {
+			return;
+		}
+	}
+
+	count = entries.playlistItems.items.length;
 
 	for(let i = 0; i < count; i++) {
 		let filename = entries.playlistItems.items[i].columns[filepath_column];
@@ -199,7 +203,7 @@ async function updateEntries(){
 				i);
 		}
 	}
-	for(let i = container.children.length - 1; i > 0; i--) {
+	for(let i = container.children.length - 1; i >= 0; i--) {
 		if(i >= count) {
 			rmEntry(i);
 		} else {
