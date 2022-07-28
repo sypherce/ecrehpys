@@ -1,4 +1,4 @@
-/*global  document, window, XMLHttpRequest  */
+/*global document, XMLHttpRequest  */
 'use strict';
 
 //import {log} from './log.js';
@@ -16,7 +16,7 @@ function setFilterDisplay(entry, index) {
 		entry.style.display='none';
 }
 
-export async function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', userid = undefined, filename = 'cnd2_western_world.mp3', index = undefined) {
+export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 'Invalid', index = undefined) {
 	//probably should check for this elsewhere
 	function urlExists(url){
 		const http = new XMLHttpRequest();
@@ -75,8 +75,6 @@ export async function addEntry(album = 'Super Mario Bros. 3', title = 'temporary
 		const this_index = Array.from(children).indexOf(this);
 		if(e.animationName === 'fade-in') {
 			this.classList.remove(e.animationName);
-			//if(this_index === 0)
-			//	playSong(this.getAttribute('data-filename'));
 		}
 		if(e.animationName === 'scroll-left-fade-out') {
 			for(let i = this_index; i < children.length; i++) {
@@ -181,7 +179,6 @@ async function updateEntries(){
 		else {
 			addEntry(entries.playlistItems.items[i].columns[album_column],
 				entries.playlistItems.items[i].columns[title_column],
-				undefined,
 				filename,
 				i);
 		}
