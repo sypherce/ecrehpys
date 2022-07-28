@@ -32,6 +32,49 @@ async function loadMp3Library(directory) {
 		console.timeEnd('mp3 scan');
 	}
 }
+let htmlcontents = `<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta charset="UTF-8">
+		<style>
+			body {
+			}
+
+			details {
+				border: 1px solid #aaa;
+				border-radius: 4px;
+				padding: .5em .5em 0;
+			}
+
+			summary {
+				font-weight: bold;
+				margin: -.5em -.5em 0;
+				padding: .5em;
+			}
+
+			details[open] {
+				padding: .5em;
+			}
+
+			details[open] summary {
+				border-bottom: 1px solid #aaa;
+				margin-bottom: .5em;
+			}
+			</style>
+	</head>
+	<body><center>
+		Use the <b>!sr</b> command to request songs in the format of:<br>
+		<b>!sr game - title</b><br>
+
+		The bot searches for the closest match to "game" and "title", example: <br>
+		<b>!sr Wind Waker - treta discovered</b><br>
+		<br>
+		<b>Songs to choose from:</b><br>`;
+const htmlfooter = `
+<br></center>
+</body>
+</html>`;
 
 async function scanMp3Library(directory) {
 	// Possible options
@@ -40,9 +83,12 @@ async function scanMp3Library(directory) {
 		noRaw: true					// don't generate raw object (default: false)
 	};
 
+	const top_level = mp3_array.length === 0;
 	try {
 		const files = await fs.promises.readdir(directory);
 		let log_counter = 0;
+		htmlcontents = htmlcontents.concat(`<details>
+			<summary>${path.parse(directory).name}</summary>`);
 		for (const file of files) {
 			const fullFileName = directory + file;
 			if(log_counter++ > 50) {
@@ -56,13 +102,25 @@ async function scanMp3Library(directory) {
 				const read_obj = NodeID3.read(fullFileName, nodeid3_options);
 				if(read_obj.album !== ''){
 					read_obj.filename = fullFileName;
+					htmlcontents = htmlcontents.concat(`➡️${path.parse(read_obj.filename).name}<br>\n`);
 				}
 
 				mp3_array.push(read_obj); // add at the end
 			}
 		}
+		htmlcontents = htmlcontents.concat('</details>');
 	} catch (error) {
 		console.error(error);
+	}
+	if(top_level) {
+		htmlcontents = htmlcontents.concat(htmlfooter);
+
+		try {
+			fs.writeFileSync('../stream/sr.html', htmlcontents);
+			// file written successfully
+		} catch (err) {
+			console.error(err);
+		}
 	}
 }
 function getEntry(index) {
