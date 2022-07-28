@@ -220,10 +220,6 @@ function initWebSocket() {
 			break;
 		}
 		case 'Sr': {
-			/*let comment = '';
-			if(typeof value.comment !== 'undefined')
-				comment = value.comment.text;*/
-
 			value.filename = value.filename.replace(/\/mnt\/g\/media\/music\/Stream\//g, '');
 			fb2000QueueSong(value.filename);
 			break;
