@@ -36,10 +36,8 @@ async function loadMp3Library(directory) {
 async function scanMp3Library(directory) {
 	// Possible options
 	const nodeid3_options = {
-		include: ['TALB', 'TIT2', 'TPE1', 'COMM'],	// only read the specified tags (default: all)
-		exclude: ['APIC'],					// don't read the specified tags (default: [])
-		onlyRaw: false,						// only return raw object (default: false)
-		noRaw: true							// don't generate raw object (default: false)
+		include: ['TALB', 'TIT2'],	// only read the specified tags (default: all)
+		noRaw: true					// don't generate raw object (default: false)
 	};
 
 	try {
