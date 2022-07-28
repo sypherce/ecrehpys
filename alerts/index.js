@@ -5,7 +5,18 @@
 //import {playSong, sendMessage} from './client.js';
 import * as fb2000 from './foobar2000.js';
 
-export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', userid = undefined, filename = 'cnd2_western_world.mp3', comment ='', index = undefined) {
+function setFilterDisplay(entry, index) {
+	entry.style.filter = 'grayscale(0%)';
+	entry.style.display='';
+
+	//0 is playing, 1-3 are up for voting, 4-7 are coming up
+	if(index > 0)
+		entry.style.filter = `grayscale(${100 - ((7 - index) * 10)}%)`;
+	if(index > 6)
+		entry.style.display='none';
+}
+
+export async function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', userid = undefined, filename = 'cnd2_western_world.mp3', comment ='', index = undefined) {
 	//probably should check for this elsewhere
 	function urlExists(url){
 		const http = new XMLHttpRequest();
@@ -34,16 +45,6 @@ export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', use
 	entry.setAttribute('data-filename', filename);
 	entry.className = `${base_classes} fade-in`;
 
-	function setFilterDisplay(entry, index) {
-		entry.style.filter = 'grayscale(0%)';
-		entry.style.display='';
-
-		//0 is playing, 1-3 are up for voting, 4-7 are coming up
-		if(index > 4)
-			entry.style.filter = 'grayscale(100%)';
-		if(index > 7)
-			entry.style.display='none';
-	}
 	setFilterDisplay(entry, id);
 
 	//temp
@@ -58,19 +59,14 @@ export function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', use
 	const token = 'The';
 	if(album.startsWith(token))
 		album = `${album.substr(token.length+1)}, ${album.substr(0, token.length)}`;
+	//change 'x: y' to 'x - y'
 
-	//we're using files. this probably should be a url masked by the backend
-	//mount the files in the directory later
-	let img_src = (`assets/${comment}${album}.png`).replace(/:/g,'');
-	let show_album_text = '';
-	//if there's no boxart, it loads a dummy file
-	if(!urlExists(img_src)) {
-		img_src = 'assets/noboxart.png';
-		show_album_text = `<div class="ticker-item">${album}</div><br>`;
-	}
+	let show_album_text = `<div class="ticker-item">${album}</div><br>`;
+
+	let img_src = await fb2000.getCoverartURL(id + (await (fb2000.getActiveItemIndex())));
 
 	entry.innerHTML = `
-		<img src="${img_src}">
+		<img src="${img_src}?album=${album}">
 
 		<div class="top_container">
 			<div class="ticker-container">
@@ -173,6 +169,8 @@ async function updateEntries(){
 	}
 	count = entries.playlistItems.items.length;
 
+	const container = document.querySelector('#container');
+
 	for(let i = 0; i < count; i++) {
 		let filename = entries.playlistItems.items[i].columns[filepath_column];
 		filename = filename.replace(/G:/g, '/mnt/g');
@@ -201,9 +199,13 @@ async function updateEntries(){
 				i);
 		}
 	}
-	const container = document.querySelector('#container');
-	for(let i = count; i < container.children.length; i++)
-		rmEntry(i);
+	for(let i = container.children.length - 1; i > 0; i--) {
+		if(i >= count) {
+			rmEntry(i);
+		} else {
+			setFilterDisplay(container.children[i], i);
+		}
+	}
 
 	//if(entry_exists !== null) {
 	//	const this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);
