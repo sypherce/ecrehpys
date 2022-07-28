@@ -7,7 +7,7 @@ const Fuse = require('fuse.js');
 
 let mp3_array = [];
 
-async function loadMp3Library(directory) {
+async function loadMp3Library(directory, force = false) {
 	async function readJsonToObject(filename) {
 		let json_data = await fs.promises.readFile(filename, 'binary');
 
@@ -19,20 +19,28 @@ async function loadMp3Library(directory) {
 
 	directory = path.normalize(`${directory}/`);
 	const json_filename = path.normalize(`${directory}/${path.basename(directory)}.json`);
+	let fileExists = fs.existsSync(json_filename);
+	if(force && fileExists) {
+		//delete file
+		try {
+			fs.unlinkSync(json_filename);
+			fileExists = false;
+		} catch(err) {
+			console.error(err);
+		}
+	}
 
-	if (fs.existsSync(json_filename)) {
-		// path exists
-		console.log('exists:', json_filename);
+	console.log(`${fileExists ? 'Found' : 'Missing'}`, json_filename);
+	if (fileExists) {
 		mp3_array = await readJsonToObject(json_filename);
 	} else {
-		console.log('DOES NOT exist:', json_filename);
 		console.time('mp3 scan');
 		await scanMp3Library(directory);
 		await writeObjectToJson(json_filename);
 		console.timeEnd('mp3 scan');
 	}
 }
-let htmlcontents = `<!DOCTYPE html>
+const htmlheader = `<!DOCTYPE html>
 <html>
 	<head>
 		<title></title>
@@ -71,6 +79,7 @@ let htmlcontents = `<!DOCTYPE html>
 		<b>!sr Wind Waker - treta discovered</b><br>
 		<br>
 		<b>Songs to choose from:</b><br>`;
+let htmlcontents ='';
 const htmlfooter = `
 <br></center>
 </body>
@@ -83,12 +92,13 @@ async function scanMp3Library(directory) {
 		noRaw: true					// don't generate raw object (default: false)
 	};
 
-	const top_level = mp3_array.length === 0;
+	const top_level = htmlcontents === '';
+	if(top_level)
+		htmlcontents = htmlheader;
 	try {
 		const files = await fs.promises.readdir(directory);
 		let log_counter = 0;
-		htmlcontents = htmlcontents.concat(`<details>
-			<summary>${path.parse(directory).name}</summary>`);
+		htmlcontents = htmlcontents.concat(`<details ${top_level ? 'open' : ''}>\n\t\t\t<summary>${path.parse(directory).name}</summary>`);
 		for (const file of files) {
 			const fullFileName = directory + file;
 			if(log_counter++ > 50) {
@@ -103,9 +113,8 @@ async function scanMp3Library(directory) {
 				if(read_obj.album !== ''){
 					read_obj.filename = fullFileName;
 					htmlcontents = htmlcontents.concat(`➡️${path.parse(read_obj.filename).name}<br>\n`);
+					mp3_array.push(read_obj); // add at the end
 				}
-
-				mp3_array.push(read_obj); // add at the end
 			}
 		}
 		htmlcontents = htmlcontents.concat('</details>');
@@ -117,6 +126,23 @@ async function scanMp3Library(directory) {
 
 		try {
 			fs.writeFileSync('../stream/sr.html', htmlcontents);
+
+			const { exec } = require('child_process');
+			exec((
+				'cd /var/www/html/nodejs/stream && ' +
+				'git commit -a -m auto && ' +
+				'git push https://github.com/sypherce/stream.git'),
+			(error, stdout, stderr) => {
+				if (error) {
+					console.log(`error: ${error.message}`);
+					return;
+				}
+				if (stderr) {
+					console.log(`stderr: ${stderr}`);
+					return;
+				}
+				console.log(`stdout: ${stdout}`);
+			});
 			// file written successfully
 		} catch (err) {
 			console.error(err);

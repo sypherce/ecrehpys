@@ -18,8 +18,16 @@ async function processLivesplit() {
 	setTimeout(processLivesplit, 500);
 }
 
+const myArgs = process.argv.slice(2);
+let force_refresh = false
+switch (myArgs[0]) {
+case '-refresh':
+	force_refresh = true;
+	break;
+}
+
 (async () => {
-	await mp3Library.init('alerts/assets/music');
+	await mp3Library.init('alerts/assets/music', force_refresh);
 	if(enable_livesplit) {
 		await livesplit_main.run('192.168.1.212:16834');
 		setTimeout(processLivesplit, 500);
