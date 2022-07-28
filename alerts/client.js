@@ -164,8 +164,6 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 				offset = Math.floor(Math.random() * ((sound.duration()*1000) - duration));
 			}
 			this._sprite.key1 = [offset, duration];
-			console.log('duration', duration)
-			console.log('offset', offset)
 			sound.play('key1');
 		}
 	});
