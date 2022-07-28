@@ -16,7 +16,7 @@ function setFilterDisplay(entry, index) {
 		entry.style.display='none';
 }
 
-export async function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', userid = undefined, filename = 'cnd2_western_world.mp3', comment ='', index = undefined) {
+export async function addEntry(album = 'Super Mario Bros. 3', title = 'temporary', userid = undefined, filename = 'cnd2_western_world.mp3', index = undefined) {
 	//probably should check for this elsewhere
 	function urlExists(url){
 		const http = new XMLHttpRequest();
@@ -46,20 +46,6 @@ export async function addEntry(album = 'Super Mario Bros. 3', title = 'temporary
 	entry.className = `${base_classes} fade-in`;
 
 	setFilterDisplay(entry, id);
-
-	//temp
-	//console is stored as a comment in the mp3s, this tells us to look for boxart
-	if(typeof comment !== 'undefined' && comment.includes('console:nes')) {
-		comment = 'nes/';
-	} else {
-		comment = '';
-	}
-
-	//we move 'The' to the end. this helps with how the boxarts are named
-	const token = 'The';
-	if(album.startsWith(token))
-		album = `${album.substr(token.length+1)}, ${album.substr(0, token.length)}`;
-	//change 'x: y' to 'x - y'
 
 	let show_album_text = `<div class="ticker-item">${album}</div><br>`;
 
@@ -146,8 +132,6 @@ export function rmEntry(index = 0){
 	//lowerEntry(index);
 }
 
-//addEntry(album, title, userid, filename, comment, index)
-//rmEntry(index)
 async function updateEntries(){
 	const album_column = 0;
 	const title_column = 1;
@@ -199,7 +183,6 @@ async function updateEntries(){
 				entries.playlistItems.items[i].columns[title_column],
 				undefined,
 				filename,
-				undefined,
 				i);
 		}
 	}

@@ -4,9 +4,6 @@ const NodeID3 = require('node-id3');
 const path = require('path');
 const fs = require('fs');
 const Fuse = require('fuse.js');
-const coverart = require('./getCoverart.js');
-const https = require('https'); // or 'https' for https:// URLs
-const sanitizeFilename = require('sanitize-filename');
 
 let mp3_array = [];
 
@@ -36,7 +33,7 @@ async function loadMp3Library(directory) {
 	}
 }
 
-async function scanMp3Library(directory, coverart_directory = path.normalize(directory + '/coverart')) {
+async function scanMp3Library(directory) {
 	// Possible options
 	const nodeid3_options = {
 		include: ['TALB', 'TIT2', 'TPE1', 'COMM'],	// only read the specified tags (default: all)
@@ -55,46 +52,12 @@ async function scanMp3Library(directory, coverart_directory = path.normalize(dir
 				console.log(fullFileName);
 			}
 			if(fs.statSync(fullFileName).isDirectory()) {
-				await scanMp3Library(`${fullFileName}/`, coverart_directory);
+				await scanMp3Library(`${fullFileName}/`);
 			}
 			else if(path.extname(fullFileName) === '.mp3') {
 				const read_obj = NodeID3.read(fullFileName, nodeid3_options);
 				if(read_obj.album !== ''){
 					read_obj.filename = fullFileName;
-					if(typeof read_obj.comment !== 'undefined' && read_obj.comment.text.includes('console:')) {
-						read_obj.artist = read_obj.comment.text;
-						console.log(read_obj.comment.text);
-					}
-					let url = await coverart.get(read_obj.artist, read_obj.album);
-					if(url) {
-						if(!fs.existsSync(coverart_directory)) {
-							fs.mkdirSync(coverart_directory);
-						}
-						console.log(`x${fullFileName}x${read_obj.album}y`);
-						let filename = path.normalize(`${coverart_directory}/${sanitizeFilename(toString(read_obj.album))}.png`);
-						if(!fs.existsSync(filename)) {
-							console.log(`${filename} doesn't exist!`);
-
-							if(url.startsWith('http')) {
-								const file = fs.createWriteStream(filename);
-								const _request = https.get(url, function(response) {
-									response.pipe(file);
-
-									// after download completed close filestream
-									file.on('finish', () => {
-										file.close();
-										console.log('Download Completed');
-									});
-								});
-							}
-							else if(url.startsWith('/')) {
-								if(fs.existsSync(url))
-									fs.copyFileSync(url, filename);
-								else
-									console.log(`${url} is missing!`);
-							}
-						}
-					}
 				}
 
 				mp3_array.push(read_obj); // add at the end
@@ -118,17 +81,12 @@ function find(input) {
 		ignoreFieldNorm: true,
 		useExtendedSearch: true,
 		keys: [
-			//{ name: 'title', getFn: (obj) => obj.album + ' ' + obj.title },
 			{
 				name: 'title',
 			},
 			{
 				name: 'album',
 			},
-		/*	{
-				name: 'filename',
-				weight: 1.0
-			},*/
 		]
 	};
 	const fuse = new Fuse(mp3_array, fuse_options);
