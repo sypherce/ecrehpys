@@ -28,7 +28,6 @@ video {
 	<button id="rm-button6">-6</button>
 </div>
 
-<script src="heat.js?time=<?php echo time();?>"></script>
 <script  type="module" src="index.js?time=<?php echo time();?>"></script>
 <script src="howler.min.js?time=<?php echo time();?>"></script>
 <script  type="module" src="client.js?time=<?php echo time();?>"></script>
