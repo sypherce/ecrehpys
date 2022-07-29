@@ -59,17 +59,11 @@ async function processCommands(user, message, flags, self, extra) {
 		say_wrapper('https://sypherce.github.io/stream/sr.html');
 	}
 	else if(message_lower.indexOf('!sr') !== -1) {
-		let info = await twitchInfo.getChannelInformation(user);
-		log('temp', info.broadcaster_id);
-
 		const query = getQuery(message_lower, '!sr');
 		const object = mp3Library.find(query);
-		log('temp', `object: ${JSON.stringify(object)}`);
 		if(typeof object.filename !== 'undefined' && object.filename !== '') {
-			object.userid = info.broadcaster_id;
 			sendMessage('Sr', object);
-			log('temp', object.filename);
-			say_wrapper(`Requested: ${path.basename(object.filename)}`);
+			say_wrapper(`Requested: ${object.album} - ${object.title}`);
 		}
 		else {
 			say_wrapper(`Not Found: ${query}`);
