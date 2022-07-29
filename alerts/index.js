@@ -52,6 +52,7 @@ export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 
 	let img_src = await fb2000.getCoverartURL(id + (await (fb2000.getActiveItemIndex())));
 
 	entry.innerHTML = `
+		<div class="progress-bar"></div>
 		<img src="${img_src}?album=${album}">
 
 		<div class="top_container">
@@ -137,10 +138,10 @@ async function updateEntries(){
 
 	let count = 10;
 	let index = await fb2000.getActiveItemIndex();
-	let playlist = await fb2000.getCurrentPlaylist();
+	let playlist = await fb2000.getActivePlaylist();
 	let entries = '';
 	if(index !== -1){
-		entries = await fb2000.getItems(playlist.id, `${index}:${count}`);
+		entries = await fb2000.getItems(playlist, `${index}:${count}`);
 	}
 
 	const container = document.querySelector('#container');
@@ -165,6 +166,16 @@ async function updateEntries(){
 		//this next block is broken
 		const entry_exists = document.querySelector(`div[data-filename="${filename}"]`);
 		if(entry_exists) {
+			for (let y = 0; y < entry_exists.childNodes.length; y++) {
+				if (entry_exists.childNodes[y].className === 'progress-bar') {
+					let pos = 0;
+					if(i === 0)
+						pos = await fb2000.getPosition();
+
+					entry_exists.childNodes[y].style.width=`calc(var(--image_width) * ${pos})`;
+					break;
+				}
+			}
 			let this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);
 			while(this_index > i) {
 				rmEntry(this_index - 1);

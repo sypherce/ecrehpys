@@ -102,8 +102,13 @@ async function getActiveItemIndex() {
 	index = index.player.activeItem.index;
 	return index;
 }
+async function getPosition() {
+	let index = (await getJSON('player'));
+	index = index.player.activeItem.position / index.player.activeItem.duration;
+	return index;
+}
 async function getCoverartURL(index) {
-	const playlist = (await getCurrentPlaylist()).id;
+	const playlist = (await getActivePlaylist());
 	return `http://192.168.1.212:8880/api/artwork/${playlist}/${index}`;
 }
 async function getActiveItemFilename() {
@@ -118,6 +123,12 @@ async function getPlaylists() {
 async function getCurrentPlaylist() {
 	let playlists = (await getPlaylists()).playlists;
 	return playlists.filter(element => element.isCurrent === true)[0];
+}
+
+async function getActivePlaylist() {
+	let index = (await getJSON('player'));
+	index = index.player.activeItem.playlistIndex;
+	return index;
 }
 async function addItems(playlist_id, index, play, items) {
 	console.log(items);
@@ -156,4 +167,4 @@ async function getItems(playlist, range) {
 	return (await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`));
 }
 
-export {setPosition, getActiveItemIndex, getCoverartURL, getActiveItemFilename, getPlaybackState, getCurrentPlaylist, addItems, getItems};
+export {setPosition, getActiveItemIndex, getPosition, getCoverartURL, getActiveItemFilename, getPlaybackState, getActivePlaylist, addItems, getItems};

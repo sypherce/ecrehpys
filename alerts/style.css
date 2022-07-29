@@ -238,6 +238,16 @@ body {
 	animation-name: ticker;
 	animation-duration: 10s;
 }
+.progress-bar {
+	position: absolute;
+	background: radial-gradient(circle, #1d5de7cc, #ffffffcc);
+	top: 0;
+	width: 0px;
+	height: 5px;
+	left: 0;
+	display: inline-block;
+	white-space: nowrap;
+}
 .ticker-transition:hover {
 	animation-play-state: paused;
 	cursor: pointer;
