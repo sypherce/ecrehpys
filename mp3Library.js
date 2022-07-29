@@ -47,6 +47,7 @@ const htmlheader = `<!DOCTYPE html>
 		<meta charset="UTF-8">
 		<style>
 			body {
+				overflow-y: scroll;
 			}
 
 			details {
@@ -71,7 +72,17 @@ const htmlheader = `<!DOCTYPE html>
 			}
 			</style>
 	</head>
-	<body><center>
+	<body>
+	<script>
+		function buttonCopyFunction(e) {
+			let command = \`!sr \${e.innerHTML}\`;
+			navigator.clipboard.writeText(command);
+
+			/* Alert the copied text */
+			alert(\`Copied to clipboard: \${command}\`);
+		}
+	</script>
+	<center>
 		Use the <b>!sr</b> command to request songs in the format of:<br>
 		<b>!sr game - title</b><br>
 
@@ -111,8 +122,8 @@ async function scanMp3Library(directory) {
 			else if(path.extname(fullFileName) === '.mp3') {
 				const read_obj = NodeID3.read(fullFileName, nodeid3_options);
 				if(read_obj.album !== ''){
-					read_obj.filename = fullFileName;
-					htmlcontents = htmlcontents.concat(`➡️${path.parse(read_obj.filename).name}<br>\n`);
+					read_obj.filename = fullFileName.replace(/alerts\/assets\/music\//g, '');
+					htmlcontents = htmlcontents.concat(`<button onclick="buttonCopyFunction(this)">${read_obj.album} - ${read_obj.title}</button><br>\n`);
 					mp3_array.push(read_obj); // add at the end
 				}
 			}
