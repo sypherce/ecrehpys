@@ -15,7 +15,7 @@ let queue_pos = 0;
 let last_playlist = undefined;
 async function fb2000QueueSong(file) {
 	file = `${music_path}/${file}`;
-	let current_playlist = await fb2000.getCurrentPlaylist();
+	let current_playlist = await fb2000.getActivePlaylist();
 	let next_index = await fb2000.getActiveItemIndex() + 1;
 
 	if(last_playlist !== current_playlist
@@ -23,7 +23,7 @@ async function fb2000QueueSong(file) {
 		queue_pos = next_index;
 		last_playlist = current_playlist;
 	}
-	await fb2000.addItems(current_playlist.id, queue_pos, false, [file]);
+	await fb2000.addItems(current_playlist, queue_pos, false, [file]);
 	queue_pos++;
 }
 
@@ -41,9 +41,9 @@ async function fb2000QueueSong(file) {
 //
 async function test_fb2000PlaySongNow(file) {
 	file = `${music_path}/${file}`;
-	let current_playlist = await fb2000.getCurrentPlaylist();
+	let current_playlist = await fb2000.getActivePlaylist();
 	let this_index = await fb2000.getActiveItemIndex();
-	await fb2000.addItems(current_playlist.id, this_index, true, [file]);
+	await fb2000.addItems(current_playlist, this_index, true, [file]);
 
 	for(let i = 0; i < 20; i++) {
 		await new Promise(r => setTimeout(r, 100));
@@ -99,16 +99,16 @@ async function test2_fb2000PlaySongNow(file) {
 	}
 	file = `${music_path}/${file}`;
 
-	let current_playlist = await fb2000.getCurrentPlaylist();
+	let current_playlist = await fb2000.getActivePlaylist();
 	let next_index = await fb2000.getActiveItemIndex() + 1;
-	await fb2000.addItems(current_playlist.id, next_index, true, [file]);
+	await fb2000.addItems(current_playlist, next_index, true, [file]);
 }
 
 async function original_fb2000PlaySongNow(file) {
 	file = `${music_path}/${file}`;
-	let current_playlist = await fb2000.getCurrentPlaylist();
+	let current_playlist = await fb2000.getActivePlaylist();
 	let next_index = await fb2000.getActiveItemIndex() + 1;
-	await fb2000.addItems(current_playlist.id, next_index, true, [file]);
+	await fb2000.addItems(current_playlist, next_index, true, [file]);
 }
 
 async function fb2000PlaySongNow(file) {
