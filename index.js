@@ -19,7 +19,7 @@ async function processLivesplit() {
 }
 
 const myArgs = process.argv.slice(2);
-let force_refresh = false
+let force_refresh = false;
 switch (myArgs[0]) {
 case '-refresh':
 	force_refresh = true;
