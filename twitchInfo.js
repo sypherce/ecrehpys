@@ -17,6 +17,14 @@ async function getChannelInformation(username){
 
 	return info_list.data[0];
 }
+async function getUsers(username){
+	if(thisTwitchConnection === null) throw 'Must run init(CLIENT_ID, SECRET) first!';
+
+	const this_user = (await thisTwitchConnection.getUsers(username)).data[0];
+
+	return this_user;
+}
 
 module.exports.init = init;
+module.exports.getUsers = getUsers;
 module.exports.getChannelInformation = getChannelInformation;

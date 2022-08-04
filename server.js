@@ -29,7 +29,37 @@ function loadCommands(filename) {
 }
 loadCommands('commands.json');
 
+let user_array = [];
+async function checkProfileImage(user) {
+	user = user.toLowerCase();
+	if(!user_array.includes(user)) {
+		console.log('fired');
+		user_array.push(user);
+		const filename = `/var/www/html/stream/assets/users/icon/${user}.php`;
+
+		// eslint-disable-next-line no-inner-declarations
+		async function callback(err) {
+			if (err) { // doesn't exist
+				console.log('doesn\'t exist');
+				const profile_image_url = (await twitchInfo.getUsers(user)).profile_image_url;
+				const content = `<?php $name='${profile_image_url}';$fp=fopen($name,'rb');header("Content-Type:image/png");header("Content-Length:".filesize($name));fpassthru($fp);exit;?>`;
+				fs.writeFile(filename, content, err => {
+					if (err) {
+						console.error(err);
+					}
+					// file written successfully
+				});
+				return;
+			}
+			console.log('exists');
+		}
+		fs.access(filename, fs.F_OK, callback);
+	}
+}
+
 async function processCommands(user, message, flags, self, extra) {
+	checkProfileImage(user);
+
 	function getQuery(message, command) {
 		const start = message.indexOf(command) + command.length;
 		const length = message.length - start;
@@ -144,12 +174,12 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 		if(!this_command.active)
 			continue;//skips command, continues iterating
 
-		log('debug', `this_command.task: ${this_command.task}`);
+		log('verbose', `this_command.task: ${this_command.task}`);
 		for (let keyword_i = 0; keyword_i < this_command.keyword.length; keyword_i++) {
 			let comparison = keywordIsIndexOf(this_command.keyword[keyword_i]);
 			let query = message.substr(message_lower.indexOf(comparison) + comparison.length);
 
-			log('debug', `keywordIsIndexOf: ${comparison}`);
+			log('verbose', `keywordIsIndexOf: ${comparison}`);
 
 			if(comparison !== '' && message_lower.indexOf(comparison) !== -1) {
 				if(this_command.cooldown > extra.timestamp - this_command.timestamp) {
@@ -167,7 +197,7 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 						}
 						if(this_task.delay) {
 							await new Promise(resolve => setTimeout(resolve, this_task.delay));
-							log('debug', `!delay ${parseInt(this_task.delay)}`);
+							log('verbose', `!delay ${parseInt(this_task.delay)}`);
 						}
 						if(this_task.chat) {
 							let processed_message = await processVariables(user, query, this_task.chat);
