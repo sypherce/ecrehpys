@@ -51,7 +51,7 @@
 	},
 	{
 		"keyword":	["indexOf('topman')", "indexOf('top man')"],
-		"task":		[{"song": "0 - Other/NES/Mega Man 3/Top Man.mp3"}],
+		"task":		[{"song": "NES/Mega Man 3/Top Man.mp3"}],
 		"author":	"xjrigsx"
 	},
 	{
