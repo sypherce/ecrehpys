@@ -53,7 +53,7 @@ async function test_fb2000PlaySongNow(file) {
 		}
 	}
 }
-
+let play_now_active_file = '';
 async function test2_fb2000PlaySongNow(file) {
 	//probably should check for this elsewhere
 	function urlExists(url){
@@ -81,9 +81,10 @@ async function test2_fb2000PlaySongNow(file) {
 		return filename.substr(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
 	}
 
-	let active_file = await fb2000.getActiveItemFilename();
-	//if the song is already playing
-	if(active_file === basefilename(file)) {
+	let this_active_file = await fb2000.getActiveItemFilename();
+	//if a forced song is already playing
+	if(play_now_active_file !== ''
+	&&(play_now_active_file === this_active_file)) {
 		file = `${local_music_path}/${removeExt(file)}`;
 
 		//play a predefined sound bite if it exists
@@ -94,14 +95,16 @@ async function test2_fb2000PlaySongNow(file) {
 		else {
 			playSoundSprite(`${file}.mp3`);
 		}
-
-		return;
 	}
-	file = `${music_path}/${file}`;
+	else {
+		play_now_active_file = this_active_file;
 
-	let current_playlist = await fb2000.getActivePlaylist();
-	let next_index = await fb2000.getActiveItemIndex() + 1;
-	await fb2000.addItems(current_playlist, next_index, true, [file]);
+		file = `${music_path}/${file}`;
+
+		let current_playlist = await fb2000.getActivePlaylist();
+		let next_index = await fb2000.getActiveItemIndex() + 1;
+		await fb2000.addItems(current_playlist, next_index, true, [file]);
+	}
 }
 
 async function original_fb2000PlaySongNow(file) {
