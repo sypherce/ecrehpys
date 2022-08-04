@@ -128,6 +128,9 @@ async function getCurrentPlaylist() {
 async function getActivePlaylist() {
 	let index = (await getJSON('player'));
 	index = index.player.activeItem.playlistIndex;
+	if(index === -1) {
+		index = (await getCurrentPlaylist()).index;
+	}
 	return index;
 }
 async function addItems(playlist_id, index, play, items) {
