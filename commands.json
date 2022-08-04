@@ -78,5 +78,10 @@
 		"keyword":	["indexOf('candymountain')", "indexOf('candy mountain')"],
 		"task":		[{"song": "0 - Other/Charlie - Candy Mountain.mp3"}],
 		"author":	"missliss15"
+	},
+	{
+		"keyword":	["indexOf('owl')"],
+		"task":		[{"song": "N64/Ocarina of Time/Ocarina of Time - Kepora Gebora.mp3"}],
+		"author":	"xjrigsx"
 	}
 ]
