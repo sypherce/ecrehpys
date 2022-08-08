@@ -1,4 +1,4 @@
-/*global document, WebSocket, Howl */
+/*global document, WebSocket, Howl, XMLHttpRequest */
 
 'use strict';
 
@@ -39,22 +39,8 @@ async function fb2000QueueSong(file) {
 //if "playnow" song is currently playing, play a random 10 second clip
 //along side the song instead
 //
-async function test_fb2000PlaySongNow(file) {
-	file = `${music_path}/${file}`;
-	let current_playlist = await fb2000.getActivePlaylist();
-	let this_index = await fb2000.getActiveItemIndex();
-	await fb2000.addItems(current_playlist, this_index, true, [file]);
-
-	for(let i = 0; i < 20; i++) {
-		await new Promise(r => setTimeout(r, 100));
-		if(await fb2000.getActiveItemIndex() === this_index + 1) {
-			fb2000.setPosition(30);
-			break;
-		}
-	}
-}
 let play_now_active_file = '';
-async function test2_fb2000PlaySongNow(file) {
+async function fb2000PlaySongNow(file) {
 	//probably should check for this elsewhere
 	function urlExists(url){
 		const http = new XMLHttpRequest();
@@ -63,19 +49,6 @@ async function test2_fb2000PlaySongNow(file) {
 		http.send();
 
 		return http.status !== 404;
-	}
-	function basefilename(filename) {
-		let ext_index = filename.lastIndexOf('.');
-		let folder_index = filename.lastIndexOf('/');
-		if(folder_index === -1)
-			folder_index = 0;
-		else
-			folder_index++;
-		if(ext_index === -1)
-			ext_index = filename.length;
-		ext_index -= folder_index;
-
-		return filename.substr(folder_index, ext_index);
 	}
 	function removeExt(filename) {
 		return filename.substr(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
@@ -105,18 +78,6 @@ async function test2_fb2000PlaySongNow(file) {
 		let next_index = await fb2000.getActiveItemIndex() + 1;
 		await fb2000.addItems(current_playlist, next_index, true, [file]);
 	}
-}
-
-async function original_fb2000PlaySongNow(file) {
-	file = `${music_path}/${file}`;
-	let current_playlist = await fb2000.getActivePlaylist();
-	let next_index = await fb2000.getActiveItemIndex() + 1;
-	await fb2000.addItems(current_playlist, next_index, true, [file]);
-}
-
-async function fb2000PlaySongNow(file) {
-	test2_fb2000PlaySongNow(file);
-	//test_fb2000PlaySongNow(file);
 }
 
 let connection;
