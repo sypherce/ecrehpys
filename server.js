@@ -8,7 +8,6 @@ const server = require('websocket').server;
 const http = require('http');
 const fetch = require('node-fetch');
 const mp3Library = require('./mp3Library.js');
-const path = require('path');
 const log = require('esm')(module)('./alerts/log.js').log;
 let debug = require('esm')(module)('./alerts/log.js').debug;
 
