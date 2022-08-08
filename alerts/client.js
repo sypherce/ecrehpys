@@ -11,9 +11,38 @@ ttsInit();
 const music_path = 'G:/media/music/Stream';
 const local_music_path = 'assets/music';
 
+function urlExists(url){
+	const http = new XMLHttpRequest();
+
+	http.open('HEAD', url, false);
+	http.send();
+
+	return http.status !== 404;
+}
+function removeExt(filename) {
+	return filename.substr(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
+}
+function playSongSprite(file) {
+	file = `${local_music_path}/${removeExt(file)}`;
+
+	//play a predefined sound bite if it exists
+	if(urlExists(`${file}.sound.mp3`)){
+		playSound(`${file}.sound.mp3`);
+	}
+	//otherwise play a random sound sprite
+	else {
+		playSoundSprite(`${file}.mp3`);
+	}
+}
+
 let queue_pos = 0;
 let last_playlist = undefined;
+let enable_song = true;
 async function fb2000QueueSong(file) {
+	if(!enable_song) {
+		playSongSprite(file);
+		return;
+	}
 	file = `${music_path}/${file}`;
 	let current_playlist = await fb2000.getActivePlaylist();
 	let next_index = await fb2000.getActiveItemIndex() + 1;
@@ -41,36 +70,28 @@ async function fb2000QueueSong(file) {
 //
 let play_now_active_file = '';
 async function fb2000PlaySongNow(file) {
-	//probably should check for this elsewhere
-	function urlExists(url){
-		const http = new XMLHttpRequest();
+	function basefilename(filename) {
+		let ext_index = filename.lastIndexOf('.');
+		let folder_index = filename.lastIndexOf('/');
+		if(folder_index === -1)
+			folder_index = 0;
+		else
+			folder_index++;
+		if(ext_index === -1)
+			ext_index = filename.length;
+		ext_index -= folder_index;
 
-		http.open('HEAD', url, false);
-		http.send();
-
-		return http.status !== 404;
+		return filename.substr(folder_index, ext_index);
 	}
-	function removeExt(filename) {
-		return filename.substr(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
-	}
 
-	let this_active_file = await fb2000.getActiveItemFilename();
+	const this_active_file = await fb2000.getActiveItemFilename();
+	const song_is_playing = play_now_active_file !== ''	&& (play_now_active_file === this_active_file);
 	//if a forced song is already playing
-	if(play_now_active_file !== ''
-	&&(play_now_active_file === this_active_file)) {
-		file = `${local_music_path}/${removeExt(file)}`;
-
-		//play a predefined sound bite if it exists
-		if(urlExists(`${file}.sound.mp3`)){
-			playSound(`${file}.sound.mp3`);
-		}
-		//otherwise play a random sound sprite
-		else {
-			playSoundSprite(`${file}.mp3`);
-		}
+	if(song_is_playing || !enable_song) {
+		playSongSprite(file);
 	}
 	else {
-		play_now_active_file = this_active_file;
+		play_now_active_file = basefilename(file);
 
 		file = `${music_path}/${file}`;
 
@@ -186,6 +207,20 @@ function initWebSocket() {
 		case 'Sr': {
 			value.filename = value.filename.replace(/\/mnt\/g\/media\/music\/Stream\//g, '');
 			fb2000QueueSong(value.filename);
+			break;
+		}
+		case 'Enable': {
+			value = value.toLowerCase();
+			if(value.indexOf('song') !== -1) {
+				enable_song = true;
+			}
+			break;
+		}
+		case 'Disable': {
+			value = value.toLowerCase();
+			if(value.indexOf('song') !== -1) {
+				enable_song = false;
+			}
 			break;
 		}
 		default: {
