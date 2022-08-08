@@ -82,6 +82,16 @@ async function processCommands(user, message, flags, self, extra) {
 			bot.Say(message);
 			streamer.Say(message);
 		}
+		if(message_lower.indexOf('!enable') !== -1) {
+			const query = getQuery(message_lower, '!enable');
+			sendMessage('Enable', query);
+			console.log('Enable', query);
+		}
+		if(message_lower.indexOf('!disable') !== -1) {
+			const query = getQuery(message_lower, '!disable');
+			sendMessage('Disable', query);
+			console.log('Disable', query);
+		}
 	}
 
 	if(message_lower.indexOf('!srinfo') !== -1) {

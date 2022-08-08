@@ -11,18 +11,18 @@ ttsInit();
 const music_path = 'G:/media/music/Stream';
 const local_music_path = 'assets/music';
 
-function urlExists(url){
-	const http = new XMLHttpRequest();
-
-	http.open('HEAD', url, false);
-	http.send();
-
-	return http.status !== 404;
-}
-function removeExt(filename) {
-	return filename.substr(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
-}
 function playSongSprite(file) {
+	function urlExists(url){
+		const http = new XMLHttpRequest();
+
+		http.open('HEAD', url, false);
+		http.send();
+
+		return http.status !== 404;
+	}
+	function removeExt(filename) {
+		return filename.substr(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
+	}
 	file = `${local_music_path}/${removeExt(file)}`;
 
 	//play a predefined sound bite if it exists
@@ -56,18 +56,18 @@ async function fb2000QueueSong(file) {
 	queue_pos++;
 }
 
-//todo:
-//take down current position in song
-//add "playnow song" to previous index
-//when song ends, jump back
-//if another song is "playnow"'d only start song
-//then it'll continue with the originally interuppted song
-//
-//if original song is within first 20% or last 20% start song over, or skip song
-//
-//if "playnow" song is currently playing, play a random 10 second clip
-//along side the song instead
-//
+/*	todo:
+	take down current position in song
+	add "playnow song" to previous index
+	when song ends, jump back
+	if another song is "playnow"'d only start song
+	then it'll continue with the originally interuppted song
+
+	if original song is within first 20% or last 20% start song over, or skip song
+
+	if "playnow" song is currently playing, play a random 10 second clip
+	along side the song instead
+*/
 let play_now_active_file = '';
 async function fb2000PlaySongNow(file) {
 	function basefilename(filename) {
