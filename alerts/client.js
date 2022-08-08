@@ -214,17 +214,13 @@ function initWebSocket() {
 			fb2000QueueSong(value.filename);
 			break;
 		}
-		case 'Enable': {
-			value = value.toLowerCase();
-			if(value.indexOf('song') !== -1) {
-				enable_song = true;
-			}
-			break;
-		}
+		case 'Enable':
 		case 'Disable': {
+			const setting = key === 'Enable';
 			value = value.toLowerCase();
+
 			if(value.indexOf('song') !== -1) {
-				enable_song = false;
+				enable_song = setting;
 			}
 			break;
 		}
