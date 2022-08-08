@@ -34,12 +34,31 @@ function playSongSprite(file) {
 		playSoundSprite(`${file}.mp3`);
 	}
 }
+function basefilename(filename) {
+	let ext_index = filename.lastIndexOf('.');
+	let folder_index = filename.lastIndexOf('/');
+	if(folder_index === -1)
+		folder_index = 0;
+	else
+		folder_index++;
+	if(ext_index === -1)
+		ext_index = filename.length;
+	ext_index -= folder_index;
+
+	return filename.substr(folder_index, ext_index);
+}
 
 let queue_pos = 0;
 let last_playlist = undefined;
 let enable_song = true;
+/*	todo
+	need to check if song is in queue and skip if it is
+*/
 async function fb2000QueueSong(file) {
-	if(!enable_song) {
+	const this_active_file = await fb2000.getActiveItemFilename();
+	const song_is_playing = play_now_active_file !== ''	&& (basefilename(file) === this_active_file);
+	console.log('basefilename(file), this_active_file, file:::', basefilename(file), this_active_file, file);
+	if(song_is_playing || !enable_song) {
 		playSongSprite(file);
 		return;
 	}
@@ -70,20 +89,6 @@ async function fb2000QueueSong(file) {
 */
 let play_now_active_file = '';
 async function fb2000PlaySongNow(file) {
-	function basefilename(filename) {
-		let ext_index = filename.lastIndexOf('.');
-		let folder_index = filename.lastIndexOf('/');
-		if(folder_index === -1)
-			folder_index = 0;
-		else
-			folder_index++;
-		if(ext_index === -1)
-			ext_index = filename.length;
-		ext_index -= folder_index;
-
-		return filename.substr(folder_index, ext_index);
-	}
-
 	const this_active_file = await fb2000.getActiveItemFilename();
 	const song_is_playing = play_now_active_file !== ''	&& (play_now_active_file === this_active_file);
 	//if a forced song is already playing
