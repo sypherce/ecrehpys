@@ -12,7 +12,7 @@ async function processLivesplit() {
 		splitIndex !== processLivesplit.last_splitindex) {
 		processLivesplit.last_splitindex = splitIndex;
 
-		server.sendMessage('Song', `${splitIndex}.mp3`);
+		server.sendMessage('Song', livesplit_main.getTrack(splitIndex));
 		log('debug', splitIndex);
 	}
 	setTimeout(processLivesplit, 500);

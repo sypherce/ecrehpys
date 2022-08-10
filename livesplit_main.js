@@ -4,6 +4,37 @@ const livesplit = require('./split.js');
 
 const timeout_length = 500;
 
+const fs = require('fs');
+const path = require('path');
+const tracklist = {
+	directory: './',
+	list: [],
+	get: function(i) {
+		if(tracklist.list[i] === undefined)
+			return path.join(tracklist.directory, `${i}.mp3`);
+
+		return path.join(tracklist.directory, tracklist.list[i]);
+	},
+	load: function(filename) {
+		fs.access(filename, fs.F_OK, function(doesnt_exist) {
+			if(doesnt_exist) {
+				console.error(doesnt_exist);
+				return;
+			}
+		});
+
+		tracklist.directory = path.dirname(filename);
+		tracklist.list = JSON.parse(fs.readFileSync(filename));
+	},
+};
+
+//test
+tracklist.load('assets/livesplit/ducktales/tracklist.json');
+console.log(JSON.stringify(tracklist));
+console.log(tracklist.get( 0));
+console.log(tracklist.get( 1));
+console.log(tracklist.get(40));
+
 let splitIndex = null;
 async function index_updater() {
 	splitIndex = await livesplit.getSplitIndex();
@@ -27,5 +58,7 @@ function getSplitIndex() {
 	return splitIndex;
 }
 
+module.exports.getTrack = tracklist.get;
+module.exports.loadTracklist = tracklist.load;
 module.exports.getSplitIndex = getSplitIndex;
 module.exports.run = run;
