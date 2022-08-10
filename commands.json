@@ -5,13 +5,23 @@
 		"author":	"cleveland_tom"
 	},
 	{
+		"keyword":	["indexOf('hot\\s*drinks')"],
+		"task":		[{"videonow": "0 - Other/Wendy's Training Video Hot Drinks.mp4"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["indexOf('wtd')"],
+		"task":		[{"videonow": "0 - Other/Was (Not Was) - Walk The Dinosaur.mp4"}],
+		"author":	"missliss15"
+	},
+	{
 		"keyword":	["indexOf('pastr(y|ie)[s]*')"],
 		"task":		[{"videonow": "0 - Other/Weebl and Bob - Pastry.mp4"}],
 		"author":	"residentemil_"
 	},
 	{
 		"keyword":	["indexOf('ghost\\s*buster[s]*')", "indexOf('sobr0sbustin')"],
-		"task":		[{"song": "0 - Other/GhostBusters Theme Song.mp3"}],
+		"task":		[{"videonow": "0 - Other/GhostBusters Theme Song.mp4"}],
 		"author":	"xjrigsx"
 	},
 	{
@@ -21,27 +31,32 @@
 	},
 	{
 		"keyword":	["indexOf('reading\\s*rainbow')", "indexOf('!rr')"],
-		"task":		[{"song": "0 - Other/Reading Rainbow.mp3"}],
+		"task":		[{"videonow": "0 - Other/Reading Rainbow.mp4"}],
 		"author":	"missliss15"
 	},
 	{
 		"keyword":	["indexOf('crab')"],
-		"task":		[{"song": "0 - Other/Crabs- MrWeebl.mp3"}],
+		"task":		[{"videonow": "0 - Other/Crabs- MrWeebl.mp4"}],
 		"author":	"residentemil_"
 	},
 	{
 		"keyword":	["indexOf('dark\\s*wing')"],
-		"task":		[{"song": "0 - Other/Darkwing Duck Theme Song.mp3"}],
+		"task":		[{"videonow": "0 - Other/Darkwing Duck Theme Song.mp4"}],
 		"author":	"sypherce"
 	},
 	{
 		"keyword":	["indexOf('duck\\s*ta(il|le)[s]*')"],
-		"task":		[{"song": "0 - Other/DuckTales Theme Song.mp3"}],
+		"task":		[{"videonow": "0 - Other/DuckTales Theme Song.mp4"}],
+		"author":	"sypherce"
+	},
+	{
+		"keyword":	["indexOf('chip\\s*[n]*\\s*dale')"],
+		"task":		[{"videonow": "0 - Other/Chip 'N Dale Rescue Rangers Theme Song.mp4"}],
 		"author":	"sypherce"
 	},
 	{
 		"keyword":	["indexOf('gumm(i|y)\\s*bear[s]*')"],
-		"task":		[{"song": "0 - Other/Gummi Bears Theme Song.mp3"}],
+		"task":		[{"videonow": "0 - Other/Gummi Bears Theme Song.mp4"}],
 		"author":	"subtlewookie"
 	},
 	{
@@ -51,12 +66,12 @@
 	},
 	{
 		"keyword":	["indexOf('trevor')"],
-		"task":		[{"song": "0 - Other/Magical Trevor Theme Song.mp3"}],
+		"task":		[{"videonow": "0 - Other/Magical Trevor Theme Song.mp4"}],
 		"author":	"muten_pizza"
 	},
 	{
 		"keyword":	["indexOf('ta(il|le)\\s*spin')"],
-		"task":		[{"song": "0 - Other/TaleSpin Theme Song.mp3"}],
+		"task":		[{"videonow": "0 - Other/TaleSpin Theme Song.mp4"}],
 		"author":	"missliss15"
 	},
 	{
@@ -86,7 +101,7 @@
 	},
 	{
 		"keyword":	["indexOf('candy\\s*mountain')"],
-		"task":		[{"song": "0 - Other/Charlie - Candy Mountain.mp3"}],
+		"task":		[{"videonow": "0 - Other/Charlie - Candy Mountain.mp4"}],
 		"author":	"missliss15"
 	},
 	{
