@@ -170,7 +170,7 @@ async function updateEntries(){
 				if (entry_exists.childNodes[y].className === 'progress-bar') {
 					let pos = 0;
 					if(i === 0)
-						pos = await fb2000.getPosition();
+						pos = await fb2000.getPositionRelative();
 
 					entry_exists.childNodes[y].style.width=`calc(var(--image_width) * ${pos})`;
 					break;

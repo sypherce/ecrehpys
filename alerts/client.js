@@ -23,15 +23,16 @@ function playSongSprite(file) {
 	function removeExt(filename) {
 		return filename.substr(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
 	}
-	file = `${local_music_path}/${removeExt(file)}`;
+	file = `${local_music_path}/${file}`;
 
 	//play a predefined sound bite if it exists
-	if(urlExists(`${file}.sound.mp3`)){
-		playSound(`${file}.sound.mp3`);
+	let soundfile = `${removeExt(file)}.sound.mp3`;
+	if(urlExists(soundfile)){
+		playSound(soundfile);
 	}
 	//otherwise play a random sound sprite
 	else {
-		playSoundSprite(`${file}.mp3`);
+		playSoundSprite(file);
 	}
 }
 function basefilename(filename) {
@@ -94,16 +95,18 @@ async function fb2000PlaySongNow(file) {
 	//if a forced song is already playing
 	if(song_is_playing || !enable_song) {
 		playSongSprite(file);
+		return false;
 	}
-	else {
-		play_now_active_file = basefilename(file);
 
-		file = `${music_path}/${file}`;
+	play_now_active_file = basefilename(file);
 
-		let current_playlist = await fb2000.getActivePlaylist();
-		let next_index = await fb2000.getActiveItemIndex() + 1;
-		await fb2000.addItems(current_playlist, next_index, true, [file]);
-	}
+	file = `${music_path}/${file}`;
+
+	let current_playlist = await fb2000.getActivePlaylist();
+	let next_index = await fb2000.getActiveItemIndex() + 1;
+	await fb2000.addItems(current_playlist, next_index, true, [file]);
+
+	return true;
 }
 
 let connection;
@@ -172,7 +175,7 @@ function initWebSocket() {
 		}, 1000);
 	};
 
-	function handleMessage(object, key, value) {
+	async function handleMessage(object, key, value) {
 		if(typeof handleMessage.content === 'undefined')
 			handleMessage.content = document.getElementById('content');
 
@@ -199,6 +202,35 @@ function initWebSocket() {
 				video.remove();
 			};
 			document.getElementById('video_div').appendChild(video);
+			break;
+		}
+		case 'VideoNow': {
+			if(await fb2000PlaySongNow(value) === false) {
+				console.log('break');
+				break;
+			}
+
+			handleMessage.VideoNow = 'playing';
+			const video = document.createElement('video');
+			video.setAttribute('id', 'NewVideo');
+			video.src = `assets/music/${value}`;
+			video.autoplay = false;
+			video.controls = false;
+			video.muted = true;
+			video.onended = (_event) => {
+				const video = document.getElementById('NewVideo');
+				video.pause();
+				video.src = '';
+				video.remove();
+				handleMessage.VideoNow = undefined;
+			};
+			document.getElementById('video_div').appendChild(video);
+			setTimeout(async function() {
+				let oldtime= video.currentTime;
+				video.currentTime = await fb2000.getPosition();
+				console.log(video.currentTime - oldtime);
+				video.play();
+			}, 400);
 			break;
 		}
 		case 'TTS': {
@@ -243,7 +275,7 @@ function initWebSocket() {
 			}
 		}
 		else if(typeof object === 'object') {
-			Object.entries(object).forEach(([key, value]) => {
+			Object.entries(object).forEach(function([key, value]) {
 				handleMessage(object, key, value);
 				log('temp', key);
 				log('temp', value);

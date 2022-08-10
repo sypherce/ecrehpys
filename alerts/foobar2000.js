@@ -104,6 +104,11 @@ async function getActiveItemIndex() {
 }
 async function getPosition() {
 	let index = (await getJSON('player'));
+	index = index.player.activeItem.position;
+	return index;
+}
+async function getPositionRelative() {
+	let index = (await getJSON('player'));
 	index = index.player.activeItem.position / index.player.activeItem.duration;
 	return index;
 }
@@ -170,4 +175,4 @@ async function getItems(playlist, range) {
 	return (await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`));
 }
 
-export {setPosition, getActiveItemIndex, getPosition, getCoverartURL, getActiveItemFilename, getPlaybackState, getActivePlaylist, addItems, getItems};
+export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, getActivePlaylist, addItems, getItems};

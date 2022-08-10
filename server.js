@@ -190,7 +190,7 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 
 			log('verbose', `keywordIsIndexOf: ${comparison}`);
 
-			if(comparison !== '' && message_lower.indexOf(comparison) !== -1) {
+			if(comparison !== '' && message_lower.search(new RegExp('\\b' + comparison + '\\b')) !== -1) {
 				if(this_command.cooldown > extra.timestamp - this_command.timestamp) {
 					const cooldown_seconds = Math.ceil((this_command.cooldown - (extra.timestamp - this_command.timestamp)) / 1000);
 					whisper_wrapper(`@${user} cooldown for ${cooldown_seconds} more second ${((cooldown_seconds > 1) ? 's' : '')}`, user);
@@ -222,6 +222,9 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 						}
 						if(this_task.song) {
 							sendMessage('Song', this_task.song);
+						}
+						if(this_task.videonow) {
+							sendMessage('VideoNow', this_task.videonow);
 						}
 
 						retVal++;
