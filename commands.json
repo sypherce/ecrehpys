@@ -5,6 +5,11 @@
 		"author":	"cleveland_tom"
 	},
 	{
+		"keyword":	["indexOf('.*glub.*')", "indexOf('.*glob.*')"],
+		"task":		[{"videonow": "0 - Other/Globglogabgalab Remix [Blue] - The Living Tombstone.mp4"}],
+		"author":	"residentemil_"
+	},
+	{
 		"keyword":	["indexOf('hot\\s*drinks')"],
 		"task":		[{"videonow": "0 - Other/Wendy's Training Video Hot Drinks.mp4"}],
 		"author":	"residentemil_"
