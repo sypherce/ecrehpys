@@ -206,30 +206,43 @@ function initWebSocket() {
 		}
 		case 'VideoNow': {
 			if(await fb2000PlaySongNow(value) === false) {
-				console.log('break');
 				break;
 			}
 
-			handleMessage.VideoNow = 'playing';
 			const video = document.createElement('video');
 			video.setAttribute('id', 'NewVideo');
 			video.src = `assets/music/${value}`;
 			video.autoplay = false;
 			video.controls = false;
 			video.muted = true;
-			video.onended = (_event) => {
-				const video = document.getElementById('NewVideo');
+			document.getElementById('video_div').appendChild(video);
+
+			video.onended = () => {
+				clearInterval(video.interval);
 				video.pause();
 				video.src = '';
 				video.remove();
-				handleMessage.VideoNow = undefined;
 			};
-			document.getElementById('video_div').appendChild(video);
-			setTimeout(async function() {
-				let oldtime= video.currentTime;
-				video.currentTime = await fb2000.getPosition();
-				console.log(video.currentTime - oldtime);
-				video.play();
+			video.onplay = () => video.isplaying = true;
+
+			video.interval = setInterval(async function() {
+				const video_file = decodeURI(basefilename(video.src));
+				const foobar_file = await fb2000.getActiveItemFilename();
+				if(video_file !== foobar_file) {
+					video.onended();
+					return;
+				}
+				let fb2000CurrentTime = await fb2000.getPosition();
+
+				if(video.isplaying !== true){
+					console.log('first', fb2000CurrentTime - video.currentTime);
+					video.currentTime = fb2000CurrentTime;
+					video.play();
+				}
+				else if((fb2000CurrentTime - video.currentTime) > 0.2 || fb2000CurrentTime - video.currentTime < -0.2) {
+					console.log(fb2000CurrentTime - video.currentTime);
+					video.currentTime = fb2000CurrentTime;
+				}
 			}, 400);
 			break;
 		}
