@@ -40,15 +40,16 @@ async function postJSON(url, data) {
 				JSON.stringify(data)
 			}
 		);
+
+		//not sure if this should just return false. throw new error is a mystery to me
 		if(!response.ok)
 			throw new Error(`HTTP error! status: ${response.status}`);
-
-		return await response.json();
-
 	} catch (err) {
 		console.log(err);
-		return '';
+		return false;
 	}
+
+	return true;
 }
 async function postSimple(url) {
 	try {
@@ -58,15 +59,16 @@ async function postSimple(url) {
 				method: 'POST'
 			}
 		);
+
+		//not sure if this should just return false. throw new error is a mystery to me
 		if(!response.ok)
 			throw new Error(`HTTP error! status: ${response.status}`);
-
-		return await response.json();
-
 	} catch (err) {
 		console.log(err);
-		return '';
+		return false;
 	}
+
+	return true;
 }
 
 
