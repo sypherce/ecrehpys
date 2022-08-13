@@ -1,13 +1,13 @@
 /*global  */
 'use strict';
 
-const base_url = 'http://192.168.1.212:8880/api/';
+const base_url = 'http://192.168.1.212:8880/api';
 //curl -X GET "https://localhost:8880/api/playlists" -H "accept: application/json"
 
 async function getJSON(url) {
 	try {
 		const response = await fetch(
-			`${base_url}${url}`,
+			`${base_url}/${url}`,
 			{
 				method: 'GET',
 				headers: {
@@ -29,7 +29,7 @@ async function getJSON(url) {
 async function postJSON(url, data) {
 	try {
 		const response = await fetch(
-			`${base_url}${url}`,
+			`${base_url}/${url}`,
 			{
 				method: 'POST',
 				headers: {
@@ -54,7 +54,7 @@ async function postJSON(url, data) {
 async function postSimple(url) {
 	try {
 		const response = await fetch(
-			`${base_url}${url}`,
+			`${base_url}/${url}`,
 			{
 				method: 'POST'
 			}
@@ -116,7 +116,7 @@ async function getPositionRelative() {
 }
 async function getCoverartURL(index) {
 	const playlist = (await getActivePlaylist());
-	return `http://192.168.1.212:8880/api/artwork/${playlist}/${index}`;
+	return `${base_url}/artwork/${playlist}/${index}`;
 }
 async function getActiveItemFilename() {
 	let filename = (await getJSON('player?columns=%filename%'));
