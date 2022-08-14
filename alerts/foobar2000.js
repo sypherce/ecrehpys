@@ -79,70 +79,66 @@ async function setPosition(position, absolute = false) {
 	} else {
 		command = `player?relativePosition=${position}`;
 	}
-	postSimple(command);
+	return postSimple(command);
 }
-//
 //set position to 30
 //
 //curl -X POST "http://192.168.1.212:8880/api/player?position=30" -H "accept: application/json"
 //
 
-let playback_state = 'stopped';
 async function getPlaybackState() {
-	let this_playback_state = (await getJSON('player'));
-	this_playback_state = this_playback_state.player.playbackState;
+	getPlaybackState.state = getPlaybackState.state ?? 'stopped';
 
-	if(playback_state === this_playback_state)
+	const json = (await getJSON('player'));
+	const this_state = json.player.playbackState;
+
+	if(getPlaybackState.state === this_state)
 		return false;
-	else {
-		playback_state = this_playback_state;
-		return playback_state;
-	}
+
+	getPlaybackState.state = this_state;
+	return getPlaybackState.state;
 }
 async function getActiveItemIndex() {
-	let index = (await getJSON('player'));
-	index = index.player.activeItem.index;
-	return index;
+	const json = (await getJSON('player'));
+	return json.player.activeItem.index;
 }
 async function getPosition() {
-	let index = (await getJSON('player'));
-	index = index.player.activeItem.position;
-	return index;
+	const json = (await getJSON('player'));
+	return json.player.activeItem.position;
 }
 async function getPositionRelative() {
-	let index = (await getJSON('player'));
-	index = index.player.activeItem.position / index.player.activeItem.duration;
-	return index;
+	const json = (await getJSON('player'));
+	return json.player.activeItem.position / json.player.activeItem.duration;
 }
 async function getCoverartURL(index) {
-	const playlist = (await getActivePlaylist());
+	const playlist = (await getActivePlaylistIndex());
 	return `${base_url}/artwork/${playlist}/${index}`;
 }
 async function getActiveItemFilename() {
-	let filename = (await getJSON('player?columns=%filename%'));
-	filename = filename.player.activeItem.columns[0];
-	return filename;
+	const json = (await getJSON('player?columns=%filename%'));
+	return json.player.activeItem.columns[0];
 }
 async function getPlaylists() {
-	return (await getJSON('playlists'));
+	const json = (await getJSON('playlists'));
+	console.log('playlists', json.playlists);
+	return json.playlists;
 }
 
 async function getCurrentPlaylist() {
-	let playlists = (await getPlaylists()).playlists;
+	const playlists = (await getPlaylists());
 	return playlists.filter(element => element.isCurrent === true)[0];
 }
 
-async function getActivePlaylist() {
-	let index = (await getJSON('player'));
-	index = index.player.activeItem.playlistIndex;
-	if(index === -1) {
-		index = (await getCurrentPlaylist()).index;
-	}
+async function getActivePlaylistIndex() {
+	const json = (await getJSON('player'));
+	const index = json.player.activeItem.playlistIndex;
+	if(index === -1)
+		return (await getCurrentPlaylist()).index;
+
 	return index;
 }
 async function addItems(playlist_id, index, play, items) {
-	console.log(items);
-	postJSON(`playlists/${playlist_id}/items/add`,
+	return postJSON(`playlists/${playlist_id}/items/add`,
 		{
 			'index': index,
 			'async': false,
@@ -174,7 +170,48 @@ async function addItems(playlist_id, index, play, items) {
 
 //curl -X GET "http://192.168.1.212:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
 async function getItems(playlist, range) {
-	return (await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`));
+	const json = await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`);
+	return json;
 }
 
-export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, getActivePlaylist, addItems, getItems};
+async function _test() {
+	function log(...args) {
+		console.log(`%c${args}`, 'color: white; background: blue;');
+	}
+
+	const test_mp3_filename = 'G:/media/music/Stream/0 - Other/Crabs- MrWeebl.mp3';
+	console.group('%cfoobar2000 test', 'color: white; background: blue;');
+	console.trace();
+	const active_playlist = (await getActivePlaylistIndex());
+	console.log({active_playlist: active_playlist});
+	console.log({getJSON: (await getJSON('player'))});
+	console.log({postSimple: [(await postSimple('player?position=15')), (await getPosition())]});
+	console.log({setPosition: [(await setPosition(25, true)), (await getPosition())]});
+	console.log({getPlaybackState: (await getPlaybackState())});
+
+	const active_item_index = await getActiveItemIndex();
+	console.log({active_item_index: active_item_index});
+	console.log({getPosition: (await getPosition())});
+	console.log({getPositionRelative: (await getPositionRelative())});
+	console.log({getCoverartURL: (await getCoverartURL(active_item_index))});
+	console.log({getActiveItemFilename: (await getActiveItemFilename())});
+	console.log({getPlaylists: (await getPlaylists())});
+	console.log({getActivePlaylistIndex: (await getActivePlaylistIndex())});
+	console.log({getItems: (await getItems(active_playlist,  '0:10'))});
+
+	await new Promise(r => setTimeout(r, 1000));
+	console.log({postJSON: (await postJSON(`playlists/${active_playlist}/items/add`,
+		{
+			'index': 0,
+			'async': false,
+			'replace': false,
+			'play': true,
+			'items': [test_mp3_filename]
+		}))});
+	console.log({addItems: (await addItems(active_playlist, 0, true, [test_mp3_filename]))});
+
+	console.groupEnd();
+}
+//_test();
+
+export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, getActivePlaylistIndex, addItems, getItems};

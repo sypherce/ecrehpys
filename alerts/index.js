@@ -138,7 +138,7 @@ async function updateEntries(){
 
 	let count = 10;
 	let index = await fb2000.getActiveItemIndex();
-	let playlist = await fb2000.getActivePlaylist();
+	let playlist = await fb2000.getActivePlaylistIndex();
 	let entries = '';
 	if(index !== -1){
 		entries = await fb2000.getItems(playlist, `${index}:${count}`);

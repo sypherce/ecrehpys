@@ -64,7 +64,7 @@ async function fb2000QueueSong(file) {
 		return;
 	}
 	file = `${music_path}/${file}`;
-	let current_playlist = await fb2000.getActivePlaylist();
+	let current_playlist = await fb2000.getActivePlaylistIndex();
 	let next_index = await fb2000.getActiveItemIndex() + 1;
 
 	if(last_playlist !== current_playlist
@@ -102,7 +102,7 @@ async function fb2000PlaySongNow(file) {
 
 	file = `${music_path}/${file}`;
 
-	let current_playlist = await fb2000.getActivePlaylist();
+	let current_playlist = await fb2000.getActivePlaylistIndex();
 	let next_index = await fb2000.getActiveItemIndex() + 1;
 	await fb2000.addItems(current_playlist, next_index, true, [file]);
 
