@@ -185,7 +185,7 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 
 		log('verbose', `this_command.task: ${this_command.task}`);
 		for (let keyword_i = 0; keyword_i < this_command.keyword.length; keyword_i++) {
-			let comparison = keywordIsIndexOf(this_command.keyword[keyword_i]);
+			let comparison = this_command.keyword[keyword_i];
 			let query = message.substr(message_lower.indexOf(comparison) + comparison.length);
 
 			log('verbose', `keywordIsIndexOf: ${comparison}`);
