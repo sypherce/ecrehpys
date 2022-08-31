@@ -11,18 +11,38 @@ const mp3Library = require('./mp3Library.js');
 const log = require('esm')(module)('./alerts/log.js').log;
 let debug = require('esm')(module)('./alerts/log.js').debug;
 
+async function generateCommandsPHP(commands) {
+	const html = require('./command_html.js').html;
+
+	html[1] = commands;
+	await fs.promises.writeFile('./commands.html', html.join(''));
+}
+
 let commands;
 function loadCommands(filename) {
-	let command_list = JSON.parse(fs.readFileSync(filename));
+	let html_commands = '';
+	const command_list = JSON.parse(fs.readFileSync(filename));
 
 	for (let commands_i = 0; commands_i < command_list.length; commands_i++) {
-		let this_command = command_list[commands_i];
+		const this_command = command_list[commands_i];
 
 		if(typeof this_command.author    === 'undefined') this_command.author    = '';
 		if(typeof this_command.cooldown  === 'undefined') this_command.cooldown  = 0;
 		if(typeof this_command.timestamp === 'undefined') this_command.timestamp = 0;
 		if(typeof this_command.active    === 'undefined') this_command.active    = true;
+
+		let keyword_string = this_command.keyword[0];
+		for(let i = 0; i < 5; i++) {
+			keyword_string = keyword_string.replace('\')', '');
+			keyword_string = keyword_string.replace('.*', '');
+			keyword_string = keyword_string.replace('\\s*', ' ');
+			keyword_string = keyword_string.replace('[s]', ' ');
+		}
+		let task_string = this_command.task[0].song || this_command.task[0].videonow;
+
+		html_commands = html_commands.concat(`command("${keyword_string}", ${JSON.stringify(task_string)}, "${this_command.author}");\n`);
 	}
+	generateCommandsPHP(html_commands);
 
 	commands = command_list;
 }
