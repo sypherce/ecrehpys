@@ -16,7 +16,7 @@ video {
 </style>
 </head>
 <body>
-<div id="main-group">
+<div id="main-group" style="display: none;">
 	<div id="container"><!--must not be empty?--></div>
 	<button id="add-button">Add New</button>
 	<button id="rm-button0">-0</button>
