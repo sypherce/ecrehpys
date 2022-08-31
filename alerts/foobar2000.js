@@ -119,6 +119,7 @@ async function getPlaylists() {
 	return json.playlists;
 }
 
+//currently broken if no playlists available
 async function getCurrentPlaylist() {
 	const playlists = await getPlaylists();
 	return playlists.filter(element => element.isCurrent === true)[0];
@@ -207,6 +208,6 @@ async function _test() {
 
 	console.groupEnd();
 }
-_test();
+//_test();
 
 export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, getActivePlaylistIndex, addItems, getItems};
