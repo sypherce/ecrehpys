@@ -16,7 +16,8 @@ const tracklist = {
 		return path.join(tracklist.directory, tracklist.list[i]);
 	},
 	load: function(filename) {
-		fs.access(filename, fs.F_OK, function(doesnt_exist) {
+		const basedir = 'assets/livesplit';
+		fs.access(`${basedir}/${filename}`, fs.F_OK, function(doesnt_exist) {
 			if(doesnt_exist) {
 				console.error(doesnt_exist);
 				return;
@@ -24,12 +25,12 @@ const tracklist = {
 		});
 
 		tracklist.directory = path.dirname(filename);
-		tracklist.list = JSON.parse(fs.readFileSync(filename));
+		tracklist.list = JSON.parse(fs.readFileSync(`${basedir}/${filename}`));
 	},
 };
 
 //test
-tracklist.load('assets/livesplit/ducktales/tracklist.json');
+tracklist.load('ducktales/tracklist.json');
 console.log(JSON.stringify(tracklist));
 console.log(tracklist.get( 0));
 console.log(tracklist.get( 1));
@@ -40,7 +41,7 @@ async function index_updater() {
 	splitIndex = await livesplit.getSplitIndex();
 	if(typeof index_updater.last === 'undefined' || index_updater.last !== splitIndex) {
 		index_updater.last = splitIndex;
-		//console.log(splitIndex);
+		console.log(splitIndex, tracklist.get(splitIndex));
 	}
 	setTimeout(index_updater, timeout_length);
 }

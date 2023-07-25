@@ -56,6 +56,10 @@ let enable_song = true;
 	need to check if song is in queue and skip if it is
 */
 async function fb2000QueueSong(file) {
+	if(!(await fb2000.isPlaying())) {
+		fb2000PlaySongNow(file);
+		return;
+	}
 	const this_active_file = await fb2000.getActiveItemFilename();
 	const song_is_playing = play_now_active_file !== ''	&& (basefilename(file) === this_active_file);
 	console.log('basefilename(file), this_active_file, file:::', basefilename(file), this_active_file, file);
@@ -64,17 +68,28 @@ async function fb2000QueueSong(file) {
 		return;
 	}
 	file = `${music_path}/${file}`;
-	let current_playlist = await fb2000.getActivePlaylistIndex();
-	let next_index = await fb2000.getActiveItemIndex() + 1;
+	const current_playlist = await fb2000.getActivePlaylistIndex();
+	const next_index = await fb2000.getActiveItemIndex() + 1;
 
-	if(last_playlist !== current_playlist
+	//no real queue for now, just next playing
+	queue_pos = next_index;
+	/*if(last_playlist !== current_playlist
 	|| next_index > queue_pos) {
 		queue_pos = next_index;
 		last_playlist = current_playlist;
-	}
+	}*/
 	await fb2000.addItems(current_playlist, queue_pos, false, [file]);
 	queue_pos++;
 }
+
+
+/*
+ idea:
+
+ flip sound channels
+playing a new sound flips to another sound at the same percent of played
+ so if a 10 second sound is 2 seconds in, and you switch to a 1000 second sound it's jump to the 200th second or 20% of the way through
+*/
 
 /*	todo:
 	take down current position in song
@@ -125,6 +140,45 @@ export function sendMessage(id, contents) {
 	connection.send(message);
 }
 
+const temp_x = {
+	list: [],
+	play: function(filename) {
+		let playing = false;
+		this.list.forEach(function (item, index) {
+			console.log(item, index);
+
+			if(item._src === filename) {
+				playing = true;
+				item.play();
+			}
+			else {
+				item.pause();
+			}
+		});
+		if(!playing) {
+			let sound;
+			this.list.push(
+				sound = new Howl({
+					src: [filename],
+					html5: true,
+					loop: true,
+				})
+			);
+			sound.play();
+		}
+		console.log('length', this.list.length);
+
+		//check if game changed, if it did, toss everything
+		//search [list] for filename
+		//if it's in [list] continue playing song
+		//if not, start it
+	},
+};
+
+function playSplitSound(file) {
+	console.log(file);
+	temp_x.play(file);
+}
 function playSound(file) {
 	console.log(file);
 	let sound = new Howl({
@@ -248,6 +302,10 @@ function initWebSocket() {
 		}
 		case 'TTS': {
 			ttsSpeak(value);
+			break;
+		}
+		case 'SplitSong': {
+			playSplitSound(`assets/music/${value}`);
 			break;
 		}
 		case 'Song': {

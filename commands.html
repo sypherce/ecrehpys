@@ -1,0 +1,199 @@
+<html>
+	<head>
+	<meta charset="UTF-8">
+	<style>
+
+		@media (prefers-color-scheme: dark) {
+			:root {
+				--text-color: #FFF;
+				--background-color: #000;
+				--border-color: #FFF;
+				--alt-color: #222;
+				--header-color: #000;
+				--header-background: #FFF;
+			}
+		}
+		@media (prefers-color-scheme: light) {
+			:root {
+				--text-color: #000;
+				--background-color: #FFF;
+				--border-color: #000;
+				--alt-color: #DDD;
+				--header-color: #FFF;
+				--header-background: #000;
+			}
+		}
+		body {
+			background-color: var(--background-color);
+			color: var(--text-color);
+		}
+		table {
+			border: 2px solid var(--border-color);
+			border-radius: 13px;
+			border-spacing: 0px;
+		}
+		mark {
+			background-color: transparent;
+			border: 0px solid var(--border-color);
+			border-radius: 15px;
+			box-shadow: 0 0 10px var(--border-color);
+			padding:1px;
+			color: var(--text-color);
+		}
+		th {
+			text-align:center;
+			position: sticky;
+			top: 0;
+			background-color: var(--header-background);
+			color: var(--header-color);
+		}
+			th:first-child {
+				border-top-left-radius:  10px;
+			}
+			th:last-child {
+				border-top-right-radius: 10px;
+			}
+		td {
+			text-align:left;
+			border:0;
+			border-left:2px solid var(--background-color);
+			border-right:2px solid var(--background-color);
+		}
+			td:first-child {
+				border-left: 0;
+				text-align:right;
+				white-space:nowrap;
+				width:0;
+			}
+			td:last-child {
+				text-align:left;
+				border-right: 0;
+				white-space:nowrap;
+				width:0;
+			}
+		tr:nth-child(odd) {
+			background-color: var(--alt-color);
+		}
+		img {
+			height: 1em;
+			width: auto;
+		}
+	</style>
+	</head>
+	<body>
+	<script>
+		function author(name) {
+			return `<img src="../../../stream/assets/users/icon/${name}.php">${name}`;
+		}
+		function keyword(arg) {
+			if(!Array.isArray(arg))
+				return `<mark>${arg}</mark>`;
+
+			let string = '';
+			for (let i = 0; i < arg.length; i++) {
+				string = string.concat(`<mark>${arg[i]}</mark>`);
+				switch(i) {
+				case arg.length-1: break;
+				default:
+					string = string.concat(`,`);
+				}
+			}
+			return string;
+		}
+		function video(desc) {
+			return `🎥${desc}`;
+		}
+		function command2(keyword_list, desc, author_name) {
+			document.write(`
+				<tr>
+					<td>${keyword(keyword_list)}</td>
+					<td>${desc}</td>
+					<td>${author(author_name)}</td>
+				</tr>
+				`);
+		}
+
+		function command(keyword_list, desc, author_name) {
+			const table = document.getElementById("main");
+			const row = table.insertRow();
+			const cells	=  [row.insertCell(0),
+							row.insertCell(1),
+							row.insertCell(2)]
+			cells[0].innerHTML = keyword(keyword_list);
+			cells[1].innerHTML = desc;
+			cells[2].innerHTML = author(author_name);
+		}
+	</script>
+	<center>
+		<table style="border-bottom:0;
+				border-bottom-right-radius: 0 0;
+				border-bottom-left-radius:  0 0;">
+			<tbody>
+				<tr>
+					<th>Icon Legend</th>
+				</tr>
+				<tr><td>
+			🎥 : Video<br>
+			🔊 : Audio</td>
+				</tr>
+			</tbody>
+		</table>
+		<table>
+			<tbody id="main">
+				<tr>
+					<th>Keyword</th>
+					<th>Command Type/Description</th>
+					<th>Author</th>
+				</tr>
+				<script>command("cleveland", "0 - Other/Cleveland Tourism Video Supercut.mp4", "cleveland_tom");
+command("glub", "0 - Other/Globglogabgalab Remix [Blue] - The Living Tombstone.mp4", "residentemil_");
+command("hot drinks", "0 - Other/Wendy's Training Video Hot Drinks.mp4", "residentemil_");
+command("wtd", "0 - Other/Was (Not Was) - Walk The Dinosaur.mp4", "missliss15");
+command("pastr(y|ie) *", "0 - Other/Weebl and Bob - Pastry.mp4", "residentemil_");
+command("ghost buster *", "0 - Other/GhostBusters Theme Song.mp4", "xjrigsx");
+command("tunak", "0 - Other/Tunak Tunak.mp4", "missliss15");
+command("tunak", "0 - Other/Tunak Tunak.mp4", "missliss15");
+command("reading rainbow", "0 - Other/Reading Rainbow.mp4", "missliss15");
+command("crab", "0 - Other/Crabs- MrWeebl.mp4", "residentemil_");
+command("dark wing", "0 - Other/Darkwing Duck Theme Song.mp4", "sypherce");
+command("duck ta(il|le) *", "0 - Other/Duck_____ Theme Song.mp4", "sypherce");
+command("!dt", "0 - Other/DuckTales Theme Song.mp4", "sypherce");
+command("chip [n]* dale", "0 - Other/Chip 'N Dale Rescue Rangers Theme Song.mp4", "sypherce");
+command("gumm(i|y) bear *", "0 - Other/Gummi Bears Theme Song.mp4", "subtlewookie");
+command("jungle boogie", "0 - Other/Jungle Boogie.mp3", "blacksquall");
+command("trevor", "0 - Other/Magical Trevor Theme Song.mp4", "muten_pizza");
+command("ta(il|le) spin", "0 - Other/TaleSpin Theme Song.mp4", "missliss15");
+command("top man", "NES/Mega Man 3/Top Man.mp3", "xjrigsx");
+command("beat box", "0 - Other/Pinball Dreams - Beat Box.mp3", "xjrigsx");
+command("chimi changa", "0 - Other/Skullmonkeys - Castle De Los Muertos.mp3", "sypherce");
+command("unusual", "0 - Other/Tom Jones - It's Not Unusual.mp3", "residentemil_");
+command("!magus", "Snes/Chrono Trigger/Battle with Magus.mp3", "subtlewookie");
+command("candy mountain", "0 - Other/Charlie - Candy Mountain.mp4", "missliss15");
+command("!owl", "N64/Ocarina of Time/Ocarina of Time - Kepora Gebora.mp3", "xjrigsx");
+command("owl", "0 - Other/owl.mp4", "xjrigsx");
+command("!gamebark", "0 - Other/GameBark.mp4", "residentemil_");
+command("!gamebark", "0 - Other/GameBark.mp4", "residentemil_");
+command("jurassic bark", "0 - Other/jurassicbark.mp4", "residentemil_");
+command("lwo", "0 - Other/gamer-walk-reverse.mp4", "residentemil_");
+command("!grill", "0 - Other/Wendys_Grill_Skills.mp4", "residentemil_");
+command("!don", undefined, "missliss15");
+command("big bark", undefined, "residentemil_");
+command("reyn warp", undefined, "residentemil_");
+command("shush", undefined, "muten_pizza");
+command("out of control", undefined, "muten_pizza");
+command("wh[a]{2,}t", undefined, "muten_pizza");
+command("xbox", undefined, "residentemil_");
+command("s(hut|) u(p|) w(ook|)", undefined, "muten_pizza");
+command("when i ('|a|)m", undefined, "residentemil_");
+command("beardcube", undefined, "residentemil_");
+command("elm street", "NES/A Nightmare on Elm Street/Town of Elm Street.mp3", "xjrigsx");
+command("big blue", "Snes/FZero/Big Blue.mp3", "xjrigsx");
+command("i ('|a|)m hearin(g|) that", "0 - Other/MNG - imhearinthat.mp3", "musicngaming");
+</script>
+			</tbody>
+			</table>
+		</table>
+	</center>
+	</body>
+	</html>
+	

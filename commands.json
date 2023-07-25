@@ -35,6 +35,11 @@
 		"author":	"missliss15"
 	},
 	{
+		"keyword":	[".*tunak", "!sypherce"],
+		"task":		[{"videonow": "0 - Other/Tunak Tunak.mp4"}],
+		"author":	"missliss15"
+	},
+	{
 		"keyword":	["reading\\s*rainbow", "!rr"],
 		"task":		[{"videonow": "0 - Other/Reading Rainbow.mp4"}],
 		"author":	"missliss15"
@@ -51,6 +56,11 @@
 	},
 	{
 		"keyword":	["duck\\s*ta(il|le)[s]*"],
+		"task":		[{"videonow": "0 - Other/Duck_____ Theme Song.mp4"}],
+		"author":	"sypherce"
+	},
+	{
+		"keyword":	["!dt"],
 		"task":		[{"videonow": "0 - Other/DuckTales Theme Song.mp4"}],
 		"author":	"sypherce"
 	},
@@ -110,13 +120,103 @@
 		"author":	"missliss15"
 	},
 	{
-		"keyword":	[".*owl.*"],
+		"keyword":	["!owl"],
 		"task":		[{"song": "N64/Ocarina of Time/Ocarina of Time - Kepora Gebora.mp3"}],
+		"author":	"xjrigsx"
+	},
+	{
+		"keyword":	[".*owl.*"],
+		"task":		[{"videonow": "0 - Other/owl.mp4"}],
+		"author":	"xjrigsx"
+	},
+	{
+		"keyword":	["!gamebark"],
+		"task":		[{"videonow": "0 - Other/GameBark.mp4"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["!gamebark"],
+		"task":		[{"videonow": "0 - Other/GameBark.mp4"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["jurassic\\s*bark"],
+		"task":		[{"videonow": "0 - Other/jurassicbark.mp4"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	[".*lwo.*"],
+		"task":		[{"videonow": "0 - Other/gamer-walk-reverse.mp4"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["!grill"],
+		"task":		[{"videonow": "0 - Other/Wendys_Grill_Skills.mp4"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["!don"],
+		"task":		[{"media": "missliss15_don.mp3"}],
+		"author":	"missliss15"
+	},
+	{
+		"keyword":	["big\\s*bark"],
+		"task":		[{"media": "emil_bigbarks.mp3"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["reyn\\s*warp"],
+		"task":		[{"media": "emil_reynwarp.mp3"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["shush"],
+		"task":		[{"media": "muten_shush.mp3"}],
+		"author":	"muten_pizza"
+	},
+	{
+		"keyword":	["out\\s*of\\s*control"],
+		"task":		[{"media": "muten_out_of_control.mp3"}],
+		"author":	"muten_pizza"
+	},
+	{
+		"keyword":	["wh[a]{2,}t"],
+		"task":		[{"media": "muten_whaat.mp3"}],
+		"author":	"muten_pizza"
+	},
+	{
+		"keyword":	["xbox"],
+		"task":		[{"media": "emil_xbox.mp3"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["s(hut|)\\s*u(p|)\\s*w(ook|)"],
+		"task":		[{"media": "muten_shut_up_wookie.mp3"}],
+		"author":	"muten_pizza"
+	},
+	{
+		"keyword":	["when\\s*i\\s*('|a|)m"],
+		"task":		[{"media": "emil_whenim.mp3"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["beardcube"],
+		"task":		[{"media": "emil_beardcube.mp3"}],
+		"author":	"residentemil_"
+	},
+	{
+		"keyword":	["elm\\s*street"],
+		"task":		[{"song": "NES/A Nightmare on Elm Street/Town of Elm Street.mp3"}],
 		"author":	"xjrigsx"
 	},
 	{
 		"keyword":	["big\\s*blue"],
 		"task":		[{"song": "Snes/FZero/Big Blue.mp3"}],
 		"author":	"xjrigsx"
+	},
+	{
+		"keyword":	["i\\s*('|a|)m\\s*hearin(g|)\\s*that"],
+		"task":		[{"song": "0 - Other/MNG - imhearinthat.mp3"}],
+		"author":	"musicngaming"
 	}
 ]

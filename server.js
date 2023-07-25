@@ -114,7 +114,11 @@ async function processCommands(user, message, flags, self, extra) {
 		}
 	}
 
-	if(message_lower.indexOf('!srinfo') !== -1) {
+	const is_broken = false;
+	if(is_broken && (message_lower.indexOf('!sr') !== -1)) {
+		say_wrapper('Song requests are currently broken.');
+	}
+	else if(message_lower.indexOf('!srinfo') !== -1) {
 		say_wrapper('https://sypherce.github.io/stream/sr.html');
 	}
 	else if(message_lower.indexOf('!sr') !== -1) {
@@ -209,8 +213,13 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 			let query = message.substr(message_lower.indexOf(comparison) + comparison.length);
 
 			log('verbose', `keywordIsIndexOf: ${comparison}`);
+			let prefix = '';
+			if(comparison.indexOf('!') === 0) {
+				prefix = '!';
+				comparison = comparison.substr(1);
+			}
 
-			if(comparison !== '' && message_lower.search(new RegExp('\\b' + comparison + '\\b')) !== -1) {
+			if(comparison !== '' && message_lower.search(new RegExp(prefix + '\\b' + comparison + '\\b')) !== -1) {
 				if(this_command.cooldown > extra.timestamp - this_command.timestamp) {
 					const cooldown_seconds = Math.ceil((this_command.cooldown - (extra.timestamp - this_command.timestamp)) / 1000);
 					whisper_wrapper(`@${user} cooldown for ${cooldown_seconds} more second ${((cooldown_seconds > 1) ? 's' : '')}`, user);

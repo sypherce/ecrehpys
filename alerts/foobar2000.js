@@ -2,7 +2,7 @@
 'use strict';
 
 const base_url = 'http://192.168.1.212:8880/api';
-//curl -X GET "https://localhost:8880/api/playlists" -H "accept: application/json"
+//curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
 
 async function getJSON(url) {
 	try {
@@ -81,6 +81,12 @@ async function setPosition(position, absolute = false) {
 	return postSimple(command);
 }
 
+async function isPlaying() {
+	const json = await getJSON('player');
+	const this_state = json.player.playbackState;
+
+	return this_state === 'playing';
+}
 async function getPlaybackState() {
 	getPlaybackState.state = getPlaybackState.state ?? 'stopped';
 
@@ -95,6 +101,9 @@ async function getPlaybackState() {
 }
 async function getActiveItemIndex() {
 	const json = await getJSON('player');
+	console.log('x');
+	console.log(JSON.stringify());//just skimmed over this. is it a typo for json?
+	console.log('x');
 	return json.player.activeItem.index;
 }
 async function getPosition() {
@@ -115,7 +124,6 @@ async function getActiveItemFilename() {
 }
 async function getPlaylists() {
 	const json = await getJSON('playlists');
-	console.log('playlists', json.playlists);
 	return json.playlists;
 }
 
@@ -184,6 +192,7 @@ async function _test() {
 	console.log({postSimple: [await postSimple('player?position=15'), await getPosition()]});
 	console.log({setPosition: [await setPosition(25, true), await getPosition()]});
 	console.log({getPlaybackState: await getPlaybackState()});
+	console.log({isPlaying: await isPlaying()});
 
 	const active_item_index = await getActiveItemIndex();
 	console.log({active_item_index: active_item_index});
@@ -210,4 +219,4 @@ async function _test() {
 }
 //_test();
 
-export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, getActivePlaylistIndex, addItems, getItems};
+export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems};
