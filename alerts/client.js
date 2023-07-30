@@ -216,7 +216,7 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 	});
 }
 function initWebSocket() {
-	connection = new WebSocket('ws://192.168.1.20:1337');
+	connection = new WebSocket('ws://derrick-server.local:1337');
 	connection.onopen = function() {
 		sendMessage('Message', 'Client');
 	};

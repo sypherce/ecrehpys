@@ -1,7 +1,7 @@
 /*global  */
 'use strict';
 
-const base_url = 'http://192.168.1.212:8880/api';
+const base_url = 'http://derrick-desktop.local:8880/api';
 //curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
 
 async function getJSON(url) {
@@ -70,7 +70,7 @@ async function postSimple(url) {
 	return true;
 }
 
-//curl -X POST "http://192.168.1.212:8880/api/player?position=30" -H "accept: application/json"
+//curl -X POST "http://derrick-desktop.local:8880/api/player?position=30" -H "accept: application/json"
 async function setPosition(position, absolute = false) {
 	let command = '';
 	if(absolute) {
@@ -152,7 +152,7 @@ async function addItems(playlist_id, index, play, items) {
 		});
 
 /* working vvvvv
-	fetch('http://192.168.1.212:8880/api/playlists/p1/items/add', {
+	fetch('http://derrick-desktop.local:8880/api/playlists/p1/items/add', {
 		method: 'POST',
 		headers: {
 			'accept': 'application/json',
@@ -172,7 +172,7 @@ async function addItems(playlist_id, index, play, items) {
 */
 }
 
-//curl -X GET "http://192.168.1.212:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
+//curl -X GET "http://derrick-desktop.local:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
 async function getItems(playlist, range) {
 	const json = await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`);
 	return json;
