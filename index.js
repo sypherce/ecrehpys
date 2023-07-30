@@ -29,12 +29,12 @@ case '-refresh':
 (async () => {
 	await mp3Library.init('alerts/assets/music', force_refresh);
 	if(enable_livesplit) {
-		await livesplit_main.run('192.168.1.212:16834');
+		await livesplit_main.run('derrick-desktop.local:16834');
 		setTimeout(processLivesplit, 500);
 	}
 	await server.init();
 
-	console.log('http://192.168.1.20/nodejs/main/alerts/');
+	console.log('http://derrick-desktop.local/nodejs/main/alerts/');
 	if(enable_livesplit)
 		console.log('Don\'t forget to actually start the livesplit server NotLikeThis');
 })();
