@@ -1,0 +1,5 @@
+
+this_command.tired
+this_command.tired_max_count
+this_command.tired_counter
+this_command.tired_delay
