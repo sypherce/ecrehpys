@@ -34,9 +34,9 @@ const html = [`<html>
 		}
 		mark {
 			background-color: transparent;
-			border: 0px solid var(--border-color);
+			/*border: 0px solid var(--border-color);
 			border-radius: 15px;
-			box-shadow: 0 0 10px var(--border-color);
+			box-shadow: 0 0 10px var(--border-color);*/
 			padding:1px;
 			color: var(--text-color);
 		}
