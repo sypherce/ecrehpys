@@ -1,7 +1,7 @@
 /*global  */
 'use strict';
 
-const base_url = 'http://derrick-desktop.local:8880/api';
+const base_url = 'http://derrick-desktop:8880/api';
 //curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
 
 async function getJSON(url) {
@@ -102,7 +102,7 @@ async function getPlaybackState() {
 async function getActiveItemIndex() {
 	const json = await getJSON('player');
 	console.log('x');
-	console.log(JSON.stringify());//just skimmed over this. is it a typo for json?
+	console.log(json.player.activeItem.index);
 	console.log('x');
 	return json.player.activeItem.index;
 }
