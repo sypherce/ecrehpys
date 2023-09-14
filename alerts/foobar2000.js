@@ -101,9 +101,6 @@ async function getPlaybackState() {
 }
 async function getActiveItemIndex() {
 	const json = await getJSON('player');
-	console.log('x');
-	console.log(json.player.activeItem.index);
-	console.log('x');
 	return json.player.activeItem.index;
 }
 async function getPosition() {
