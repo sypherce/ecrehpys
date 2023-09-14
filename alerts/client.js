@@ -69,7 +69,8 @@ async function fb2000QueueSong(file) {
 	}
 	file = `${music_path}/${file}`;
 	const current_playlist = await fb2000.getActivePlaylistIndex();
-	const next_index = await fb2000.getActiveItemIndex() + 1;
+	let next_index = await fb2000.getActiveItemIndex() + 1;
+	if(next_index == 0) next_index = 10000;//10000 is just temporary
 
 	//no real queue for now, just next playing
 	queue_pos = next_index;
@@ -119,6 +120,7 @@ async function fb2000PlaySongNow(file) {
 
 	let current_playlist = await fb2000.getActivePlaylistIndex();
 	let next_index = await fb2000.getActiveItemIndex() + 1;
+	if(next_index === 0) next_index = 10000;//10000 is just temporary
 	await fb2000.addItems(current_playlist, next_index, true, [file]);
 
 	return true;
@@ -256,6 +258,10 @@ function initWebSocket() {
 				video.remove();
 			};
 			document.getElementById('video_div').appendChild(video);
+			break;
+		}
+		case 'SongSprite': {
+			playSongSprite(value);
 			break;
 		}
 		case 'VideoNow': {

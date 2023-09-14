@@ -30,15 +30,23 @@ function loadCommands(filename) {
 		if(typeof this_command.cooldown  === 'undefined') this_command.cooldown  = 0;
 		if(typeof this_command.timestamp === 'undefined') this_command.timestamp = 0;
 		if(typeof this_command.active    === 'undefined') this_command.active    = true;
+		if(typeof this_command.tired     === 'undefined') this_command.tired     = false;
 
 		let keyword_string = this_command.keyword[0];
-		for(let i = 0; i < 5; i++) {
-			keyword_string = keyword_string.replace('\')', '');
-			keyword_string = keyword_string.replace('.*', '');
-			keyword_string = keyword_string.replace('\\s*', ' ');
-			keyword_string = keyword_string.replace('[s]', ' ');
+		if(typeof this_command.altkey   !== 'undefined') {
+			keyword_string = this_command.altkey;
+		}
+		else {
+			for(let i = 0; i < 5; i++) {
+				keyword_string = keyword_string.replace('\')', '');
+				keyword_string = keyword_string.replace('.*', '');
+				keyword_string = keyword_string.replace('\\s*', ' ');
+				keyword_string = keyword_string.replace('[s]', ' ');
+			}
 		}
 		let task_string = this_command.task[0].song || this_command.task[0].videonow;
+		if(typeof this_command.description !== 'undefined') task_string = this_command.description;
+		if(typeof task_string              === 'undefined') task_string = "";
 
 		html_commands = html_commands.concat(`command("${keyword_string}", ${JSON.stringify(task_string)}, "${this_command.author}");\n`);
 	}
@@ -76,14 +84,30 @@ async function checkProfileImage(user) {
 	}
 }
 
+function getQuery(message, command) {
+	const start = message.indexOf(command) + command.length;
+	const length = message.length - start;
+	return message.substr(start, length);
+}
+
+function tired(command, setting, message) {
+	if(message.indexOf(command) !== -1) {
+		const query = getQuery(message, `${command} `);
+
+		for (let commands_i = 0; commands_i < commands.length; commands_i++) {
+			const this_command = commands[commands_i];
+
+			if(typeof this_command.altkey !== 'undefined' && this_command.altkey[0].indexOf(query) !== -1){
+				this_command.tired = setting;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 async function processCommands(user, message, flags, self, extra) {
 	checkProfileImage(user);
-
-	function getQuery(message, command) {
-		const start = message.indexOf(command) + command.length;
-		const length = message.length - start;
-		return message.substr(start, length);
-	}
 
 	if(user === process.env.BOT_USER) return;
 
@@ -112,6 +136,18 @@ async function processCommands(user, message, flags, self, extra) {
 			sendMessage('Disable', query);
 			console.log('Disable', query);
 		}
+	}
+	if(user == "sypherce"   ||
+	   user == "missliss15")
+		if(tired("!untired", false, message_lower)) return;
+
+	if(user == "sypherce"      ||
+	   user == "missliss15"    ||
+	   user == "residentemil_" ||
+	   user == "muten_pizza"   ||
+	   user == "subtlewookie"  ||
+	   user == "xjrigsx") {
+		if(tired("!tired", true, message_lower)) return;
 	}
 
 	const is_broken = false;
@@ -253,7 +289,35 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 							sendMessage('Song', this_task.song);
 						}
 						if(this_task.videonow) {
-							sendMessage('VideoNow', this_task.videonow);
+							if(typeof this_command.tired === 'undefined' || this_command.tired === false) {
+								sendMessage('VideoNow', this_task.videonow);
+							}
+							else {
+								sendMessage('SongSprite', this_task.videonow);
+							}
+						}
+						if(this_task.joe) {
+							let joe_string = message_lower.substr(message_lower.indexOf('!joe ') + 5);
+
+							function getRandomInt(max) {
+								return Math.floor(Math.random() * max);
+							}
+							let repeat_length = 2;
+							let new_string = '';
+							for(let i = 0; i < joe_string.length; i++){
+								if(i == 0 || i == joe_string.length - 1) {
+									new_string += joe_string[i];
+								}
+								else {
+									let random_length = 2 + Math.floor(Math.random() * 6);
+									if(random_length > repeat_length)
+										repeat_length = random_length;
+
+									new_string += joe_string[i].repeat(repeat_length);
+								}
+							};
+							joe_string = new_string;
+							say_wrapper(joe_string);
 						}
 
 						retVal++;
@@ -331,6 +395,7 @@ async function getAuthToken(CLIENTIDGOESHERE, CLIENTSECRETGOESHERE) {
 	};
 	streamer.onBan = (bannedUsername, extra) => {
 		console.log(`streamer.onBan ${bannedUsername} ${extra}`);
+		sendMessage('Audio', "muten_dungeon.mp3");
 	};
 	streamer.onTimeout = (timedOutUsername, durationInSeconds, extra) => {
 		console.log(`streamer.onTimeout ${timedOutUsername} ${durationInSeconds} ${extra}`);
