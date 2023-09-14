@@ -26,11 +26,12 @@ function loadCommands(filename) {
 	for (let commands_i = 0; commands_i < command_list.length; commands_i++) {
 		const this_command = command_list[commands_i];
 
-		if(typeof this_command.author    === 'undefined') this_command.author    = '';
-		if(typeof this_command.cooldown  === 'undefined') this_command.cooldown  = 0;
-		if(typeof this_command.timestamp === 'undefined') this_command.timestamp = 0;
-		if(typeof this_command.active    === 'undefined') this_command.active    = true;
-		if(typeof this_command.tired     === 'undefined') this_command.tired     = false;
+		if(typeof this_command.author       === 'undefined') this_command.author           = '';
+		if(typeof this_command.cooldown     === 'undefined') this_command.cooldown         = 0;
+		if(typeof this_command.timestamp    === 'undefined') this_command.timestamp        = 0;
+		if(typeof this_command.active       === 'undefined') this_command.active           = true;
+		if(typeof this_command.tired        === 'undefined') this_command.tired            = [];
+		if(typeof this_command.tired.active === 'undefined') this_command.tired.active     = false;
 
 		let keyword_string = this_command.keyword[0];
 		if(typeof this_command.altkey   !== 'undefined') {
@@ -98,7 +99,7 @@ function tired(command, setting, message) {
 			const this_command = commands[commands_i];
 
 			if(typeof this_command.altkey !== 'undefined' && this_command.altkey[0].indexOf(query) !== -1){
-				this_command.tired = setting;
+				this_command.tired.active = setting;
 				return true;
 			}
 		}
@@ -285,11 +286,35 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 							else
 								sendMessage('Audio', this_task.media);
 						}
+						const enable_videos_and_songs = true;
 						if(this_task.song) {
-							sendMessage('Song', this_task.song);
+							if(enable_videos_and_songs) sendMessage('Song', this_task.song);
+							else sendMessage('SongSprite', this_task.song);
 						}
 						if(this_task.videonow) {
-							if(typeof this_command.tired === 'undefined' || this_command.tired === false) {
+							if(enable_videos_and_songs && (typeof this_command.tired.active === 'undefined' || this_command.tired.active === false)){
+								if(typeof this_command.lasttimestamp === 'undefined') {
+									this_command.lasttimestamp = this_command.timestamp;
+								}
+								if(typeof this_command.tired.max_count === 'undefined') {
+									this_command.tired.max_count = 3;
+									this_command.tired.counter = 0;
+								}
+								if(typeof this_command.tired.active_delay === 'undefined') {
+									this_command.tired.active_delay = 1;
+								}
+
+								console.log(this_command.timestamp);
+								if(this_command.timestamp > this_command.lasttimestamp + this_command.tired.active_delay) {
+									console.log(`${this_command.timestamp} > ${this_command.lasttimestamp} + ${this_command.tired.active_delay}`);
+									this_command.lasttimestamp = this_command.timestamp;
+									this_command.tired.counter++;
+									console.log(`${this_command.tired.counter}`);
+									if(this_command.tired.counter > this_command.tired.max_count) {
+										this_command.tired.active = true;
+									}
+								}
+
 								sendMessage('VideoNow', this_task.videonow);
 							}
 							else {
