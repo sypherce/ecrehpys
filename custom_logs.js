@@ -7,11 +7,11 @@ export default function log(type, ...message) {
 	let prefix;
 	let bg;
 	if(type === 'debug' && debug) {
-		prefix = '%c::D::%c';
+		prefix = '%cD:%c';
 		bg = 'brown';
 	}
 	else if(type === 'temp' && temp) {
-		prefix = '%c::T::%c';
+		prefix = '%cT:%c';
 		bg = 'yellow';
 	}
 	else

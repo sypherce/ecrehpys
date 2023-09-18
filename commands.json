@@ -568,7 +568,7 @@
 		"author": "muten_pizza"
 	},
 	{
-		"keyword": ["cocadee(z|s)nut(z|s)"],
+		"keyword": ["cocadee(z|s)(nut(z|s)|)"],
 		"task":[{"media": "wookie_cocadeeznuts.mp3"}],
 		"author": "subtlewookie"
 	},
@@ -902,7 +902,7 @@
 	{
 		"keyword": ["joe"],
 		"task":[{"joe": "joe"}],
-		"author": ""
+		"author": "sypherce"
 	},
 	{
 		"keyword": ["jungle\\s*boogie"],
@@ -1561,7 +1561,7 @@
 		"author": "residentemil_"
 	},
 	{
-		"keyword": ["water"],
+		"keyword": ["water", "what\\s*(a|')re"],
 		"task":[{"media": "emil_water.mp3"}],
 		"author": "residentemil_"
 	},
@@ -1600,6 +1600,26 @@
 		"altkey": ["left"],
 		"keyword": ["left"],
 		"task":[{"videonow": "0 - Other/emil_left.mp4"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["hey\\s*water"],
+		"task":[{"media": "emil_heywater.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["alright"],
+		"task":[{"song": "0 - Other/muten_emil_moster_annoying.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["hey\\s*beef"],
+		"task":[{"media": "emil_heybeef.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["correct"],
+		"task":[{"media": "muten_correct.mp3"}],
 		"author": "residentemil_"
 	}
 ]

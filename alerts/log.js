@@ -6,15 +6,15 @@ export function log(type, ...message) {
 	let prefix;
 	let bg;
 	if(type === 'debug' && debug) {
-		prefix = '%c::D::%c';
+		prefix = '%cD:%c';
 		bg = 'brown';
 	}
 	else if(type === 'verbose' && verbose) {
-		prefix = '%c::V::%c';
+		prefix = '%cV:%c';
 		bg = 'brown';
 	}
 	else if(type === 'temp' && temp) {
-		prefix = '%c::T::%c';
+		prefix = '%cT:%c';
 		bg = 'yellow';
 	}
 	else
