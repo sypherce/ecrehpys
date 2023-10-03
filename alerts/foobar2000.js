@@ -1,8 +1,11 @@
 /*global  */
 'use strict';
-
-const base_url = 'http://derrick-desktop:8880/api';
+						//lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
+const isLinux = false;	//win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
+let base_url = `http://${(isLinux ? 'steamdeck.local' : 'derrick-desktop')}:8880/api`;
 //curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
+
+let music_path = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
 
 async function getJSON(url) {
 	try {
@@ -180,7 +183,7 @@ async function _test() {
 		console.log(`%c${args}`, 'color: white; background: blue;');
 	}
 
-	const test_mp3_filename = 'G:/media/music/Stream/0 - Other/Crabs- MrWeebl.mp3';
+	let test_mp3_filename = music_path + 'media/music/Stream/0 - Other/Crabs- MrWeebl.mp3';
 	console.group('%cfoobar2000 test', 'color: white; background: blue;');
 	console.trace();
 	const active_playlist = await getActivePlaylistIndex();
@@ -210,10 +213,10 @@ async function _test() {
 			'play': true,
 			'items': [test_mp3_filename]
 		})});
-	console.log({addItems: await addItems(active_playlist, 0, true, [test_mp3_filename])});
+		console.log(`${active_playlist} -- ${test_mp3_filename}`);
 
 	console.groupEnd();
 }
 //_test();
 
-export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems};
+export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path};

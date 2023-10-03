@@ -4,7 +4,9 @@ const server = require('./server.js');
 const mp3Library = require('./mp3Library.js');
 const log = require('esm')(module)('./alerts/log.js').log;
 const enable_livesplit = false;//needs enabled
-const livesplit_main = (enable_livesplit) ? require('./livesplit_main.js') : '';
+const livesplit_main = (enable_livesplit)
+	? require('./livesplit_main.js') :
+	'';
 
 async function processLivesplit() {
 	let splitIndex = livesplit_main.getSplitIndex();

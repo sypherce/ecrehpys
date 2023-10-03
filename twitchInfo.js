@@ -12,7 +12,12 @@ async function init(CLIENT_ID, SECRET) {
 async function getChannelInformation(username){
 	if(thisTwitchConnection === null) throw 'Must run init(CLIENT_ID, SECRET) first!';
 
-	const this_user = await thisTwitchConnection.getUsers(username);
+	let this_user = await thisTwitchConnection.getUsers(username);
+	if(typeof this_user.data === 'undefined')
+		this_user = await thisTwitchConnection.getUsers('sypherce');
+	if(typeof this_user.data[0] === 'undefined')
+		this_user = await thisTwitchConnection.getUsers('sypherce');
+
 	const info_list = await thisTwitchConnection.getChannelInformation({'broadcaster_id' : this_user.data[0].id});
 
 	return info_list.data[0];

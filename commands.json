@@ -1,5 +1,20 @@
 [
 	{
+		"keyword": ["!ca"],
+		"task":[{"customaudio": "ca"}],
+		"author": "sypherce"
+	},
+	{
+		"keyword": ["joe"],
+		"task":[{"joe": "joe"}],
+		"author": "sypherce"
+	},
+	{
+		"keyword": ["!lips"],
+		"task":[{"lips": "!lips"}],
+		"author": "sypherce"
+	},
+	{
 		"keyword": ["!bn"],
 		"task":[{"media": "muten_butt_nugget.mp3"}],
 		"description":"🔊Butt Nugget",
@@ -163,7 +178,7 @@
 	{
 		"keyword": ["!why"],
 		"task":[{"media": "xjrigsx_WHY.mp3"}],
-		"author": "xjrigs"
+		"author": "xjrigsx"
 	},
 	{
 		"keyword": ["!zelda"],
@@ -220,13 +235,13 @@
 		"author": "residentemil_"
 	},
 	{
-		"altkey": ["a mine"],
+		"altkey": ["amine"],
 		"keyword": ["(a|)\\s*mine"],
 		"task":[{"media": "wookie_amine.mp3"}],
 		"author": "subtlewookie"
 	},
 	{
-		"altkey": ["garbage day"],
+		"altkey": ["garbageday"],
 		"keyword": ["(adamj9omg|garbage\\s*day)"],
 		"task":[{"media": "adamj93_garbageday.mp3"}],
 		"author": "adamj93"
@@ -268,7 +283,7 @@
 		"author": "ultraminimalist"
 	},
 	{
-		"altkey": ["*__*"],
+		"altkey": ["redead"],
 		"keyword": ["(redead|\\\\*__\\\\*|rebeca11rage|catjamhehe)"],
 		"task":[{"media": "zelda_oot_woah_redead_scream.mp3"}],
 		"author": ""
@@ -325,6 +340,7 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["acapella"],
 		"keyword": ["acapel(l|)a"],
 		"task":[{"media": "mario_sunshine_secret_course.mp3"}],
 		"author": "muten_pizza"
@@ -350,6 +366,7 @@
 		"author": "xjrigsx"
 	},
 	{
+		"altkey": ["avocados"],
 		"keyword": ["av(o|a)c(o|a)do(s|)"],
 		"task":[{"media": "rebeca_avocados_from_mexico.mp3"}],
 		"author": "rebecadraws"
@@ -365,6 +382,7 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["badgers"],
 		"keyword": ["badger(s|)"],
 		"task":[{"media": "missliss_badgers.mp3"}],
 		"author": "missliss15"
@@ -438,6 +456,7 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["beep"],
 		"keyword": ["beep", "missli47glfo47"],
 		"task":[{"media": "xjrigsx_beep.mp3"}],
 		"author": "xjrigsx"
@@ -568,6 +587,7 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["cocadeeznuts"],
 		"keyword": ["cocadee(z|s)(nut(z|s)|)"],
 		"task":[{"media": "wookie_cocadeeznuts.mp3"}],
 		"author": "subtlewookie"
@@ -589,7 +609,6 @@
 		"author": "muten_pizza"
 	},
 	{
-		"altkey": ["crab"],
 		"keyword": ["crab"],
 		"task":[{"videonow": "0 - Other/Crabs- MrWeebl.mp4"}],
 		"author": "residentemil_"
@@ -691,21 +710,25 @@
 		"author": "subtlewookie"
 	},
 	{
+		"altkey": ["elmstreet"],
 		"keyword": ["elm\\s*street"],
 		"task":[{"song": "NES/A Nightmare on Elm Street/Town of Elm Street.mp3"}],
 		"author": "xjrigsx"
 	},
 	{
+		"altkey": ["evillaugh"],
 		"keyword": ["evil\\s*laugh"],
 		"task":[{"media": "muten_evil_laugh.mp3"}],
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["excuseme"],
 		"keyword": ["excuse\\s*me"],
 		"task":[{"media": "rebeca_excuse_me_princess.mp3"}],
 		"author": "rebecadraws"
 	},
 	{
+		"altkey": ["fancymel"],
 		"keyword": ["fancy\\s*mel"],
 		"task":[{"media": "fancymel.mp3"}],
 		"author": "residentemil_"
@@ -721,7 +744,6 @@
 		"author": "rebecadraws"
 	},
 	{
-		"altkey": ["gamebark"],
 		"keyword": ["gamebark"],
 		"task":[{"videonow": "0 - Other/GameBark.mp4"}],
 		"author": "residentemil_"
@@ -747,6 +769,7 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["gameoveryeah"],
 		"keyword": ["gameover\\s*yeah"],
 		"task":[{"media": "emil_game_over_yeah.mp3"}],
 		"author": "residentemil_"
@@ -773,7 +796,7 @@
 	},
 	{
 		"altkey": ["ghostbusters"],
-		"keyword": ["ghost\\s*buster[s]*", "sobr0sbustin"],
+		"keyword": ["ghost\\s*buster[s]*", "f0ngerbustin"],
 		"task":[{"videonow": "0 - Other/GhostBusters Theme Song.mp4"}],
 		"author": "xjrigsx"
 	},
@@ -788,11 +811,13 @@
 		"author": ""
 	},
 	{
+		"altkey": ["goat"],
 		"keyword": ["goat(ed|)"],
 		"task":[{"media": "muten_goat.mp3"}],
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["goodnight"],
 		"keyword": ["good(\\s*|_)ni(gh|)t(e|)"],
 		"task":[{"media": "muten_good_night.mp3"}],
 		"author": "muten_pizza"
@@ -814,11 +839,13 @@
 		"author": "subtlewookie"
 	},
 	{
+		"altkey": ["headache"],
 		"keyword": ["head\\s*ache"],
 		"task":[{"media": "muten_headache.mp3"}],
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["hellyes"],
 		"keyword": ["hell\\s*(yes|yeah|ya)"],
 		"task":[{"media": "muten_hellyes.mp3"}],
 		"author": "muten_pizza"
@@ -839,11 +866,13 @@
 		"author": ""
 	},
 	{
+		"altkey": ["holdit"],
 		"keyword": ["hold\\s*it"],
 		"task":[{"media": "phoenix_holdit.mp3"}],
 		"author": "unordinarywarlord"
 	},
 	{
+		"altkey": ["holyguacamole"],
 		"keyword": ["holy(\\s*guac(amole|)|)"],
 		"task":[{"media": "johnny_bravo_holy_guacamole.mp3"}],
 		"author": "rebecadraws"
@@ -875,16 +904,19 @@
 		"author": "nefael_yunalesca"
 	},
 	{
+		"altkey": ["hyperbeatz"],
 		"keyword": ["hyper\\s*beatz"],
 		"task":[{"media": "xjrigsx_hyperbeatz.mp3"}],
 		"author": "xjrigsx"
 	},
 	{
+		"altkey": ["imhearinthat"],
 		"keyword": ["i\\s*('|a|)m\\s*hearin(g|)\\s*that"],
 		"task":[{"song": "0 - Other/MNG - imhearinthat.mp3"}],
 		"author": "musicngaming"
 	},
 	{
+		"altkey": ["iswear"],
 		"keyword": ["i\\s*swear"],
 		"task":[{"media": "adamj93_i_swear.mp3"}],
 		"author": "adamj93"
@@ -900,11 +932,7 @@
 		"author": "muten_pizza"
 	},
 	{
-		"keyword": ["joe"],
-		"task":[{"joe": "joe"}],
-		"author": "sypherce"
-	},
-	{
+		"altkey": ["jungleboogie"],
 		"keyword": ["jungle\\s*boogie"],
 		"task":[{"song": "0 - Other/Jungle Boogie.mp3"}],
 		"author": "blacksquall"
@@ -921,16 +949,23 @@
 		"author": "muten_pizza"
 	},
 	{
+		"keyword": ["idiot"],
+		"task":[{"media": "muten_idiot_sandwich.mp3"}],
+		"author": "muten_pizza"
+	},
+	{
 		"keyword": ["keyboard"],
 		"task":[{"media": "unordinarywarlord_keyboard.mp3"}],
 		"author": "unordinarywarlord"
 	},
 	{
+		"altkey": ["kitty"],
 		"keyword": ["kitty", "buttspog", "ultram37pog"],
 		"task":[{"media": "ultra_kitty.mp3"}],
 		"author": "ultraminimalist"
 	},
 	{
+		"altkey": ["leopleurodon"],
 		"keyword": ["l(i|e)o(pleurodon|)"],
 		"task":[{"media": "missliss_liopleurodon.mp3"}],
 		"author": "missliss15"
@@ -941,6 +976,7 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["letsgo"],
 		"keyword": ["let('|)s\\s*(a|)\\s*go"],
 		"task":[{"media": "mario_sm64_mario_lets_go.mp3"}],
 		"author": ""
@@ -951,6 +987,7 @@
 		"author": ""
 	},
 	{
+		"altkey": ["lizardking"],
 		"keyword": ["lizard\\s*king"],
 		"task":[{"media": "wookie_lizardking.mp3"}],
 		"author": "subtlewookie"
@@ -976,6 +1013,7 @@
 		"author": "rebecadraws"
 	},
 	{
+		"altkey": ["meeting"],
 		"keyword": ["meeting(s|)"],
 		"task":[{"media": "muten_meetings.mp3"}],
 		"author": "muten_pizza"
@@ -986,6 +1024,7 @@
 		"author": "subtlewookie"
 	},
 	{
+		"altkey": ["mngcube"],
 		"keyword": ["mng(cube|no|yes|noyes|yesno)"],
 		"task":[{"media": "emil_mngcube.mp3"}],
 		"author": "residentemil_"
@@ -996,6 +1035,7 @@
 		"author": "rebecadraws"
 	},
 	{
+		"altkey": ["mostlydead"],
 		"keyword": ["mostly\\s*dead"],
 		"task":[{"media": "adamj93_mostly_dead.mp3"}],
 		"author": "adamj93"
@@ -1011,12 +1051,14 @@
 		"author": ""
 	},
 	{
+		"altkey": ["mybad"],
 		"keyword": ["my\\s*bad"],
 		"task":[{"media": "muten_mybad.mp3"}],
 		"author": "muten_pizza"
 	},
 	{
-		"keyword": ["n[o]{2,}"],
+		"altkey": ["noo"],
+		"keyword": ["n[o]{1,}"],
 		"task":[{"media": "muten_nooo.mp3"}],
 		"author": "muten_pizza"
 	},
@@ -1031,6 +1073,7 @@
 		"author": "subtlewookie"
 	},
 	{
+		"altkey": ["notfine"],
 		"keyword": ["not\\s*fine"],
 		"task":[{"media": "notfine.mp3"}],
 		"author": "muten_pizza"
@@ -1041,21 +1084,25 @@
 		"author": ""
 	},
 	{
+		"altkey": ["ohbark"],
 		"keyword": ["oh\\s*bark"],
 		"task":[{"media": "emil_ohbark.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["ohhello"],
 		"keyword": ["oh\\s*hello"],
 		"task":[{"media": "missliss_oh_hello.mp3"}],
 		"author": "missliss15"
 	},
 	{
+		"altkey": ["ohno"],
 		"keyword": ["oh\\s*no"],
 		"task":[{"media": "mario_oh_no.mp3"}],
 		"author": ""
 	},
 	{
+		"altkey": ["okbye"],
 		"keyword": ["ok\\s*bye"],
 		"task":[{"media": "missliss_ok_bye.mp3"}],
 		"author": "missliss15"
@@ -1086,6 +1133,7 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["outofcontrol"],
 		"keyword": ["out\\s*of\\s*control"],
 		"task":[{"media": "muten_out_of_control.mp3"}],
 		"author": "muten_pizza"
@@ -1101,6 +1149,7 @@
 		"author": "subtlewookie"
 	},
 	{
+		"altkey": ["parkour"],
 		"keyword": ["parko(u|)r"],
 		"task":[{"media": "office_parkour.mp3"}],
 		"author": "rebecadraws"
@@ -1117,6 +1166,7 @@
 		"author": "missliss15"
 	},
 	{
+		"altkey": ["picnic"],
 		"keyword": ["picnic(time|)"],
 		"task":[{"media": "picnic_time.mp3"}],
 		"author": "missliss15"
@@ -1127,6 +1177,7 @@
 		"author": "unordinarywarlord"
 	},
 	{
+		"altkey": ["pleasedont"],
 		"keyword": ["please\\s*don(\\'|)t"],
 		"task":[{"media": "pleasedont.mp3"}],
 		"author": ""
@@ -1147,6 +1198,7 @@
 		"author": ""
 	},
 	{
+		"altkey": ["peter"],
 		"keyword": ["puppy", "peter"],
 		"task":[{"media": "ultra_puppy_peter.mp3"}],
 		"author": "ultraminimalist"
@@ -1158,11 +1210,13 @@
 		"author": "missliss15"
 	},
 	{
+		"altkey": ["reyntime"],
 		"keyword": ["reyn(time|)"],
 		"task":[{"media": "emil_reyn_time.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["reynwarp"],
 		"keyword": ["reyn\\s*warp"],
 		"task":[{"media": "emil_reynwarp.mp3"}],
 		"author": "residentemil_"
@@ -1178,16 +1232,19 @@
 		"author": ""
 	},
 	{
+		"altkey": ["rupeegame"],
 		"keyword": ["rupee(\\s*|_)game"],
 		"task":[{"media": "xjrigsx_rupeegame.mp3"}],
 		"author": "xjrigsx"
 	},
 	{
+		"altkey": ["suw"],
 		"keyword": ["s(hut|)\\s*u(p|)\\s*w(ook|)(ie|)(iee|)"],
 		"task":[{"media": "muten_shut_up_wookie.mp3"}],
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["s2deez"],
 		"keyword": ["s2\\s*dee(s|z)"],
 		"task":[{"media": "emil_s2deez.mp3"}],
 		"author": "residentemil_"
@@ -1218,7 +1275,8 @@
 		"author": ""
 	},
 	{
-		"keyword": ["sexy\\s*(bark|)"],
+		"altkey": ["sexybark"],
+		"keyword": ["sexy(\\s*bark|)"],
 		"task":[{"media": "emil_sexybark.mp3"}],
 		"author": "residentemil_"
 	},
@@ -1233,11 +1291,13 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["shutit"],
 		"keyword": ["shut\\s*it"],
 		"task":[{"media": "zelda_tp_sumo_fight.mp3"}],
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["shutup"],
 		"keyword": ["shut\\s*up"],
 		"task":[{"media": "office_shut_up.mp3"}],
 		"author": "muten_pizza"
@@ -1248,13 +1308,15 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["smb2pause"],
 		"keyword": ["smb2(u|)\\s*pause"],
 		"task":[{"media": "mario_smb2u_pause.mp3"}],
 		"author": "xjrigsx"
 	},
 	{
+		"altkey": ["snake"],
 		"keyword": ["snake", "kept you waitin(g|\\'|)"],
-		"task":[{"media": "spiritualmutant_kept_you_waiting .mp3"}],
+		"task":[{"media": "spiritualmutant_kept_you_waiting.mp3"}],
 		"author": "spiritualmutant"
 	},
 	{
@@ -1269,11 +1331,13 @@
 		"author": "missliss15"
 	},
 	{
+		"altkey": ["thankyou"],
 		"keyword": ["thank\\s*you"],
 		"task":[{"media": "re4_merchant_thank_you.mp3"}],
 		"author": ""
 	},
 	{
+		"altkey": ["ticktock"],
 		"keyword": ["ti(c|)k\\s*to(c|)k"],
 		"task":[{"media": "zelda_oot_switch.mp3"}],
 		"author": "muten_pizza"
@@ -1289,6 +1353,7 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["topman"],
 		"keyword": ["top\\s*man"],
 		"task":[{"song": "NES/Mega Man 3/Top Man.mp3"}],
 		"author": "xjrigsx"
@@ -1320,11 +1385,13 @@
 		"author": "xjrigsx"
 	},
 	{
+		"altkey": ["ultimatebark"],
 		"keyword": ["ultimate\\s*bark"],
 		"task":[{"media": "emil_ultimatebark.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["ultimateshame"],
 		"keyword": ["ultimate\\s*shame"],
 		"task":[{"media": "muten_ultimate_beep_of_shame.mp3"}],
 		"author": "muten_pizza"
@@ -1350,11 +1417,13 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["wahwee"],
 		"keyword": ["wahwee", "wil(l|)y"],
 		"task":[{"media": "emil_wahwee.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["wakeup"],
 		"keyword": ["wake\\s*up"],
 		"task":[{"media": "muten_wakeup.mp3"}],
 		"author": "muten_pizza"
@@ -1370,6 +1439,7 @@
 		"author": "warp"
 	},
 	{
+		"altkey": ["warpnuts"],
 		"keyword": ["warpnut(s|z)"],
 		"task":[{"media": "emil_warpnuts.mp3"}],
 		"author": "residentemil_"
@@ -1390,6 +1460,7 @@
 		"author": ""
 	},
 	{
+		"altkey": ["welcomeback"],
 		"keyword": ["welcome\\s*back"],
 		"task":[{"media": "welcome_back.mp3"}],
 		"author": "muten_pizza"
@@ -1400,11 +1471,13 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["whaat"],
 		"keyword": ["wh[a]{2,}t"],
 		"task":[{"media": "muten_whaat.mp3"}],
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["whenim"],
 		"keyword": ["when\\s*i\\s*('|a|)m"],
 		"task":[{"media": "emil_whenim.mp3"}],
 		"author": "residentemil_"
@@ -1417,12 +1490,17 @@
 	{
 		"keyword": ["why"],
 		"task":[{"media": "xjrigsx_why_1.mp3"}],
-		"author": "xjrigs"
+		"author": "xjrigsx"
 	},
 	{
 		"keyword": ["wimp"],
 		"task":[{"media": "wimp.mp3"}],
 		"author": "subtlewookie"
+	},
+	{
+		"keyword": ["!_disabled_1"],
+		"task":[{"media": "ducktales_remastered_no1.mp3"}],
+		"author": "muten_pizza"
 	},
 	{
 		"keyword": ["wimpamp"],
@@ -1445,11 +1523,13 @@
 		"author": "wengday"
 	},
 	{
+		"altkey": ["witw"],
 		"keyword": ["witw", "reside53CarmenJAM"],
 		"task":[{"song": "0 - Other/Where in the World is Carmen Sandiego.mp3"}],
 		"author": "missliss15"
 	},
 	{
+		"altkey": ["witwshaun"],
 		"keyword": ["witw(shaun|sean|shawn)"],
 		"task":[{"media": "emil_witwshaun.mp3"}],
 		"author": "residentemil_"
@@ -1465,6 +1545,7 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["witwnuts"],
 		"keyword": ["witwnut(s|z)", "witwdee(z|s)"],
 		"task":[{"media": "emil_witwnuts.mp3"}],
 		"author": "residentemil_"
@@ -1475,11 +1556,13 @@
 		"author": ""
 	},
 	{
+		"altkey": ["wookiebark"],
 		"keyword": ["wook(i|ii)(e|ee)(_|\\s*)bark"],
 		"task":[{"media": "wookie_bark.mp3"}],
 		"author": "subtlewookie"
 	},
 	{
+		"altkey": ["wow"],
 		"keyword": ["wow", "missli47wow4"],
 		"task":[{"media": "wow.mp3"}],
 		"author": ""
@@ -1496,11 +1579,13 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["yatta"],
 		"keyword": ["yat(t|)a", "(i|we) did it"],
 		"task":[{"media": "emil_yatta.mp3"}],
 		"author": "yatta"
 	},
 	{
+		"altkey": ["yeehaw"],
 		"keyword": ["yeeha(w|)"],
 		"task":[{"media": "jedi_yeehaw.mp3"}],
 		"author": "jedi31177"
@@ -1516,6 +1601,7 @@
 		"author": "xjrigsx"
 	},
 	{
+		"altkey": ["yesyes"],
 		"keyword": ["yes\\s*yes"],
 		"task":[{"media": "emil_yesyes.mp3"}],
 		"author": "residentemil_"
@@ -1536,16 +1622,19 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["zoned"],
 		"keyword": ["zone\\s*d"],
 		"task":[{"media": "cnd_zone_d.mp3"}],
 		"author": "xjrigsx"
 	},
 	{
+		"altkey": ["zonejam"],
 		"keyword": ["zone\\s*jam"],
 		"task":[{"media": "cnd_zone_j.mp3"}],
-		"author": "xjrigs"},
+		"author": "xjrigsx"},
 
 	{
+		"altkey": ["hoo"],
 		"keyword": ["hoo", "who"],
 		"task":[{"media": "wally_who.mp3"}],
 		"author": "wally4000"
@@ -1556,31 +1645,37 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["hanson2"],
 		"keyword": ["hanson", "hanson2"],
 		"task":[{"media": "emil_hanson2.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["water"],
 		"keyword": ["water", "what\\s*(a|')re"],
 		"task":[{"media": "emil_water.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["flush"],
 		"keyword": ["flush", "restroom", "bathroom", "pee"],
 		"task":[{"media": "ultra_flush.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["roasted"],
 		"keyword": ["roast(ed|)"],
 		"task":[{"media": "xjrigsx_roasted.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["imin"],
 		"keyword": ["i\\s*('|a|)m\\s*in"],
 		"task":[{"media": "emil_imin.mp3"}],
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["chicken"],
 		"keyword": ["(chicken|arise)"],
 		"task":[{"media": "emil_chicken.mp3"}],
 		"author": "residentemil_"
@@ -1603,6 +1698,7 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["heywater"],
 		"keyword": ["hey\\s*water"],
 		"task":[{"media": "emil_heywater.mp3"}],
 		"author": "residentemil_"
@@ -1613,6 +1709,7 @@
 		"author": "residentemil_"
 	},
 	{
+		"altkey": ["heybeef"],
 		"keyword": ["hey\\s*beef"],
 		"task":[{"media": "emil_heybeef.mp3"}],
 		"author": "residentemil_"
@@ -1621,5 +1718,359 @@
 		"keyword": ["correct"],
 		"task":[{"media": "muten_correct.mp3"}],
 		"author": "residentemil_"
+	},
+	{
+		"altkey": ["chunkybooty"],
+		"keyword": ["(chunky\\s*booty|chunky|booty)"],
+		"task":[{"media": "emil_chunkybooty.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["awfulbark"],
+		"task":[{"media": "ca_awfulbark.mp3"}],
+		"author": ""
+	},
+	{
+		"keyword": ["beefawful"],
+		"task":[{"media": "ca_beefawful.mp3"}],
+		"author": ""
+	},
+	{
+		"keyword": ["beefmweep"],
+		"task":[{"media": "ca_beefmweep.mp3"}],
+		"author": ""
+	},
+	{
+		"keyword": ["beefwater"],
+		"task":[{"media": "ca_beefwater.mp3"}],
+		"author": ""
+	},
+	{
+		"keyword": ["ded"],
+		"task":[{"media": "ca_ded.mp3"}],
+		"author": ""
+	},
+	{
+		"keyword": ["gonnadie"],
+		"task":[{"media": "ca_gonnadie.mp3"}],
+		"author": ""
+	},
+	{
+		"keyword": ["!sh"],
+		"task":[{"media": "ca_sh.mp3"}],
+		"author": ""
+	},
+	{
+		"keyword": ["ultimateyes"],
+		"task":[{"media": "ca_ultimateyes.mp3"}],
+		"author": ""
+	},
+	{
+		"keyword": ["cave"],
+		"task":[{"media":
+		["xjrigsx_rygar_sagilas_cave_1.mp3",
+		 "xjrigsx_rygar_sagilas_cave_2.mp3",
+		 "xjrigsx_rygar_sagilas_cave_3.mp3",
+		 "xjrigsx_rygar_sagilas_cave_4.mp3",
+		 "xjrigsx_rygar_sagilas_cave_5.mp3",
+		 "xjrigsx_rygar_sagilas_cave_6.mp3"]}],
+		"author": "xjrigsx"
+	},
+	{
+		"keyword": ["chaos"],
+		"task":[{"media":
+		["fforigin_chaos1.mp3",
+		 "fforigin_chaos2.mp3",
+		 "fforigin_chaos3.mp3",
+		 "fforigin_chaos4.mp3",
+		 "fforigin_chaos5.mp3",
+		 "fforigin_chaos6.mp3",
+		 "fforigin_chaos7.mp3"]}],
+		"author": "nefael_yunalesca"
+	},
+	{
+		"keyword": ["dead"],
+		"task":[{"media":
+		["ducktales_death.mp3",
+		 "ducktales_remastered_death.mp3"]}],
+		"author": ""
+	},
+	{
+		"keyword": ["gerudo"],
+		"task":[{"media":
+		["zelda_oot_gerudo_valley_1.mp3",
+		 "zelda_oot_gerudo_valley_2.mp3",
+		 "zelda_oot_gerudo_valley_3.mp3",
+		 "zelda_oot_gerudo_valley_4.mp3",
+		 "zelda_oot_gerudo_valley_5.mp3",
+		 "zelda_oot_gerudo_valley_6.mp3"]}],
+		"author": "muten_pizza"
+	},
+	{
+		"keyword": ["captain"],
+		"task":[{"media":
+		["shahirbear_captain_planet_1.mp3",
+		 "shahirbear_captain_planet_2.mp3"]}],
+		"author": "shahirbear"
+	},
+	{
+		"keyword": ["heman"],
+		"task":[{"media":
+		["ultra_heman_1.mp3",
+		 "ultra_heman_2.mp3",
+		 "ultra_heman_3.mp3",
+		 "ultra_heman_4.mp3",
+		 "ultra_heman_5.mp3",
+		 "ultra_heman_6.mp3"]}],
+		"author": "ultraminimalist"
+	},
+	{
+		"altkey": ["megaman"],
+		"keyword": ["m(e|a)g(e|a)\\s*m(e|a)n"],
+		"task":[{"media":
+		["muten_mega_man_1.mp3",
+		 "muten_mega_man_2.mp3",
+		 "muten_mega_man_3.mp3"]}],
+		"author": "muten_pizza"
+	},
+	{
+		"keyword": ["victory"],
+		"task":[{"media":
+		["victory1.mp3",
+		 "victory2.mp3"]}],
+		"author": "muten_pizza"
+	},
+	{
+		"altkey": ["hoy"],
+		"keyword": ["(a|)hoy"],
+		"task":[{"media":
+		["zelda_ww_aryll_hoy1.mp3",
+		 "zelda_ww_aryll_hoy2.mp3"]}],
+		"author": ""
+	},
+	{
+		"keyword": ["gl"],
+		"task":[{"alert": ["assets/alerts/gl.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "sypherce"
+	},
+	{
+		"altkey": ["sabalink"],
+		"keyword": ["sabalink", "sypher18SabaLink"],
+		"task":[{"alert": ["assets/alerts/sabalink.gif", "flipInY", "rubberBand", "fadeOut"]}],
+		"author": "sypherce"
+	},
+	{
+		"keyword": ["stab"],
+		"task":[{"alert": ["assets/alerts/stab.gif", "slideInDown", "tada", "slideOutUp"]}],
+		"author": "sypherce"
+	},
+	{
+		"keyword": ["dookie"],
+		"task":[{"alert": ["assets/alerts/dookie.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "sypherce"
+	},
+	{
+		"keyword": ["westernworld"],
+		"task":[{"alert": ["assets/alerts/cnd2_western_world.gif", "slideInRight", "pulse", "slideOutRight"]}],
+		"author": "sypherce"
+	},
+	{
+		"keyword": ["emily"],
+		"task":[{"alert": ["assets/alerts/emily.gif", "bounceIn", "pulse", "hinge"]}],
+		"author": "sypherce"
+	},
+	{
+		"keyword": ["catjam"],
+		"task":[{"alert": ["assets/alerts/catJAM.gif", "jackInTheBox", "pulse", "bounceOut"]}],
+		"author": "sypherce"
+	},
+	{
+		"altkey": ["imout"],
+		"keyword": ["i(\\'|a|)m\\s*out"],
+		"task":[{"alert": ["assets/alerts/muten_imout.mp4", "bounceIn", "shake", "lightSpeedOut"]}],
+		"author": "muten_pizza"
+	},
+	{
+		"keyword": ["xjrigsx"],
+		"task":[{"alert": ["assets/alerts/xjrigsx.mp4", "bounceIn", "pulse", "hinge"]}],
+		"author": "xjrigsx"
+	},
+
+	{
+		"keyword": ["adamj93"],
+		"task":[{"alert": ["assets/alerts/adamj93.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "adamj93"
+	},
+	{
+		"keyword": ["bogmired"],
+		"task":[{"alert": ["assets/alerts/bogmired.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "bogmired"
+	},
+	{
+		"keyword": ["dakoeta"],
+		"task":[{"media": "dakoeta.mp3"}],
+		"author": "dakoeta"
+	},
+	{
+		"keyword": ["davidvk1996"],
+		"task":[{"alert": ["assets/alerts/davidvk1996.gif", "jackInTheBox", "pulse", "hinge"]}],
+		"author": "davidvk1996"
+	},
+	{
+		"keyword": ["grimbomb"],
+		"task":[{"alert": ["assets/alerts/grimbomb.gif", "slideInDown", "swing", "slideOutUp"]}],
+		"author": "grimbomb"
+	},
+	{
+		"keyword": ["huckleberry__gin"],
+		"task":[{"alert": ["assets/alerts/huckleberry__gin.gif", "bounceIn", "pulse", "slideOutUp"]}],
+		"author": "huckleberry__gin"
+	},
+	{
+		"keyword": ["jedi31177"],
+		"task":[{"alert": ["assets/alerts/jedi31177.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "jedi31177"
+	},
+	{
+		"keyword": ["jedi"],
+		"task":[{"alert": ["assets/alerts/jedi31177.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "jedi31177"
+	},
+	{
+		"keyword": ["missliss15"],
+		"task":[{"alert": ["assets/alerts/missliss15.gif", "jackInTheBox", "tada", "hinge"]}],
+		"author": "missliss15"
+	},
+	{
+		"keyword": ["musicngaming"],
+		"task":[{"alert": ["assets/alerts/musicngaming.mp4", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "musicngaming"
+	},
+	{
+		"keyword": ["muten_pizza"],
+		"task":[{"alert": ["assets/alerts/muten_pizza.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "muten_pizza"
+	},
+	{
+		"keyword": ["sypherce"],
+		"task":[{"alert": ["assets/alerts/zelda_oot_woah_redead_scream.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "sypherce"
+	},
+	{
+		"keyword": ["nefael_yunalesca", "nefaelTidusLaugh"],
+		"task":[{"alert": ["assets/alerts/nefael_yunalesca.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "nefael_yunalesca"
+	},
+	{
+		"keyword": ["haha"],
+		"task":[{"alert": ["assets/alerts/nefael_yunalesca.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "nefael_yunalesca"
+	},
+	{
+		"keyword": ["paramixzeph"],
+		"task":[{"alert": ["assets/alerts/paramixzeph.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "paramixzeph"
+	},
+	{
+		"keyword": ["popcyclopsicle"],
+		"task":[{"alert": ["assets/alerts/pops.mp4", "rotateIn", "flip", "zoomOutDown"]}],
+		"author": "popcyclopsicle"
+	},
+	{
+		"keyword": ["rebecadraws"],
+		"task":[{"alert": ["assets/alerts/rebecadraws.gif", "bounceIn", "pulse", "rotateOut"]}],
+		"author": "rebecadraws"
+	},
+	{
+		"keyword": ["residentemil_"],
+		"task":[{"alert": ["assets/alerts/residentemil_.gif", "bounceIn", "pulse", "hinge"]}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["rpggamershub"],
+		"task":[{"alert": ["assets/alerts/rpggamershub.mp4", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "rpggamershub"
+	},
+	{
+		"keyword": ["siegemunde"],
+		"task":[{"alert": ["assets/alerts/siegemunde.gif", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "siegemunde"
+	},
+	{
+		"keyword": ["skizzlethewicked"],
+		"task":[{"alert": ["assets/alerts/skizzlethewicked.gif", "slideInDown", "pulse", "slideOutDown"]}],
+		"author": "skizzlethewicked"
+	},
+	{
+		"keyword": ["subtlewookie"],
+		"task":[{"alert": ["assets/alerts/subtlewookie.mp4", "fadeIn", "pulse", "fadeOut"]}],
+		"author": "subtlewookie"
+	},
+	{
+		"keyword": ["rob"],
+		"task":[{"alert": ["assets/alerts/thedandygaymer.gif", "jackInTheBox", "pulse", "bounceOut"]}],
+		"author": "thedandygaymer"
+	},
+	{
+		"keyword": ["thedandygaymer"],
+		"task":[{"alert": ["assets/alerts/thedandygaymer.gif", "jackInTheBox", "pulse", "slideOutUp"]}],
+		"author": "thedandygaymer"
+	},
+	{
+		"keyword": ["ultraminimalist"],
+		"task":[{"alert": ["assets/alerts/ultraminimalist.mp4", "slideInDown", "pulse", "slideOutUp"]}],
+		"author": "ultraminimalist"
+	},
+	{
+		"keyword": ["unordinarywarlord"],
+		"task":[{"alert": ["assets/alerts/unordinarywarlord.gif", "bounceIn", "pulse", "rollOut"]}],
+		"author": "unordinarywarlord"
+	},
+	{
+		"keyword": ["viggotheecarpathian"],
+		"task":[{"media": "viggotheecarpathian.mp3"}],
+		"author": "viggotheecarpathian"
+	},
+	{
+		"keyword": ["wengday"],
+		"task":[{"alert": ["assets/alerts/wengday.gif", "flipInX", "flip", "flipOutY"]}],
+		"author": "wengday"
+	},
+	{
+		"keyword": ["zellsh0t"],
+		"task":[{"alert": ["assets/alerts/zellsh0t.gif", "slideInDown", "shake", "slideOutUp"]}],
+		"author": "zellsh0"
+	},
+
+	{
+		"altkey": ["yawn"],
+		"keyword": ["(yawn|tired|sleep|sleepy)"],
+		"task":[{"media":
+		["zelda_tp_midna_yawn1.mp3",
+		 "zelda_tp_midna_yawn2.mp3"]}],
+		"author": ""
+	},
+	{
+		"altkey": ["sasquatch"],
+		"keyword": ["(sasquatch|reside53sasquatchwhy)"],
+		"task":[{"media": "wookie_sasquatch.mp3"}],
+		"author": "subtlewookie"
+	},
+	{
+		"keyword": ["mgow"],
+		"task":[{"media": "emil_mgow.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["noise"],
+		"task":[{"media": "ultraminimalist_noise.mp3"}],
+		"author": "ultraminimalist"
+	},
+	{
+		"altkey": ["kickit"],
+		"keyword": ["kick\\s*it"],
+		"task":[{"media": "wookie_kickit.mp3"}],
+		"author": "subtlewookie"
 	}
+
 ]

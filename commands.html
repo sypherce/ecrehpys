@@ -1,3 +1,4 @@
+
 <html>
 	<head>
 	<meta charset="UTF-8">
@@ -27,439 +28,384 @@
 			background-color: var(--background-color);
 			color: var(--text-color);
 		}
-		table {
-			border: 2px solid var(--border-color);
-			border-radius: 13px;
-			border-spacing: 0px;
-		}
-		mark {
-			background-color: transparent;
-			/*border: 0px solid var(--border-color);
-			border-radius: 15px;
-			box-shadow: 0 0 10px var(--border-color);*/
-			padding:1px;
-			color: var(--text-color);
-		}
-		th {
-			text-align:center;
-			position: sticky;
-			top: 0;
-			background-color: var(--header-background);
-			color: var(--header-color);
-		}
-			th:first-child {
-				border-top-left-radius:  10px;
-			}
-			th:last-child {
-				border-top-right-radius: 10px;
-			}
-		td {
-			text-align:left;
-			border:0;
-			border-left:2px solid var(--background-color);
-			border-right:2px solid var(--background-color);
-		}
-			td:first-child {
-				border-left: 0;
-				text-align:right;
-				white-space:nowrap;
-				width:0;
-			}
-			td:last-child {
-				text-align:left;
-				border-right: 0;
-				white-space:nowrap;
-				width:0;
-			}
-		tr:nth-child(odd) {
-			background-color: var(--alt-color);
-		}
-		img {
-			height: 1em;
-			width: auto;
-		}
 	</style>
 	</head>
-	<body>
-	<script>
-		function author(name) {
-			return `<img src="../../../stream/assets/users/icon/${name}.php">${name}`;
-		}
-		function keyword(arg) {
-			if(!Array.isArray(arg))
-				return `<mark>${arg}</mark>`;
-
-			let string = '';
-			for (let i = 0; i < arg.length; i++) {
-				string = string.concat(`<mark>${arg[i]}</mark>`);
-				switch(i) {
-				case arg.length-1: break;
-				default:
-					string = string.concat(`,`);
-				}
-			}
-			return string;
-		}
-		function video(desc) {
-			return `🎥${desc}`;
-		}
-		function command2(keyword_list, desc, author_name) {
-			document.write(`
-				<tr>
-					<td>${keyword(keyword_list)}</td>
-					<td>${desc}</td>
-					<td>${author(author_name)}</td>
-				</tr>
-				`);
-		}
-
-		function command(keyword_list, desc, author_name) {
-			const table = document.getElementById("main");
-			const row = table.insertRow();
-			const cells	=  [row.insertCell(0),
-							row.insertCell(1),
-							row.insertCell(2)]
-			cells[0].innerHTML = keyword(keyword_list);
-			cells[1].innerHTML = desc;
-			cells[2].innerHTML = author(author_name);
-		}
-	</script>
-	<center>
-		<table style="border-bottom:0;
-				border-bottom-right-radius: 0 0;
-				border-bottom-left-radius:  0 0;">
-			<tbody>
-				<tr>
-					<th>Icon Legend</th>
-				</tr>
-				<tr><td>
-			🎥 : Video<br>
-			🔊 : Audio</td>
-				</tr>
-			</tbody>
-		</table>
-		<table>
-			<tbody id="main">
-				<tr>
-					<th>Keyword</th>
-					<th>Command Type/Description</th>
-					<th>Author</th>
-				</tr>
-				<script>command("!bn", "🔊Butt Nugget", "muten_pizza");
-command("!cowboy", "🔊Clip of <a href=\"https://www.youtube.com/watch?v=UFFa0QoHWvE\">https://www.youtube.com/watch?v=UFFa0QoHWvE</a>", "");
-command("!cut", "🔊Olberic from Octopath Traveler", "");
-command("!do", "🔊Yoda from Star Wars", "jedi31177");
-command("!don", "🔊donatello_86", "missliss15");
-command("!drop", "🔊Clip from \"You Dropped A Bomb On Me\" Song by \"The Gap Band\"", "jedi31177");
-command("!dt", "🎥 <a href=\"https://www.youtube.com/watch?v=nqZ_Cb2slBw\">https://www.youtube.com/watch?v=nqZ_Cb2slBw</a>", "");
-command("!duck", "🔊Strongbad yelling", "subtlewookie");
-command("!exit", "", "jedi31177");
-command("!feels", "🔊Shulk from Xenoblade Chronicles/Smash Bros", "");
-command("!fine", "", "muten_pizza");
-command("!grill", "0 - Other/Wendys_Grill_Skills.mp4", "residentemil_");
-command("!hold", "", "muten_pizza");
-command("!huck", "", "huckleberry__gin");
-command("!huck2", "", "huckleberry__gin");
-command("!huck3", "", "huckleberry__gin");
-command("!item2", "", "");
-command("!knowing", "", "jedi31177");
-command("!live", "", "");
-command("!owl", "N64/Ocarina of Time/Ocarina of Time - Kepora Gebora.mp3", "xjrigsx");
-command("!pause", "", "xjrigsx");
-command("!ready", "", "");
-command("!remember", "", "muten_pizza");
-command("!secret", "", "");
-command("!smalls", "", "skizzle_the_wicked");
-command("!sus", "", "muten_pizza");
-command("!try", "", "muten_pizza");
-command("!value", "", "muten_pizza");
-command("!waiting", "", "muten_pizza");
-command("!whatever", "", "");
-command("!why", "", "xjrigs");
-command("!zelda", "", "");
-command("cleveland", "🎥 <a href=\"https://www.youtube.com/watch?v=MH2taq--sj8\">https://www.youtube.com/watch?v=MH2taq--sj8</a>", "cleveland_tom");
-command("glub", "0 - Other/Globglogabgalab Remix [Blue] - The Living Tombstone.mp4", "residentemil_");
-command("lwo", "0 - Other/gamer-walk-reverse.mp4", "residentemil_");
-command("nice", "", "");
-command("owl", "0 - Other/owl.mp4", "xjrigsx");
-command("tunak", "0 - Other/Tunak Tunak.mp4", "missliss15");
-command("cube", "", "residentemil_");
-command("barkwarp", "", "residentemil_");
-command("a mine", "", "subtlewookie");
-command("garbage day", "", "adamj93");
-command("daftnuts", "", "residentemil_");
-command("hi", "", "hellomrrobot");
-command("dangerous", "", "subtlewookie");
-command("moo", "", "muten_pizza");
-command("oodaft", "", "residentemil_");
-command("pyramid", "", "ultraminimalist");
-command("*__*", "", "");
-command("onit", "", "muten_pizza");
-command("shaun", "", "residentemil_");
-command("uwelcome", "", "muten_pizza");
-command("wetwalrus", "", "");
-command("dowah", "", "muten_pizza");
-command("fhqwhgads", "0 - Other/fhqwhgads - Everybody to the Limit.mp4", "missliss15");
-command("007", "0 - Other/007.mp3", "xjrigsx");
-command("1up", "", "");
-command("220v", "", "muten_pizza");
-command("acapel(l|)a", "", "muten_pizza");
-command("agony", "", "eumachtis");
-command("ahh", "", "");
-command("alert", "", "");
-command("arctic", "", "xjrigsx");
-command("av(o|a)c(o|a)do(s|)", "", "rebecadraws");
-command("awards", "", "huckleberry__gin");
-command("awful", "", "muten_pizza");
-command("badger(s|)", "", "missliss15");
-command("barkofshame", "", "residentemil_");
-command("batman", "", "muten_pizza");
-command("beardcube", "", "residentemil_");
-command("beardwarp", "", "residentemil_");
-command("beatbox", "0 - Other/Pinball Dreams - Beat Box.mp3", "xjrigsx");
-command("beedle", "", "");
-command("beefbark", "", "residentemil_");
-command("beefblock", "", "residentemil_");
-command("beefcube", "", "residentemil_");
-command("beefglod", "", "residentemil_");
-command("beefnuts", "", "residentemil_");
-command("beefpocalypse", "", "residentemil_");
-command("beeftroit", "", "residentemil_");
-command("beep", "", "xjrigsx");
-command("beepofshame", "", "muten_pizza");
-command("bigbark", "", "residentemil_");
-command("bigblue", "Snes/FZero/Big Blue.mp3", "xjrigsx");
-command("block", "", "xjrigsx");
-command("bolero", "", "rebecadraws");
-command("bombman", "NES/Mega Man/Bomb Man.mp3", "xjrigsx");
-command("boombox", "", "xjrigsx");
-command("bootsnpants", "", "muten_pizza");
-command("brb", "", "muten_pizza");
-command("bruh", "", "muten_pizza");
-command("burn", "", "ultraminimalist");
-command("buy", "", "");
-command("buying", "", "");
-command("bye", "", "muten_pizza");
-command("california", "", "muten_pizza");
-command("candymountain", "0 - Other/Charlie - Candy Mountain.mp4", "missliss15");
-command("cantina", "", "irishsponge93");
-command("chayter", "", "muten_pizza");
-command("chimichanga", "0 - Other/Skullmonkeys - Castle De Los Muertos.mp3", "");
-command("chip", "", "residentemil_");
-command("chipndale", "0 - Other/Chip 'N Dale Rescue Rangers Theme Song.mp4", "");
-command("chocobo", "", "");
-command("cmon", "", "muten_pizza");
-command("cocadee(z|s)(nut(z|s)|)", "", "subtlewookie");
-command("coffee", "", "huckleberry__gin");
-command("comeback", "", "");
-command("cough", "", "muten_pizza");
-command("crab", "0 - Other/Crabs- MrWeebl.mp4", "residentemil_");
-command("crash", "", "xjrigsx");
-command("crickets", "", "");
-command("cubetroit", "", "residentemil_");
-command("fart", "", "");
-command("daftbeef", "", "residentemil_");
-command("dale", "", "residentemil_");
-command("darkwing", "0 - Other/Darkwing Duck Theme Song.mp4", "");
-command("death", "", "wally");
-command("dentist", "", "muten_pizza");
-command("detroit", "", "residentemil_");
-command("detroitifornia", "", "muten_pizza");
-command("discord", "", "");
-command("dogsout", "", "residentemil_");
-command("ducktales", "0 - Other/Duck_____ Theme Song.mp4", "");
-command("dumbass", "", "ultraminimalist");
-command("dungeon", "", "muten_pizza");
-command("eagle", "", "muten_pizza");
-command("elecman", "NES/Mega Man/Elec Man.mp3", "subtlewookie");
-command("elm street", "NES/A Nightmare on Elm Street/Town of Elm Street.mp3", "xjrigsx");
-command("evil laugh", "", "muten_pizza");
-command("excuse me", "", "rebecadraws");
-command("fancy mel", "", "residentemil_");
-command("forever", "", "muten_pizza");
-command("french", "", "rebecadraws");
-command("gamebark", "0 - Other/GameBark.mp4", "residentemil_");
-command("gamebeef", "", "residentemil_");
-command("gameblock", "", "residentemil_");
-command("gamecube", "", "");
-command("gameglod", "", "residentemil_");
-command("gameover yeah", "", "residentemil_");
-command("gamesalsa", "", "residentemil_");
-command("ganon", "", "ultraminimalist");
-command("gcremix", "", "muten_pizza");
-command("gerudu", "", "muten_pizza");
-command("ghostbusters", "0 - Other/GhostBusters Theme Song.mp4", "xjrigsx");
-command("gibberish", "", "");
-command("gibberish2", "", "");
-command("goat(ed|)", "", "muten_pizza");
-command("good( |_)ni(gh|)t(e|)", "", "muten_pizza");
-command("groove", "", "muten_pizza");
-command("groovy", "", "ultraminimalist");
-command("gummibears", "0 - Other/Gummi Bears Theme Song.mp4", "subtlewookie");
-command("head ache", "", "muten_pizza");
-command("hell (yes|yeah|ya)", "", "muten_pizza");
-command("hello", "", "");
-command("hey", "", "missliss15");
-command("hiyah", "", "");
-command("hold it", "", "unordinarywarlord");
-command("holy( guac(amole|)|)", "", "rebecadraws");
-command("horror", "", "");
-command("hotdrinks", "0 - Other/Wendy's Training Video Hot Drinks.mp4", "residentemil_");
-command("hoy1", "", "muten_pizza");
-command("hoy2", "", "muten_pizza");
-command("hyah", "", "nefael_yunalesca");
-command("hyper beatz", "", "xjrigsx");
-command("i ('|a|)m hearin(g|) that", "0 - Other/MNG - imhearinthat.mp3", "musicngaming");
-command("i swear", "", "adamj93");
-command("item", "", "");
-command("jail", "", "muten_pizza");
-command("joe", "", "sypherce");
-command("jungle boogie", "0 - Other/Jungle Boogie.mp3", "blacksquall");
-command("jurassicbark", "0 - Other/jurassicbark.mp4", "residentemil_");
-command("kakarot", "", "muten_pizza");
-command("keyboard", "", "unordinarywarlord");
-command("kitty", "", "ultraminimalist");
-command("l(i|e)o(pleurodon|)", "", "missliss15");
-command("ladder", "", "muten_pizza");
-command("let('|)s (a|) go", "", "");
-command("listen", "", "");
-command("lizard king", "", "subtlewookie");
-command("look", "", "");
-command("loserly", "", "residentemil_");
-command("magus", "Snes/Chrono Trigger/Battle with Magus.mp3", "subtlewookie");
-command("mariachi", "", "rebecadraws");
-command("meeting(s|)", "", "muten_pizza");
-command("mlt", "", "subtlewookie");
-command("mng(cube|no|yes|noyes|yesno)", "", "residentemil_");
-command("mom", "", "rebecadraws");
-command("mostly dead", "", "adamj93");
-command("muere", "", "");
-command("mweep", "", "");
-command("my bad", "", "muten_pizza");
-command("n[o]{2,}", "", "muten_pizza");
-command("nerd", "", "muten_pizza");
-command("!no", "", "subtlewookie");
-command("not fine", "", "muten_pizza");
-command("objection", "", "");
-command("oh bark", "", "residentemil_");
-command("oh hello", "", "missliss15");
-command("oh no", "", "");
-command("ok bye", "", "missliss15");
-command("oof", "", "hellomrrobot");
-command("oops", "", "jedi31177");
-command("oowarp", "", "residentemil_");
-command("oowart", "", "residentemil_");
-command("oowee", "", "residentemil_");
-command("out of control", "", "muten_pizza");
-command("ow", "", "ultraminimalist");
-command("panic", "", "subtlewookie");
-command("parko(u|)r", "", "rebecadraws");
-command("pastry", "0 - Other/Weebl and Bob - Pastry.mp4", "residentemil_");
-command("peanutbutter", "", "missliss15");
-command("picnic(time|)", "", "missliss15");
-command("pikachu", "", "unordinarywarlord");
-command("please don(\'|)t", "", "");
-command("praise", "", "muten_pizza");
-command("ps1", "", "");
-command("ps2", "", "");
-command("puppy", "", "ultraminimalist");
-command("rr", "0 - Other/Reading Rainbow.mp4", "missliss15");
-command("reyn(time|)", "", "residentemil_");
-command("reyn warp", "", "residentemil_");
-command("rigsglod", "", "residentemil_");
-command("rupee", "", "");
-command("rupee( |_)game", "", "xjrigsx");
-command("s(hut|) u(p|) w(ook|)(ie|)(iee|)", "", "muten_pizza");
-command("s2 dee(s|z)", "", "residentemil_");
-command("salsa", "", "residentemil_");
-command("school", "", "muten_pizza");
-command("scream", "", "ultraminimalist");
-command("sega", "", "subtlewookie");
-command("selling", "", "");
-command("sexy (bark|)", "", "residentemil_");
-command("shun", "", "missliss15");
-command("shush", "", "muten_pizza");
-command("shut it", "", "muten_pizza");
-command("shut up", "", "muten_pizza");
-command("slap", "", "muten_pizza");
-command("smb2(u|) pause", "", "xjrigsx");
-command("snake", "", "spiritualmutant");
-command("sosumi", "", "wally4000");
-command("talespin", "0 - Other/TaleSpin Theme Song.mp4", "missliss15");
-command("thank you", "", "");
-command("ti(c|)k to(c|)k", "", "muten_pizza");
-command("timwarp", "", "residentemil_");
-command("toby", "", "muten_pizza");
-command("top man", "NES/Mega Man 3/Top Man.mp3", "xjrigsx");
-command("trevor", "0 - Other/Magical Trevor Theme Song.mp4", "muten_pizza");
-command("tunak nut(s|z)", "", "residentemil_");
-command("tunakpocalypse", "", "residentemil_");
-command("twss", "", "missliss15");
-command("upgrade", "NES/Mega Man 5/Weapon Upgrade.mp3", "xjrigsx");
-command("ultimate bark", "", "residentemil_");
-command("ultimate shame", "", "muten_pizza");
-command("ultimatebeef", "", "residentemil_");
-command("unacceptable", "", "hellomrrobot");
-command("unbending", "", "");
-command("unusual", "0 - Other/Tom Jones - It's Not Unusual.mp3", "residentemil_");
-command("wahwee", "", "residentemil_");
-command("wake up", "", "muten_pizza");
-command("waluigi", "", "");
-command("warp", "", "warp");
-command("warpnut(s|z)", "", "residentemil_");
-command("wart", "", "subtlewookie");
-command("weird", "", "missliss15");
-command("welcome", "", "");
-command("welcome back", "", "muten_pizza");
-command("what", "", "muten_pizza");
-command("wh[a]{2,}t", "", "muten_pizza");
-command("when i ('|a|)m", "", "residentemil_");
-command("whip", "", "muten_pizza");
-command("why", "", "xjrigs");
-command("wimp", "", "subtlewookie");
-command("wimpamp", "", "residentemil_");
-command("wimpanic", "", "subtlewookie");
-command("win95", "", "");
-command("wisdom", "", "wengday");
-command("witw", "0 - Other/Where in the World is Carmen Sandiego.mp3", "missliss15");
-command("witw(shaun|sean|shawn)", "", "residentemil_");
-command("witwbeef", "", "residentemil_");
-command("witwglod", "", "residentemil_");
-command("witwnut(s|z)", "", "residentemil_");
-command("woah", "", "");
-command("wook(i|ii)(e|ee)(_| )bark", "", "subtlewookie");
-command("wow", "", "");
-command("wtd", "0 - Other/Was (Not Was) - Walk The Dinosaur.mp4", "missliss15");
-command("xbox", "", "residentemil_");
-command("yat(t|)a", "", "yatta");
-command("yeeha(w|)", "", "jedi31177");
-command("yeet", "", "muten_pizza");
-command("yes", "", "xjrigsx");
-command("yes yes", "", "residentemil_");
-command("yodel", "", "blackwoodrecordings");
-command("yoshi", "", "");
-command("zoidberg", "", "muten_pizza");
-command("zone d", "", "xjrigsx");
-command("zone jam", "", "xjrigs");
-command("hoo", "", "wally4000");
-command("danger", "0 - Other/emil_danger.mp3", "residentemil_");
-command("hanson", "", "residentemil_");
-command("water", "", "residentemil_");
-command("flush", "", "residentemil_");
-command("roast(ed|)", "", "residentemil_");
-command("i ('|a|)m in", "", "residentemil_");
-command("(chicken|arise)", "", "residentemil_");
-command("danger", "0 - Other/emil_danger.mp3", "residentemil_");
-command("gandalfjam", "0 - Other/emil_gandalfJAM.mp4", "residentemil_");
-command("left", "0 - Other/emil_left.mp4", "residentemil_");
-command("hey water", "", "residentemil_");
-command("alright", "0 - Other/muten_emil_moster_annoying.mp3", "residentemil_");
-command("hey beef", "", "residentemil_");
-command("correct", "", "residentemil_");
-</script>
-			</tbody>
-			</table>
-		</table>
-	</center>
+	<body>007 [xjrigsx]<br>
+1up<br>
+220v [muten_pizza]<br>
+acapella [muten_pizza]<br>
+adamj93 [adamj93]<br>
+agony [eumachtis]<br>
+ahh<br>
+alert<br>
+alright [residentemil_]<br>
+amine [subtlewookie]<br>
+arctic [xjrigsx]<br>
+avocados [rebecadraws]<br>
+awards [huckleberry__gin]<br>
+awful [muten_pizza]<br>
+awfulbark<br>
+badgers [missliss15]<br>
+barkofshame [residentemil_]<br>
+barkwarp [residentemil_]<br>
+batman [muten_pizza]<br>
+beardcube [residentemil_]<br>
+beardwarp [residentemil_]<br>
+beatbox [xjrigsx]<br>
+beedle<br>
+beefawful<br>
+beefbark [residentemil_]<br>
+beefblock [residentemil_]<br>
+beefcube [residentemil_]<br>
+beefglod [residentemil_]<br>
+beefmweep<br>
+beefnuts [residentemil_]<br>
+beefpocalypse [residentemil_]<br>
+beeftroit [residentemil_]<br>
+beefwater<br>
+beep [xjrigsx]<br>
+beepofshame [muten_pizza]<br>
+bigbark [residentemil_]<br>
+bigblue [xjrigsx]<br>
+block [xjrigsx]<br>
+!bn [muten_pizza]<br>
+bogmired [bogmired]<br>
+bolero [rebecadraws]<br>
+bombman [xjrigsx]<br>
+boombox [xjrigsx]<br>
+bootsnpants [muten_pizza]<br>
+brb [muten_pizza]<br>
+bruh [muten_pizza]<br>
+burn [ultraminimalist]<br>
+buy<br>
+buying<br>
+bye [muten_pizza]<br>
+california [muten_pizza]<br>
+candymountain [missliss15]<br>
+cantina [irishsponge93]<br>
+captain [shahirbear]<br>
+catjam [sypherce]<br>
+cave [xjrigsx]<br>
+chaos [nefael_yunalesca]<br>
+chayter [muten_pizza]<br>
+chicken [residentemil_]<br>
+chimichanga<br>
+chip [residentemil_]<br>
+chipndale<br>
+chocobo<br>
+!chomp<br>
+chunkybooty [residentemil_]<br>
+cleveland [cleveland_tom]<br>
+cmon [muten_pizza]<br>
+cocadeeznuts [subtlewookie]<br>
+coffee [huckleberry__gin]<br>
+comeback<br>
+correct [residentemil_]<br>
+cough [muten_pizza]<br>
+!cowboy<br>
+crab [residentemil_]<br>
+crash [xjrigsx]<br>
+crickets<br>
+cube [residentemil_]<br>
+cubetroit [residentemil_]<br>
+!cut<br>
+daftbeef [residentemil_]<br>
+daftnuts [residentemil_]<br>
+dakoeta [dakoeta]<br>
+dale [residentemil_]<br>
+danger [residentemil_]<br>
+danger [residentemil_]<br>
+dangerous [subtlewookie]<br>
+darkwing<br>
+davidvk1996 [davidvk1996]<br>
+dead<br>
+death [wally]<br>
+ded<br>
+dentist [muten_pizza]<br>
+detroit [residentemil_]<br>
+detroitifornia [muten_pizza]<br>
+!_disabled_1 [muten_pizza]<br>
+discord<br>
+!do [jedi31177]<br>
+dogsout [residentemil_]<br>
+!don [missliss15]<br>
+dookie [sypherce]<br>
+dowah [muten_pizza]<br>
+!drop [jedi31177]<br>
+!dt<br>
+!duck [subtlewookie]<br>
+ducktales<br>
+dumbass [ultraminimalist]<br>
+dungeon [muten_pizza]<br>
+eagle [muten_pizza]<br>
+elecman [subtlewookie]<br>
+elmstreet [xjrigsx]<br>
+emily [sypherce]<br>
+evillaugh [muten_pizza]<br>
+excuseme [rebecadraws]<br>
+!exit [jedi31177]<br>
+fancymel [residentemil_]<br>
+fart<br>
+!feels<br>
+fhqwhgads [missliss15]<br>
+!fine [muten_pizza]<br>
+flush [residentemil_]<br>
+forever [muten_pizza]<br>
+french [rebecadraws]<br>
+gamebark [residentemil_]<br>
+gamebeef [residentemil_]<br>
+gameblock [residentemil_]<br>
+gamecube<br>
+gameglod [residentemil_]<br>
+gameoveryeah [residentemil_]<br>
+gamesalsa [residentemil_]<br>
+gandalfjam [residentemil_]<br>
+ganon [ultraminimalist]<br>
+garbageday [adamj93]<br>
+gcremix [muten_pizza]<br>
+gerudo [muten_pizza]<br>
+gerudu [muten_pizza]<br>
+ghostbusters [xjrigsx]<br>
+gibberish2<br>
+gibberish<br>
+gl [sypherce]<br>
+glub [residentemil_]<br>
+goat [muten_pizza]<br>
+gonnadie<br>
+goodnight [muten_pizza]<br>
+!grill [residentemil_]<br>
+grimbomb [grimbomb]<br>
+groove [muten_pizza]<br>
+groovy [ultraminimalist]<br>
+gummibears [subtlewookie]<br>
+haha [nefael_yunalesca]<br>
+hanson2 [residentemil_]<br>
+headache [muten_pizza]<br>
+hello<br>
+hellyes [muten_pizza]<br>
+heman [ultraminimalist]<br>
+hey [missliss15]<br>
+heybeef [residentemil_]<br>
+heywater [residentemil_]<br>
+hi [hellomrrobot]<br>
+hiyah<br>
+!hold [muten_pizza]<br>
+holdit [unordinarywarlord]<br>
+holyguacamole [rebecadraws]<br>
+hoo [wally4000]<br>
+horror<br>
+hotdrinks [residentemil_]<br>
+hoy1 [muten_pizza]<br>
+hoy2 [muten_pizza]<br>
+hoy<br>
+!huck [huckleberry__gin]<br>
+!huck2 [huckleberry__gin]<br>
+!huck3 [huckleberry__gin]<br>
+huckleberry__gin [huckleberry__gin]<br>
+hyah [nefael_yunalesca]<br>
+hydrate<br>
+hyperbeatz [xjrigsx]<br>
+idiot [muten_pizza]<br>
+imhearinthat [musicngaming]<br>
+imin [residentemil_]<br>
+imout [muten_pizza]<br>
+!inu [resident_emil_]<br>
+iswear [adamj93]<br>
+!item2<br>
+item<br>
+jail [muten_pizza]<br>
+jedi [jedi31177]<br>
+jedi31177 [jedi31177]<br>
+jungleboogie [blacksquall]<br>
+jurassicbark [residentemil_]<br>
+kakarot [muten_pizza]<br>
+keyboard [unordinarywarlord]<br>
+kickit [subtlewookie]<br>
+kitty [ultraminimalist]<br>
+!knowing [jedi31177]<br>
+ladder [muten_pizza]<br>
+laugh<br>
+left [residentemil_]<br>
+leopleurodon [missliss15]<br>
+letsgo<br>
+listen<br>
+!live<br>
+lizardking [subtlewookie]<br>
+look<br>
+loserly [residentemil_]<br>
+lwo [residentemil_]<br>
+magus [subtlewookie]<br>
+mariachi [rebecadraws]<br>
+meeting [muten_pizza]<br>
+megaman [muten_pizza]<br>
+mgow [residentemil_]<br>
+missliss15 [missliss15]<br>
+mlt [subtlewookie]<br>
+mngcube [residentemil_]<br>
+mom [rebecadraws]<br>
+moo [muten_pizza]<br>
+mostlydead [adamj93]<br>
+muere<br>
+musicngaming [musicngaming]<br>
+muten_pizza [muten_pizza]<br>
+mweep<br>
+mybad [muten_pizza]<br>
+nefael_yunalesca [nefael_yunalesca]<br>
+nerd [muten_pizza]<br>
+nice<br>
+!no [subtlewookie]<br>
+noise [ultraminimalist]<br>
+noo [muten_pizza]<br>
+notfine [muten_pizza]<br>
+objection<br>
+ohbark [residentemil_]<br>
+ohhello [missliss15]<br>
+ohno<br>
+okbye [missliss15]<br>
+onit [muten_pizza]<br>
+oodaft [residentemil_]<br>
+oof [hellomrrobot]<br>
+oops [jedi31177]<br>
+oowarp [residentemil_]<br>
+oowart [residentemil_]<br>
+oowee [residentemil_]<br>
+outofcontrol [muten_pizza]<br>
+ow [ultraminimalist]<br>
+!owl [xjrigsx]<br>
+owl [xjrigsx]<br>
+panic [subtlewookie]<br>
+paramixzeph [paramixzeph]<br>
+parkour [rebecadraws]<br>
+pastry [residentemil_]<br>
+!pause [xjrigsx]<br>
+peanutbutter [missliss15]<br>
+peter [ultraminimalist]<br>
+picnic [missliss15]<br>
+pikachu [unordinarywarlord]<br>
+pleasedont<br>
+popcyclopsicle [popcyclopsicle]<br>
+praise [muten_pizza]<br>
+ps1<br>
+ps2<br>
+pyramid [ultraminimalist]<br>
+!ready<br>
+rebecadraws [rebecadraws]<br>
+redead<br>
+!remember [muten_pizza]<br>
+residentemil_ [residentemil_]<br>
+reyntime [residentemil_]<br>
+reynwarp [residentemil_]<br>
+rigsglod [residentemil_]<br>
+roasted [residentemil_]<br>
+rob [thedandygaymer]<br>
+rpggamershub [rpggamershub]<br>
+rr [missliss15]<br>
+rupee<br>
+rupeegame [xjrigsx]<br>
+s2deez [residentemil_]<br>
+sabalink [sypherce]<br>
+salsa [residentemil_]<br>
+sasquatch [subtlewookie]<br>
+school [muten_pizza]<br>
+scream [ultraminimalist]<br>
+!secret<br>
+sega [subtlewookie]<br>
+selling<br>
+sexybark [residentemil_]<br>
+shaun [residentemil_]<br>
+!sh<br>
+shun [missliss15]<br>
+shush [muten_pizza]<br>
+shutit [muten_pizza]<br>
+shutup [muten_pizza]<br>
+siegemunde [siegemunde]<br>
+skizzlethewicked [skizzlethewicked]<br>
+slap [muten_pizza]<br>
+!smalls [skizzle_the_wicked]<br>
+smb2pause [xjrigsx]<br>
+snake [spiritualmutant]<br>
+sosumi [wally4000]<br>
+stab [sypherce]<br>
+subtlewookie [subtlewookie]<br>
+!sus [muten_pizza]<br>
+suw [muten_pizza]<br>
+sypherce [sypherce]<br>
+talespin [missliss15]<br>
+thankyou<br>
+thedandygaymer [thedandygaymer]<br>
+ticktock [muten_pizza]<br>
+timwarp [residentemil_]<br>
+toby [muten_pizza]<br>
+topman [xjrigsx]<br>
+trevor [muten_pizza]<br>
+!try [muten_pizza]<br>
+tunak [missliss15]<br>
+tunak nut(s|z) [residentemil_]<br>
+tunakpocalypse [residentemil_]<br>
+twss [missliss15]<br>
+ultimatebark [residentemil_]<br>
+ultimatebeef [residentemil_]<br>
+ultimateshame [muten_pizza]<br>
+ultimateyes<br>
+ultraminimalist [ultraminimalist]<br>
+unacceptable [hellomrrobot]<br>
+unbending<br>
+unordinarywarlord [unordinarywarlord]<br>
+unusual [residentemil_]<br>
+upgrade [xjrigsx]<br>
+uwelcome [muten_pizza]<br>
+!value [muten_pizza]<br>
+victory [muten_pizza]<br>
+viggotheecarpathian [viggotheecarpathian]<br>
+wahwee [residentemil_]<br>
+!waiting [muten_pizza]<br>
+wakeup [muten_pizza]<br>
+waluigi<br>
+warp [warp]<br>
+warpnuts [residentemil_]<br>
+wart [subtlewookie]<br>
+water [residentemil_]<br>
+weird [missliss15]<br>
+welcomeback [muten_pizza]<br>
+welcome<br>
+wengday [wengday]<br>
+westernworld [sypherce]<br>
+wetwalrus<br>
+whaat [muten_pizza]<br>
+what [muten_pizza]<br>
+!whatever<br>
+whenim [residentemil_]<br>
+whip [muten_pizza]<br>
+!why [xjrigsx]<br>
+why [xjrigsx]<br>
+wimp [subtlewookie]<br>
+wimpamp [residentemil_]<br>
+wimpanic [subtlewookie]<br>
+win95<br>
+wisdom [wengday]<br>
+witw [missliss15]<br>
+witwbeef [residentemil_]<br>
+witwglod [residentemil_]<br>
+witwnuts [residentemil_]<br>
+witwshaun [residentemil_]<br>
+woah<br>
+wookiebark [subtlewookie]<br>
+wow<br>
+wtd [missliss15]<br>
+xbox [residentemil_]<br>
+xjrigsx [xjrigsx]<br>
+yatta [yatta]<br>
+yawn<br>
+yeehaw [jedi31177]<br>
+yeet [muten_pizza]<br>
+yes [xjrigsx]<br>
+yesyes [residentemil_]<br>
+yodel [blackwoodrecordings]<br>
+yoshi<br>
+!zelda<br>
+zellsh0t [zellsh0]<br>
+zoidberg [muten_pizza]<br>
+zoned [xjrigsx]<br>
+zonejam [xjrigsx]<br>
 	</body>
-	</html>
+</html>

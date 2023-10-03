@@ -8,82 +8,85 @@ const server = require('websocket').server;
 const http = require('http');
 const fetch = require('node-fetch');
 const mp3Library = require('./mp3Library.js');
+const emote = require('./emote.js');
 const log = require('esm')(module)('./alerts/log.js').log;
 let debug = require('esm')(module)('./alerts/log.js').debug;
 
-async function generateCommandsPHP(commands) {
+async function generateCommandsPHP(command_list) {
 	const html = require('./command_html.js').html;
 
-	html[1] = commands;
+	html[1] = command_list;
 	await fs.promises.writeFile('./commands.html', html.join(''));
 }
 
-let commands;
+let global_commands_list;
 function loadCommands(filename) {
-	let html_commands = '';
+	let html = '';
 	const command_list = JSON.parse(fs.readFileSync(filename));
 
-	for (let commands_i = 0; commands_i < command_list.length; commands_i++) {
-		const this_command = command_list[commands_i];
+	for (let index = 0; index < command_list.length; index++) {
+		const this_command          = command_list[index];
+		this_command.author       ??= '';
+		this_command.cooldown     ??= 0;
+		this_command.timestamp    ??= 0;
+		this_command.active       ??= true;
+		this_command.tired        ??= [];
+		this_command.tired.active ??= false;
 
-		if(typeof this_command.author       === 'undefined') this_command.author           = '';
-		if(typeof this_command.cooldown     === 'undefined') this_command.cooldown         = 0;
-		if(typeof this_command.timestamp    === 'undefined') this_command.timestamp        = 0;
-		if(typeof this_command.active       === 'undefined') this_command.active           = true;
-		if(typeof this_command.tired        === 'undefined') this_command.tired            = [];
-		if(typeof this_command.tired.active === 'undefined') this_command.tired.active     = false;
-
-		let keyword_string = this_command.keyword[0];
-		if(typeof this_command.altkey   !== 'undefined') {
-			keyword_string = this_command.altkey;
+		for (let task_i = 0; task_i < this_command.task.length; task_i++) {
+			if(typeof this_command.task[task_i].media === 'object')
+				this_command.task[task_i].media_counter = 0;
 		}
-		else {
+
+		let keyword = this_command.keyword.at(0);
+
+		if(typeof this_command.altkey !== 'undefined') {
+			keyword = this_command.altkey;
+		}
+		if(typeof this_command.altkey === 'undefined') {
 			for(let i = 0; i < 5; i++) {
-				keyword_string = keyword_string.replace('\')', '');
-				keyword_string = keyword_string.replace('.*', '');
-				keyword_string = keyword_string.replace('\\s*', ' ');
-				keyword_string = keyword_string.replace('[s]', ' ');
+				keyword = keyword.replace('\')', '');
+				keyword = keyword.replace('.*', '');
+				keyword = keyword.replace('\\s*', ' ');
+				keyword = keyword.replace('[s]', ' ');
 			}
 		}
 		let task_string = this_command.task[0].song || this_command.task[0].videonow;
 		if(typeof this_command.description !== 'undefined') task_string = this_command.description;
 		if(typeof task_string              === 'undefined') task_string = "";
 
-		html_commands = html_commands.concat(`command("${keyword_string}", ${JSON.stringify(task_string)}, "${this_command.author}");\n`);
-	}
-	generateCommandsPHP(html_commands);
-
-	commands = command_list;
-}
-loadCommands('commands.json');
-
-let user_array = [];
-async function checkProfileImage(user) {
-	user = user.toLowerCase();
-	if(!user_array.includes(user)) {
-		console.log('fired');
-		user_array.push(user);
-		const filename = `/var/www/html/stream/assets/users/icon/${user}.php`;
-
-		// eslint-disable-next-line no-inner-declarations
-		async function callback(err) {
-			if (err) { // doesn't exist
-				console.log('doesn\'t exist');
-				const profile_image_url = (await twitchInfo.getUsers(user)).profile_image_url;
-				const content = `<?php $name='${profile_image_url}';$fp=fopen($name,'rb');header("Content-Type:image/png");header("Content-Length:".filesize($name));fpassthru($fp);exit;?>`;
-				fs.writeFile(filename, content, err => {
-					if (err) {
-						console.error(err);
-					}
-					// file written successfully
-				});
-				return;
-			}
-			console.log('exists');
+		const formatted_author_string = this_command.author === '' ? '' : ` [${this_command.author}]`;
+		switch(keyword) {
+			case '!lips':
+			case 'joe':
+			case '!ca':
+				break;
+			default:
+				html = html.concat(`${keyword}${formatted_author_string}<br>\n`);
+				break;
 		}
-		fs.access(filename, fs.F_OK, callback);
 	}
+	//add mixitup commands. no extra whitespace
+	html = html.concat(`!chomp<br>
+hydrate<br>
+!inu [resident_emil_]<br>
+laugh<br>`);
+
+	const html_split = html.split(/\r?\n/);
+	html_split.sort((a, b) => {
+		a = a.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "");
+		b = b.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, ""); // ignore upper and lowercase
+		if (a < b) return -1;
+		if (a > b) return 1;
+
+		return 0;
+	});
+	generateCommandsPHP(html_split.join("\r\n"));
+
+	return command_list;
 }
+global_commands_list = loadCommands('commands.json');
+
 
 function getQuery(message, command) {
 	const start = message.indexOf(command) + command.length;
@@ -91,12 +94,12 @@ function getQuery(message, command) {
 	return message.substr(start, length);
 }
 
-function tired(command, setting, message) {
+function tired(command, setting, message, command_list = global_commands_list) {
 	if(message.indexOf(command) !== -1) {
 		const query = getQuery(message, `${command} `);
 
-		for (let commands_i = 0; commands_i < commands.length; commands_i++) {
-			const this_command = commands[commands_i];
+		for (let i = 0; i < command_list.length; i++) {
+			const this_command = command_list[i];
 
 			if(typeof this_command.altkey !== 'undefined' && this_command.altkey[0].indexOf(query) !== -1){
 				this_command.tired.active = setting;
@@ -107,18 +110,99 @@ function tired(command, setting, message) {
 	return false;
 }
 
+/*
+intros
+bits, follows, subs, raids, channel points redeem
+multi-audio-commands
+	random
+gif
+	GL
+	Hydrate
+	sabalink
+	dookie
+	stab
+	westernworld
+	emily
+	i'mout
+	catJAM
+
+txt
+	flippers
+	focker D:
+	lurk
+	notfine
+
+	sprites
+	sso
+	stickers
+	unlurk
+	wurk
+	z1wrap
+	!srinfo
+
+
+other
+	!1
+	cocadeeznuts
+tts
+	jim
+
+
+special
+	watch time
+	timeout
+	tts
+*/
+
+const ShuffleBag = require('giffo-shufflebag');
+const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+const replyBag = new ShuffleBag(attacks);
+const user_array = [];
 async function processCommands(user, message, flags, self, extra) {
-	checkProfileImage(user);
+	async function writeProfileImage(){
+		const filename = `/var/www/html/stream/assets/users/icon/${user}.php`;
+		const profile_image_url = (await twitchInfo.getUsers(user)).profile_image_url;
+		const content = `<?php $name='${profile_image_url}';$fp=fopen($name,'rb');header("Content-Type:image/png");header("Content-Length:".filesize($name));fpassthru($fp);exit;?>`;
+		fs.writeFile(filename, content, err => {
+			if (err) {
+				console.error(err);
+			}
+			// file written successfully
+		});
+	}
+	async function checkProfileImage(user) {
+		user = user.toLowerCase();
+		console.log('fired');
+		const filename = `/var/www/html/stream/assets/users/icon/${user}.php`;
+
+		await writeProfileImage();
+
+		fs.access(filename, fs.F_OK, err => {
+			if (err) { // doesn't exist
+				console.log('doesn\'t exist');
+				return;
+			}
+			console.log('exists');
+		});
+	}
+
+	const isNewUser = !user_array.includes(user);
+	if(isNewUser) {
+		user_array.push(user);
+		const alert = findAlertByString(user.toLowerCase());
+		if(alert)
+			sendMessage('Alert', alert);
+		await checkProfileImage(user);
+	}
 
 	if(user === process.env.BOT_USER) return;
 
 	let message_lower = message.toLowerCase();
 	//console.log(`x: ${test2(message)}`);
-	log('debug', `message: ${message}`);
 
 	if(flags.broadcaster) {
 		if(message_lower.indexOf('!reload') !== -1)
-			loadCommands('commands.json');
+			global_commands_list = loadCommands('commands.json');
 		if(message_lower.indexOf('!debug') !== -1)
 			debug = !debug;
 		if(message_lower.indexOf('!ec') !== -1)
@@ -138,16 +222,87 @@ async function processCommands(user, message, flags, self, extra) {
 			console.log('Disable', query);
 		}
 	}
-	if(user == "sypherce"   ||
-	   user == "missliss15")
+	if(message_lower.startsWith('!so')) {
+		let query = getQuery(message_lower, '!so').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ')[0];
+		if(query.length === 0)
+			query = 'sypherce';
+		const channel_info = await twitchInfo.getChannelInformation(`${query}`);
+
+		channel_info.game_and_title = channel_info.game_name;
+		if(channel_info.game_name === 'Retro') {
+			if(channel_info.title.length > 45)
+				channel_info.title = `${channel_info.title.substr(0, 45)}...`;
+
+			channel_info.game_and_title = `${channel_info.game_name} (${channel_info.title})`;
+		}
+		bot.Say(`Hey, you should check out twitch.tv/${channel_info.broadcaster_name} ! They were last playing ${channel_info.game_and_title}.`);
+	}
+	if(message_lower.indexOf('!library') !== -1) {
+		const item_list = ["The Fighter's Sword", "The Master Sword", "The Master Sword", "The Butter Sword", "The Fighter's Shield",
+			"The Red Shield", "The Mirror Shield", "The Green Clothes", "The Blue Mail", "The Red Mail", "The Pegasus Shoes", "The Power Glove",
+			"The Titan's Mitt", "Zora's Flippers", "The Moon Pearl", "The Bow", "The Silver Arrows", "The Boomerang", "The Magical Boomerang",
+			"The Hookshot", "some Bombs", "a Mushroom", "The Magic Powder", "The Fire Rod", "The Ice Rod", "The Bombos Medallion", "The Ether Medallion",
+			"The Quake Medallion", "The Lantern", "The Magic Hammer", "The Shovel", "The Ocarina", "a Bug Catching Net", "The Book of Mudora",
+			"an Empty Bottle", "The Cane of Somaria", "The Cane of Byrna ", "a Magic Cape", "The Magic Mirror", "some Medicine of Life",
+			"some Medicine of Magic", "some Medicine of Life and Magic", "a Fairy enslaved in a jar", "a Bee in a jar", "a Golden Bee in a jar",
+			"a Super Bomb", "an Arrow", "some Rupee.... I mean Garbage"];
+		const item = item_list[Math.floor(Math.random() * item_list.length)];
+		bot.Say(`${user}X says that ${item} is in the Library!`);
+	}
+	if(message_lower.startsWith('!unso')) {
+		let query = getQuery(message_lower, '!unso').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ')[0];
+		if(query.length === 0)
+			query = 'sypherce';
+		const channel_info = await twitchInfo.getChannelInformation(`${query}`);
+
+		bot.Say(`I take it back, don't follow ${channel_info.broadcaster_name}`);
+	}
+	if(message_lower.indexOf('@ecrehpys') !== -1) {
+		switch (replyBag.next()){
+		case 0:
+			bot.Say(`Meow @${user}`);
+			break;
+		case 1:
+			bot.Say(`@${user} sypher18Awkward`);
+			break;
+		case 2:
+			bot.Say(`@${user} sypher18OMG`);
+			break;
+		case 3:
+			bot.Say(`WHAT @${user.toUpperCase()}!?!??!!?!?`);
+			break;
+		case 4:
+			bot.Say(`@${user} sypher18Cry`);
+			break;
+		case 5:
+			bot.Say(`NiCe @${user}`);
+			break;
+		case 6:
+			bot.Say(`FIGHT ME @${user.toUpperCase()}!`);
+			sendMessage('Audio', `muten_whip.mp3`);
+			break;
+		case 7:
+			bot.Say(`@${user} └(°□°└）`);
+			break;
+		case 8:
+			bot.Say(`You know what? SHUT UP! D:`);
+			sendMessage('Audio', `office_shut_up.mp3`);
+			break;
+		}
+	}
+	if(message_lower.indexOf('!commands') !== -1 || message_lower.indexOf('!sounds') !== -1) {
+		bot.Say('https://sypherce.github.io/stream/sounds.html');
+	}
+	if(user === "sypherce"   ||
+	   user === "missliss15")
 		if(tired("!untired", false, message_lower)) return;
 
-	if(user == "sypherce"      ||
-	   user == "missliss15"    ||
-	   user == "residentemil_" ||
-	   user == "muten_pizza"   ||
-	   user == "subtlewookie"  ||
-	   user == "xjrigsx") {
+	if(user === "sypherce"      ||
+	   user === "missliss15"    ||
+	   user === "residentemil_" ||
+	   user === "muten_pizza"   ||
+	   user === "subtlewookie"  ||
+	   user === "xjrigsx") {
 		if(tired("!tired", true, message_lower)) return;
 	}
 
@@ -170,8 +325,8 @@ async function processCommands(user, message, flags, self, extra) {
 		}
 	}
 
-	let number = await processCommandsPart2(user, message, flags, self, extra);
-	log('debug', number + ' Commands activated!');
+	const number = await processCommandsPart2(user, message, flags, self, extra);
+	log('debug', `${user}(${number}): ${message}`);
 }
 
 async function processVariables(user, query_string, task_string) {
@@ -202,7 +357,7 @@ async function processVariables(user, query_string, task_string) {
 	}
 
 	task_string = task_string.replace(/\$\(\s*user\s*\)/,	user);
-	if(channel_info !==null) {
+	if(channel_info !== null) {
 		task_string = task_string.replace(/\$\(\s*touser\s*\)/, channel_info.game_and_title);
 		task_string = task_string.replace(/\$\(\s*game_and_title\s*\)/, channel_info.game_and_title);
 		task_string = task_string.replace(/\$\(\s*game\s*\)/, channel_info.game_name);
@@ -221,33 +376,54 @@ async function processVariables(user, query_string, task_string) {
 
 	return task_string;
 }
+function findAlertByString(string, commands = global_commands_list) {
+	for (let index = 0; index < commands.length; index++) {
+		const keyword = typeof commands[index].altkey !== 'undefined' ?
+			commands[index].altkey.toString() :
+			commands[index].keyword.toString();
 
-async function processCommandsPart2(user, message, _flags, _self, extra) {
-	//check if 'string' contains indexOf(). if it does, we return it's (contents)
-	function keywordIsIndexOf(string) {
-		const start = 'indexOf(\'';
-		const end = '\')';
-
-		let start_index = string.indexOf(start);
-		let end_index = string.lastIndexOf(end);
-		if(start_index === -1 | end_index === -1)
-			return '';
-
-		return string.slice(start_index + start.length, end_index);
+		if(keyword === string)
+			return commands[index].task.at(0).alert;
 	}
+	return undefined;
+}
 
+function findCommandByString(string, commands = global_commands_list) {
+	for (let index = 0; index < commands.length; index++) {
+		let keyword = commands[index].keyword.toString();
+		if(typeof commands[index].altkey  !== 'undefined')
+			keyword = commands[index].altkey.toString();
+
+		if(keyword === string){
+			if(typeof commands[index].task.at(0).videonow !== 'undefined')
+				return commands[index].task.at(0).videonow.toString();
+			else if(typeof commands[index].task.at(0).alert !== 'undefined')
+				return commands[index].task.at(0).alert.toString();
+
+			//console.log(`${commands[index]} __ ${commands[index].task}__ ${commands[index].task.media}`);
+			//console.log(`${JSON.stringify(commands[index])} __ ${JSON.stringify(commands[index].task)}__ ${JSON.stringify(commands[index].task.media)}`);
+			return commands[index].task[0].media.toString();
+		}
+		//else
+		//	console.log(`${keyword} __ ${command_string}`);
+	}
+	return undefined;
+}
+
+
+async function processCommandsPart2(user, message, _flags, _self, extra, commands = global_commands_list) {
 	let message_lower = message.toLowerCase();
 	let retVal = 0;
 
-	for (let commands_i = 0; commands_i < commands.length; commands_i++) {
-		let this_command = commands[commands_i];
+	for (let index = 0; index < commands.length; index++) {
+		let this_command = commands[index];
 		if(!this_command.active)
 			continue;//skips command, continues iterating
 
 		log('verbose', `this_command.task: ${this_command.task}`);
 		for (let keyword_i = 0; keyword_i < this_command.keyword.length; keyword_i++) {
-			let comparison = this_command.keyword[keyword_i];
-			let query = message.substr(message_lower.indexOf(comparison) + comparison.length);
+			let comparison = this_command.keyword.at(keyword_i);
+			const query = message.substr(message_lower.indexOf(comparison) + comparison.length);
 
 			log('verbose', `keywordIsIndexOf: ${comparison}`);
 			let prefix = '';
@@ -260,93 +436,124 @@ async function processCommandsPart2(user, message, _flags, _self, extra) {
 				if(this_command.cooldown > extra.timestamp - this_command.timestamp) {
 					const cooldown_seconds = Math.ceil((this_command.cooldown - (extra.timestamp - this_command.timestamp)) / 1000);
 					whisper_wrapper(`@${user} cooldown for ${cooldown_seconds} more second ${((cooldown_seconds > 1) ? 's' : '')}`, user);
+					continue;
 				}
-				else {
-					commands[commands_i].timestamp = extra.timestamp;
+				commands[index].timestamp = extra.timestamp;
 
-					for (let task_i = 0; task_i < this_command.task.length; task_i++) {
-						let this_task = this_command.task[task_i];
-						if(this_task.tts) {
-							let processed_message = await processVariables(user, query, this_task.tts);
-							sendMessage('TTS', processed_message);
+				for (let task_i = 0; task_i < this_command.task.length; task_i++) {
+					let this_task = this_command.task[task_i];
+					if(this_task.customaudio) {
+						this_task = null;
+						let args = message_lower.substr(message_lower.indexOf('!ca ') + 4).split(' ');
+						if(args.length %3 !== 0) {
+							say_wrapper(`Syntax Error: !ca cmd start duration ...`);
+							return retVal;
 						}
-						if(this_task.delay) {
-							await new Promise(resolve => setTimeout(resolve, this_task.delay));
-							log('verbose', `!delay ${parseInt(this_task.delay)}`);
-						}
-						if(this_task.chat) {
-							let processed_message = await processVariables(user, query, this_task.chat);
-							say_wrapper(processed_message);
-						}
-
-						//https://animate.style/#javascript
-						if(this_task.media) {
-							if(this_task.media.indexOf('mp4') !== -1)
-								sendMessage('Video', this_task.media);
-							else
-								sendMessage('Audio', this_task.media);
-						}
-						const enable_videos_and_songs = true;
-						if(this_task.song) {
-							if(enable_videos_and_songs) sendMessage('Song', this_task.song);
-							else sendMessage('SongSprite', this_task.song);
-						}
-						if(this_task.videonow) {
-							if(enable_videos_and_songs && (typeof this_command.tired.active === 'undefined' || this_command.tired.active === false)){
-								if(typeof this_command.lasttimestamp === 'undefined') {
-									this_command.lasttimestamp = this_command.timestamp;
-								}
-								if(typeof this_command.tired.max_count === 'undefined') {
-									this_command.tired.max_count = 3;
-									this_command.tired.counter = 0;
-								}
-								if(typeof this_command.tired.active_delay === 'undefined') {
-									this_command.tired.active_delay = 1;
-								}
-
-								console.log(this_command.timestamp);
-								if(this_command.timestamp > this_command.lasttimestamp + this_command.tired.active_delay) {
-									console.log(`${this_command.timestamp} > ${this_command.lasttimestamp} + ${this_command.tired.active_delay}`);
-									this_command.lasttimestamp = this_command.timestamp;
-									this_command.tired.counter++;
-									console.log(`${this_command.tired.counter}`);
-									if(this_command.tired.counter > this_command.tired.max_count) {
-										this_command.tired.active = true;
-									}
-								}
-
-								sendMessage('VideoNow', this_task.videonow);
-							}
-							else {
-								sendMessage('SongSprite', this_task.videonow);
+						for (let i = 0; i < args.length; i+=3) {
+							args[i] = findCommandByString(args[i]);
+							if(typeof args[i] === 'undefined')
+								continue;
+							if(typeof args[i] === 'object')
+								args[i] = args[i][0];
+							if(args[i].endsWith('.gif')) {
+								args[i] = args[i].substr(0, args[i].lastIndexOf(".gif")) + ".mp3";
 							}
 						}
-						if(this_task.joe) {
-							let joe_string = message_lower.substr(message_lower.indexOf('!joe ') + 5);
+						sendMessage('CustomAudio', args);
+						return retVal;
 
-							function getRandomInt(max) {
-								return Math.floor(Math.random() * max);
-							}
-							let repeat_length = 2;
-							let new_string = '';
-							for(let i = 0; i < joe_string.length; i++){
-								if(i == 0 || i == joe_string.length - 1) {
-									new_string += joe_string[i];
-								}
-								else {
-									let random_length = 2 + Math.floor(Math.random() * 6);
-									if(random_length > repeat_length)
-										repeat_length = random_length;
-
-									new_string += joe_string[i].repeat(repeat_length);
-								}
-							};
-							joe_string = new_string;
-							say_wrapper(joe_string);
-						}
-
-						retVal++;
 					}
+
+					if(this_task.tts) {
+						let processed_message = await processVariables(user, query, this_task.tts);
+						sendMessage('TTS', processed_message);
+					}
+					if(this_task.delay) {
+						await new Promise(resolve => setTimeout(resolve, this_task.delay));
+						log('verbose', `!delay ${parseInt(this_task.delay)}`);
+					}
+					if(this_task.chat) {
+						let processed_message = await processVariables(user, query, this_task.chat);
+						say_wrapper(processed_message);
+					}
+					if(this_task.alert) {
+						sendMessage('Alert', this_task.alert);
+					}
+
+					//https://animate.style/#javascript
+					if(this_task.media) {
+						let this_media = this_task.media;
+						if(typeof this_media === 'object') {
+							if(commands[index].task[task_i].media_counter >= commands[index].task[task_i].media.length)
+								commands[index].task[task_i].media_counter = 0;
+							this_media = commands[index].task[task_i].media[commands[index].task[task_i].media_counter];
+							commands[index].task[task_i].media_counter++;
+						}
+
+						if(this_media.endsWith('.mp4'))
+							sendMessage('Video', this_media);
+						else
+							sendMessage('Audio', this_media);
+					}
+					const enable_videos_and_songs = true;
+					if(this_task.song) {
+						if(enable_videos_and_songs) sendMessage('Song', this_task.song);
+						else sendMessage('SongSprite', this_task.song);
+					}
+					if(this_task.videonow) {
+						if(!enable_videos_and_songs || (typeof this_command.tired.active !== 'undefined') && this_command.tired.active === true) {
+							sendMessage('SongSprite', this_task.videonow);
+						}
+						else {
+							this_command.lasttimestamp      ??= this_command.timestamp;
+							this_command.tired.max_count    ??= 3;
+							this_command.tired.counter      ??= 0;
+							this_command.tired.active_delay ??= 1;
+
+							//console.log(this_command.timestamp);
+							if(this_command.timestamp > this_command.lasttimestamp + this_command.tired.active_delay) {
+								//console.log(`${this_command.timestamp} > ${this_command.lasttimestamp} + ${this_command.tired.active_delay}`);
+								this_command.lasttimestamp = this_command.timestamp;
+								//temporarily disabled until we work on the client side
+								//this_command.tired.counter++;
+								//console.log(`${this_command.tired.counter}`);
+								if(this_command.tired.counter > this_command.tired.max_count) {
+									this_command.tired.active = true;
+								}
+							}
+
+							sendMessage('VideoNow', this_task.videonow);
+						}
+					}
+					if(this_task.lips) {
+						const string = message.substr(message.indexOf('!lips ') + 6).trim();
+						const array = string.split(' ');
+
+						await (async function(){
+							array[0] = await emote.get(string);
+						})();
+
+						sendMessage('Lips', array);
+					}
+					if(this_task.joe) {
+						const original = message_lower.substr(message_lower.indexOf('!joe ') + 5);
+						let repeat_length = 2;
+						let result = '';
+						for(let letter = 0; letter < original.length; letter++){
+							if(letter == 0 || letter == original.length - 1) {
+								result += original[letter];
+								continue;
+							}
+							const random_length = 2 + Math.floor(Math.random() * 6);
+							if(random_length > repeat_length)
+								repeat_length = random_length;
+
+								result += original[letter].repeat(repeat_length);
+						};
+						say_wrapper(result);
+					}
+
+					retVal++;
 				}
 			}
 		}
@@ -384,7 +591,7 @@ async function getAuthToken(CLIENTIDGOESHERE, CLIENTSECRETGOESHERE) {
 }
 
 {//dummy functions
-	let chatter_counter = 0;
+	var lurker_counter = [];//add lurker counter
 	streamer.onMessageDeleted = (id, extra) => {
 		console.log(`streamer.onMessageDeleted: ${id} ${extra}`);
 	};
@@ -398,8 +605,10 @@ async function getAuthToken(CLIENTIDGOESHERE, CLIENTSECRETGOESHERE) {
 		case 'nightbot':
 			break;
 		default:
-			chatter_counter++;
-			console.log(`Chatter #${chatter_counter}, ${user} joined!`);
+			if(lurker_counter.indexOf(user) === -1) {
+				lurker_counter.push(user);
+				console.log(`Lurker #${lurker_counter.length}, ${user} joined!`);
+			}
 			break;
 		}
 	};
@@ -410,8 +619,10 @@ async function getAuthToken(CLIENTIDGOESHERE, CLIENTSECRETGOESHERE) {
 		case 'nightbot':
 			break;
 		default:
-			chatter_counter--;
-			console.log(`Chatter #${chatter_counter}, ${user} parted!`);
+			if(lurker_counter.indexOf(user) !== -1) {
+				lurker_counter.pop(user);
+				console.log(`Lurker #${lurker_counter.length}, ${user} parted!`);
+			}
 			break;
 		}
 	};
@@ -420,6 +631,7 @@ async function getAuthToken(CLIENTIDGOESHERE, CLIENTSECRETGOESHERE) {
 	};
 	streamer.onBan = (bannedUsername, extra) => {
 		console.log(`streamer.onBan ${bannedUsername} ${extra}`);
+		say_wrapper(`Goodbye ${bannedUsername}!`)
 		sendMessage('Audio', "muten_dungeon.mp3");
 	};
 	streamer.onTimeout = (timedOutUsername, durationInSeconds, extra) => {
@@ -458,22 +670,14 @@ async function getAuthToken(CLIENTIDGOESHERE, CLIENTSECRETGOESHERE) {
 	};
 }
 streamer.onChat = (user, message, flags, self, extra) => {
-	let _dummy;
-	processCommands(user, message, flags, self, extra).then(
-		result => _dummy = result
-	);
+	processCommands(user, message, flags, self, extra);
 };
 bot.onWhisper = (user, message, flags, self, extra) => {
-	let _dummy;
-	processCommands(user, message, flags, self, extra).then(
-		result => _dummy = result
-	);
+	processCommands(user, message, flags, self, extra);
+	bot.Say(`@${user}`);
 };
 streamer.onCommand = (user, command, message, flags, extra) => {
-	let _dummy;
-	processCommands(user, `!${command} ${message}`, flags, null, extra).then(
-		result => _dummy = result
-	);
+	processCommands(user, `!${command} ${message}`, flags, null, extra);
 };
 
 function say_wrapper(message) {
@@ -487,7 +691,7 @@ function whisper_wrapper(message, _user) {
 }
 
 const socket = new server({
-	httpServer: http.createServer().listen(1337)
+	httpServer: http.createServer().listen(1338)
 });
 
 function sendMessage(id, contents) {
@@ -510,20 +714,21 @@ socket.on('request', function(request) {
 	connection.on('message', function(message) {
 		let object = JSON.parse(message.utf8Data);
 		console.log(message.utf8Data);
-		if(object.Message === 'Client') {
+		switch (object.Message){
+		case 'Client':
 			sendMessage('Message', 'Server');
-		}
-		else if(object.Message === 'Request Queue') {
-
+			break;
+		case 'Request Queue':
 			let entry = [mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries())),
 				mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries())),
 				mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries()))];
 			sendMessage('Sr', entry[0]);
 			sendMessage('Sr', entry[1]);
 			sendMessage('Sr', entry[2]);
-		}
-		else {
+			break;
+		default:
 			console.log('Unsupported!');
+			break;
 		}
 	});
 
