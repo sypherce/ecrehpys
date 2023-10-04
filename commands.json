@@ -2062,6 +2062,11 @@
 		"author": "residentemil_"
 	},
 	{
+		"keyword": ["mrow"],
+		"task":[{"media": "emil_mrow.mp3"}],
+		"author": "residentemil_"
+	},
+	{
 		"keyword": ["noise"],
 		"task":[{"media": "ultraminimalist_noise.mp3"}],
 		"author": "ultraminimalist"
@@ -2071,6 +2076,12 @@
 		"keyword": ["kick\\s*it"],
 		"task":[{"media": "wookie_kickit.mp3"}],
 		"author": "subtlewookie"
+	},
+	{
+		"altkey": ["peaceful"],
+		"keyword": ["peace(ful|)"],
+		"task":[{"media": "emil_peaceful.mp3"}],
+		"author": "residentemil_"
 	}
 
 ]

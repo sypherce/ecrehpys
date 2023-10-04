@@ -38,24 +38,25 @@ function loadCommands(filename) {
 				this_command.task[task_i].media_counter = 0;
 		}
 
-		let keyword = this_command.keyword.at(0);
+		let keyword = (this_command.altkey === 'undefined') ?
+			this_command.altkey:
+			this_command.keyword.at(0);
 
-		if(typeof this_command.altkey !== 'undefined') {
-			keyword = this_command.altkey;
-		}
-		if(typeof this_command.altkey === 'undefined') {
-			for(let i = 0; i < 5; i++) {
-				keyword = keyword.replace('\')', '');
-				keyword = keyword.replace('.*', '');
-				keyword = keyword.replace('\\s*', ' ');
-				keyword = keyword.replace('[s]', ' ');
-			}
+		if(keyword !== this_command.altkey) {
+//			for(let i = 0; i < 5; i++) {
+			keyword = keyword.replaceAll('\')', '');
+			keyword = keyword.replaceAll('.*', '');
+			keyword = keyword.replaceAll('\\s*', ' ');
+			keyword = keyword.replaceAll('[s]', ' ');
+//			}
 		}
 		let task_string = this_command.task[0].song || this_command.task[0].videonow;
 		if(typeof this_command.description !== 'undefined') task_string = this_command.description;
 		if(typeof task_string              === 'undefined') task_string = "";
 
-		const formatted_author_string = this_command.author === '' ? '' : ` [${this_command.author}]`;
+		const formatted_author_string = (this_command.author === '') ?
+			'' :
+			` [${this_command.author}]`;
 		switch(keyword) {
 			case '!lips':
 			case 'joe':
@@ -378,9 +379,9 @@ async function processVariables(user, query_string, task_string) {
 }
 function findAlertByString(string, commands = global_commands_list) {
 	for (let index = 0; index < commands.length; index++) {
-		const keyword = typeof commands[index].altkey !== 'undefined' ?
-			commands[index].altkey.toString() :
-			commands[index].keyword.toString();
+		const keyword = (typeof commands[index].altkey === 'undefined') ?
+			commands[index].keyword.toString() :
+			commands[index].altkey.toString();
 
 		if(keyword === string)
 			return commands[index].task.at(0).alert;
@@ -399,10 +400,15 @@ function findCommandByString(string, commands = global_commands_list) {
 				return commands[index].task.at(0).videonow.toString();
 			else if(typeof commands[index].task.at(0).alert !== 'undefined')
 				return commands[index].task.at(0).alert.toString();
+			else if(typeof commands[index].task.at(0).media !== 'undefined')
+				return commands[index].task.at(0).media.toString();
+			else if(typeof commands[index].task.at(0).song !== 'undefined')
+				return commands[index].task.at(0).song.toString();
 
 			//console.log(`${commands[index]} __ ${commands[index].task}__ ${commands[index].task.media}`);
 			//console.log(`${JSON.stringify(commands[index])} __ ${JSON.stringify(commands[index].task)}__ ${JSON.stringify(commands[index].task.media)}`);
-			return commands[index].task[0].media.toString();
+
+			return "";
 		}
 		//else
 		//	console.log(`${keyword} __ ${command_string}`);

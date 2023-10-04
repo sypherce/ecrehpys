@@ -243,15 +243,13 @@ function initWebSocket() {
 		}
 		case 'CustomAudio': {
 			let delay = 0;
-			const value_array = String(value).split(',');
 			const max_sound_cmds = 5;
-			for(let i = 0; i < value_array.length && i < max_sound_cmds * 3; i += 3) {
+			for(let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
 				const max_duration = 15000;
-				const cmd = `${value_array[i].startsWith('assets/alerts/') ? '../../' : ''}${value_array[i]}`;
-				const start = parseInt(value_array[i+1]);
-				const duration = (parseInt(value_array[i+2]) < max_duration) ?
-					parseInt(value_array[i+2]) :
-					max_duration;
+				const cmd = `${value[i].startsWith('assets/alerts/') ? '../../' : ''}${value[i].split(',')[0]}`;
+				const start = parseInt(value[i+1]);
+				const duration = (parseInt(value[i+2]) < max_duration) ?
+					parseInt(value[i+2]) : max_duration;
 				console.log(`${cmd}: ${start}, ${duration}`);
 				const cmd_path = `assets/${cmd.endsWith('mp4') ? `music` : `alerts`}/${cmd}`
 
