@@ -258,7 +258,7 @@ function initWebSocket() {
 					parseInt(value[i+2]) :
 					max_duration;
 				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
-				const cmd_path = `assets/${(cmd.endsWith('mp4')|cmd.endsWith('gif')) ? `music` : `alerts`}/${cmd}`//fix gif right here.
+				const cmd_path = `assets/${(cmd.endsWith('mp4')|cmd.endsWith('gif')) ? `music` : `alerts`}/${cmd}`;
 
 				if(delay !== 0)//if there's a delay from the last sound
 					await new Promise(r => setTimeout(r, delay));
