@@ -11,6 +11,9 @@ ttsInit();
 const local_music_path = 'assets/music';
 
 function playSongSprite(file) {
+	if(file.endsWith('.gif'))//we pass gifs into this for some reason. reason is laziness
+		file = file.substr(0, file.lastIndexOf(".gif")) + ".mp3";
+
 	function urlExists(url){
 		const http = new XMLHttpRequest();
 
@@ -192,10 +195,12 @@ function playSound(file) {
 	});
 	sound.play();
 }
+
+//todo: gif needs handled elsewhere, proper console.log
+//research: do i need to sound.unload() the sound myself?
 function playSoundSprite(file, offset = -1, duration = -1) {
-	console.log(file);
-	console.log(offset, duration);
-	console.log(typeof offset, typeof duration);
+	if(file.endsWith('.gif'))//we pass gifs into this for some reason; reason is laziness
+		file = file.substr(0, file.lastIndexOf(".gif")) + ".mp3";
 	let sound = new Howl({
 		src: [file],
 		sprite: {
@@ -243,19 +248,28 @@ function initWebSocket() {
 		}
 		case 'CustomAudio': {
 			let delay = 0;
-			const max_sound_cmds = 5;
+			const max_sound_cmds = 100;
+			let position = 0;
 			for(let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
-				const max_duration = 15000;
+				const max_duration = 10000;
 				const cmd = `${value[i].startsWith('assets/alerts/') ? '../../' : ''}${value[i].split(',')[0]}`;
 				const start = parseInt(value[i+1]);
-				const duration = (parseInt(value[i+2]) < max_duration) ?
-					parseInt(value[i+2]) : max_duration;
-				console.log(`${cmd}: ${start}, ${duration}`);
-				const cmd_path = `assets/${cmd.endsWith('mp4') ? `music` : `alerts`}/${cmd}`
+				let duration = (parseInt(value[i+2]) < max_duration) ?
+					parseInt(value[i+2]) :
+					max_duration;
+				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
+				const cmd_path = `assets/${(cmd.endsWith('mp4')|cmd.endsWith('gif')) ? `music` : `alerts`}/${cmd}`//fix gif right here.
 
-				if(delay !== 0)
+				if(delay !== 0)//if there's a delay from the last sound
 					await new Promise(r => setTimeout(r, delay));
+				if(position + duration > max_duration)
+					duration = max_duration - position;
 				playSoundSprite(cmd_path, start, duration);
+				position = position + duration;
+				console.log(`position: ${position}`)
+				console.log(`if(${position} + ${duration} >= ${max_duration})`);
+				if(position >= max_duration)
+					break;
 				delay = duration;
 			}
 			return;
@@ -306,7 +320,7 @@ function initWebSocket() {
 		}
 		case 'Video': {
 			const video = document.createElement('video');
-			video.setAttribute('id', 'NewVideo');
+			video.sy('id', 'NewVideo');
 			video.src = value;
 			video.autoplay = true;
 			video.controls = false;

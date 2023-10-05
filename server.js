@@ -486,7 +486,6 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 						sendMessage('Alert', this_task.alert);
 					}
 
-					//https://animate.style/#javascript
 					if(this_task.media) {
 						let this_media = this_task.media;
 						if(typeof this_media === 'object') {

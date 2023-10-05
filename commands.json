@@ -2082,6 +2082,22 @@
 		"keyword": ["peace(ful|)"],
 		"task":[{"media": "emil_peaceful.mp3"}],
 		"author": "residentemil_"
+	},
+	{
+		"altkey": ["wheel"],
+		"keyword": ["(wheelofwater|wheel)"],
+		"task":[{"media": "emil_wheelofwater.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["daftwater"],
+		"task":[{"media": "emil_daftwater.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["wheelofbeef"],
+		"task":[{"media": "emil_wheelofbeef.mp3"}],
+		"author": "residentemil_"
 	}
 
 ]
