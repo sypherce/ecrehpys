@@ -10,9 +10,16 @@ import * as fb2000 from './foobar2000.js';
 ttsInit();
 const local_music_path = 'assets/music';
 
+function replaceExtension(filename, original, replacement) {
+	if(filename.endsWith(original))
+		filename = filename.substr(0, filename.lastIndexOf(original)) + replacement;
+
+	return filename;
+}
+
 function playSongSprite(file) {
-	if(file.endsWith('.gif'))//we pass gifs into this for some reason. reason is laziness
-		file = file.substr(0, file.lastIndexOf(".gif")) + ".mp3";
+	//we pass gifs into this for some reason. reason is laziness
+	file = replaceExtension(file, '.gif', '.mp3');
 
 	function urlExists(url){
 		const http = new XMLHttpRequest();
@@ -146,9 +153,9 @@ export function sendMessage(id, contents) {
 
 const temp_x = {
 	list: [],
-	play: function(filename) {
+	play: (filename) => {
 		let playing = false;
-		this.list.forEach(function (item, index) {
+		this.list.forEach((item, index) => {
 			console.log(item, index);
 
 			if(item._src === filename) {
@@ -188,7 +195,7 @@ function playSound(file) {
 	let sound = new Howl({
 		src: [file],
 		html5: true,
-		onend: function() {
+		onend: () => {
 			sound.unload();
 			console.log('Unloaded!');
 		},
@@ -199,19 +206,20 @@ function playSound(file) {
 //todo: gif needs handled elsewhere, proper console.log
 //research: do i need to sound.unload() the sound myself?
 function playSoundSprite(file, offset = -1, duration = -1) {
-	if(file.endsWith('.gif'))//we pass gifs into this for some reason; reason is laziness
-		file = file.substr(0, file.lastIndexOf(".gif")) + ".mp3";
+	//we pass gifs into this for some reason. reason is laziness
+	file = replaceExtension(file, '.gif', '.mp3');
+
 	let sound = new Howl({
 		src: [file],
 		sprite: {
 			key1: [offset, duration]
 		},
 		html5: true,
-		onend: function() {
+		onend: () => {
 			sound.unload();
 			console.log('Unloaded!');
 		},
-		onload: function() {
+		onload: () => {
 			if(duration === -1) {
 				duration = Math.floor(Math.random() * 7000) + 3000;
 			}
@@ -225,14 +233,14 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 }
 function initWebSocket() {
 	connection = new WebSocket('ws://derrick-server.local:1338');
-	connection.onopen = function() {
+	connection.onopen = () => {
 		sendMessage('Message', 'Client');
 	};
 
-	connection.onclose = function(e) {
+	connection.onclose = (e) => {
 		console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
 
-		setTimeout(function() {
+		setTimeout(() => {
 			initWebSocket();
 		}, 1000);
 	};
@@ -257,19 +265,20 @@ function initWebSocket() {
 				let duration = (parseInt(value[i+2]) < max_duration) ?
 					parseInt(value[i+2]) :
 					max_duration;
-				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
 				const cmd_path = `assets/${(cmd.endsWith('mp4')|cmd.endsWith('gif')) ? `music` : `alerts`}/${cmd}`;
 
 				if(delay !== 0)//if there's a delay from the last sound
 					await new Promise(r => setTimeout(r, delay));
 				if(position + duration > max_duration)
 					duration = max_duration - position;
+				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
 				playSoundSprite(cmd_path, start, duration);
-				position = position + duration;
-				console.log(`position: ${position}`)
+
 				console.log(`if(${position} + ${duration} >= ${max_duration})`);
-				if(position >= max_duration)
+				if(position + duration >= max_duration)
 					break;
+
+				position = position + duration;
 				delay = duration;
 			}
 			return;
@@ -344,14 +353,11 @@ function initWebSocket() {
 				console.log(`value_array: ${value}`);
 				break;
 			}
-			let [video_file,
+			const [video_file,
 				start_animation,
 				mid_animation,
 				end_animation] = value;
-			let audio_file = '';
-			if(video_file.endsWith('.gif')) {
-				audio_file = video_file.substr(0, video_file.lastIndexOf(".gif")) + ".mp3";
-			}
+			const audio_file = replaceExtension(video_file, '.gif', '.mp3');
 
 			async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
 				// We create a Promise and return it
@@ -387,17 +393,17 @@ function initWebSocket() {
 					src: audio_file,
 					html5: true,
 					preload: true,
-					onplay: function() {
+					onplay: () => {
 						const duration = `${parseInt((sound.duration()*1000)/3)}ms`;
-						animateCSS(img, start_animation, duration, function() {
-								animateCSS(img, mid_animation, duration, function() {
+						animateCSS(img, start_animation, duration, () => {
+								animateCSS(img, mid_animation, duration, () => {
 									animateCSS(img, end_animation, duration);
 								});
 							}
 						);
 						document.getElementById('video_div').appendChild(img);
 					},
-					onend: function() {
+					onend: () => {
 						sound.unload();
 					},
 				});
@@ -410,11 +416,11 @@ function initWebSocket() {
 				video.autoplay = true;
 				video.controls = false;
 				video.muted = false;
-				video.onplay= function() {
+				video.onplay= () => {
 					console.log(video.duration);
 					const duration = `${parseInt((video.duration*1000)/3)}ms`;
-					animateCSS(video, start_animation, duration, function() {
-							animateCSS(video, mid_animation, duration, function() {
+					animateCSS(video, start_animation, duration, () => {
+							animateCSS(video, mid_animation, duration, () => {
 								animateCSS(video, end_animation, duration);
 							});
 						}
@@ -451,7 +457,7 @@ function initWebSocket() {
 			};
 			video.onplay = () => video.isplaying = true;
 
-			video.interval = setInterval(async function() {
+			video.interval = setInterval(async () => {
 				const video_file = decodeURI(basefilename(video.src));
 				const foobar_file = await fb2000.getActiveItemFilename();
 				if(video_file !== foobar_file) {
@@ -506,7 +512,7 @@ function initWebSocket() {
 		}
 	}
 
-	connection.onmessage = function(message) {
+	connection.onmessage = (message) => {
 		log('temp', message.data);
 		const object = JSON.parse(message.data);
 		if((Array.isArrayobject)) {
@@ -518,7 +524,7 @@ function initWebSocket() {
 			}
 		}
 		else if(typeof object === 'object') {
-			Object.entries(object).forEach(function([key, value]) {
+			Object.entries(object).forEach(([key, value]) => {
 				handleMessage(object, key, value);
 				log('temp', key);
 				log('temp', value);
@@ -529,7 +535,7 @@ function initWebSocket() {
 		}
 	};
 
-	connection.onerror = function(error) {
+	connection.onerror = (error) => {
 		console.error(`WebSocket error: ${error.message} Closing socket`);
 		connection.close();
 	};

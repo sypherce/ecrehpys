@@ -61,6 +61,7 @@ function loadCommands(filename) {
 			case '!lips':
 			case 'joe':
 			case '!ca':
+			case '!nc':
 				break;
 			default:
 				html = html.concat(`${keyword}${formatted_author_string}<br>\n`);
@@ -190,9 +191,11 @@ async function processCommands(user, message, flags, self, extra) {
 	const isNewUser = !user_array.includes(user);
 	if(isNewUser) {
 		user_array.push(user);
-		const alert = findAlertByString(user.toLowerCase());
+		//handle intro
+		const alert = findAlertByString(`!${user.toLowerCase()}`);
 		if(alert)
 			sendMessage('Alert', alert);
+		//setup profile image for chat overlay
 		await checkProfileImage(user);
 	}
 
@@ -231,8 +234,9 @@ async function processCommands(user, message, flags, self, extra) {
 
 		channel_info.game_and_title = channel_info.game_name;
 		if(channel_info.game_name === 'Retro') {
-			if(channel_info.title.length > 45)
-				channel_info.title = `${channel_info.title.substr(0, 45)}...`;
+			const max_title_length = 45;
+			if(channel_info.title.length > max_title_length)
+				channel_info.title = `${channel_info.title.substr(0, max_title_length)}...`;
 
 			channel_info.game_and_title = `${channel_info.game_name} (${channel_info.title})`;
 		}
@@ -248,7 +252,7 @@ async function processCommands(user, message, flags, self, extra) {
 			"some Medicine of Magic", "some Medicine of Life and Magic", "a Fairy enslaved in a jar", "a Bee in a jar", "a Golden Bee in a jar",
 			"a Super Bomb", "an Arrow", "some Rupee.... I mean Garbage"];
 		const item = item_list[Math.floor(Math.random() * item_list.length)];
-		bot.Say(`${user}X says that ${item} is in the Library!`);
+		bot.Say(`${user} says that ${item} is in the Library!`);
 	}
 	if(message_lower.startsWith('!unso')) {
 		let query = getQuery(message_lower, '!unso').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ')[0];
@@ -417,6 +421,13 @@ function findCommandByString(string, commands = global_commands_list) {
 }
 
 
+function replaceExtension(filename, original, replacement) {
+	if(filename.endsWith(original))
+		filename = filename.substr(0, filename.lastIndexOf(original)) + replacement;
+
+	return filename;
+}
+
 async function processCommandsPart2(user, message, _flags, _self, extra, commands = global_commands_list) {
 	let message_lower = message.toLowerCase();
 	let retVal = 0;
@@ -448,7 +459,12 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 
 				for (let task_index = 0; task_index < this_command.task.length; task_index++) {
 					let this_task = this_command.task[task_index];
-					if(this_task.customaudio) {
+
+					if(this_task.nocommand) {//this needs to be 1st to override other commands
+						return 0;
+					}
+
+					if(this_task.customaudio) {//this needs to be 2nd to override other commands
 						this_task = null;
 						let args = message_lower.substr(message_lower.indexOf('!ca ') + 4).split(' ');
 						if(args.length %3 !== 0) {
@@ -460,14 +476,11 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 							if(typeof args[i] === 'undefined')
 								continue;
 							if(typeof args[i] === 'object')
-								args[i] = args[i][0];
-							if(args[i].endsWith('.gif')) {
-								args[i] = args[i].substr(0, args[i].lastIndexOf(".gif")) + ".mp3";
-							}
+								args[i] = args[i].at(0);
+							replaceExtension(args[i], '.gif', '.mp3');
 						}
 						sendMessage('CustomAudio', args);
 						return retVal;
-
 					}
 
 					if(this_task.tts) {
@@ -710,11 +723,11 @@ function sendMessage(id, contents) {
 	log('debug', `sendMessage(${message})`);
 	connection.sendUTF(message);
 }
-socket.on('request', function(request) {
+socket.on('request', (request) => {
 	connection = request.accept(null, request.origin);
 	console.log(request.origin);
 
-	connection.on('message', function(message) {
+	connection.on('message', (message) => {
 		let object = JSON.parse(message.utf8Data);
 		console.log(message.utf8Data);
 		switch (object.Message){
@@ -735,7 +748,7 @@ socket.on('request', function(request) {
 		}
 	});
 
-	connection.on('close', function(_connection) {
+	connection.on('close', (_connection) => {
 		console.log('connection closed');
 	});
 });

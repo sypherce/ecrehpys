@@ -1,5 +1,10 @@
 [
 	{
+		"keyword": ["!nc"],
+		"task":[{"nocommand": "nc"}],
+		"author": "sypherce"
+	},
+	{
 		"keyword": ["!ca"],
 		"task":[{"customaudio": "ca"}],
 		"author": "sypherce"
@@ -1891,73 +1896,70 @@
 		"author": "muten_pizza"
 	},
 	{
-		"keyword": ["xjrigsx"],
+		"altkey": ["!xjrigsx"],
+		"keyword": ["!xjrigsx|!rigs"],
 		"task":[{"alert": ["assets/alerts/xjrigsx.mp4", "bounceIn", "pulse", "hinge"]}],
 		"author": "xjrigsx"
 	},
 
 	{
-		"keyword": ["adamj93"],
+		"keyword": ["!adamj93"],
 		"task":[{"alert": ["assets/alerts/adamj93.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "adamj93"
 	},
 	{
-		"keyword": ["bogmired"],
+		"keyword": ["!bogmired"],
 		"task":[{"alert": ["assets/alerts/bogmired.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "bogmired"
 	},
 	{
-		"keyword": ["dakoeta"],
+		"keyword": ["!dakoeta"],
 		"task":[{"media": "dakoeta.mp3"}],
 		"author": "dakoeta"
 	},
 	{
-		"keyword": ["davidvk1996"],
+		"keyword": ["!davidvk1996"],
 		"task":[{"alert": ["assets/alerts/davidvk1996.gif", "jackInTheBox", "pulse", "hinge"]}],
 		"author": "davidvk1996"
 	},
 	{
-		"keyword": ["grimbomb"],
+		"keyword": ["!grimbomb"],
 		"task":[{"alert": ["assets/alerts/grimbomb.gif", "slideInDown", "swing", "slideOutUp"]}],
 		"author": "grimbomb"
 	},
 	{
-		"keyword": ["huckleberry__gin"],
+		"keyword": ["!huckleberry__gin"],
 		"task":[{"alert": ["assets/alerts/huckleberry__gin.gif", "bounceIn", "pulse", "slideOutUp"]}],
 		"author": "huckleberry__gin"
 	},
 	{
-		"keyword": ["jedi31177"],
+		"altkey": ["!jedi31177"],
+		"keyword": ["!jedi|!jedi31177"],
 		"task":[{"alert": ["assets/alerts/jedi31177.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "jedi31177"
 	},
 	{
-		"keyword": ["jedi"],
-		"task":[{"alert": ["assets/alerts/jedi31177.gif", "slideInDown", "pulse", "slideOutUp"]}],
-		"author": "jedi31177"
-	},
-	{
-		"keyword": ["missliss15"],
+		"keyword": ["!missliss15"],
 		"task":[{"alert": ["assets/alerts/missliss15.gif", "jackInTheBox", "tada", "hinge"]}],
 		"author": "missliss15"
 	},
 	{
-		"keyword": ["musicngaming"],
+		"keyword": ["!musicngaming"],
 		"task":[{"alert": ["assets/alerts/musicngaming.mp4", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "musicngaming"
 	},
 	{
-		"keyword": ["muten_pizza"],
+		"keyword": ["!muten_pizza"],
 		"task":[{"alert": ["assets/alerts/muten_pizza.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "muten_pizza"
 	},
 	{
-		"keyword": ["sypherce"],
+		"keyword": ["!sypherce"],
 		"task":[{"alert": ["assets/alerts/zelda_oot_woah_redead_scream.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "sypherce"
 	},
 	{
-		"keyword": ["nefael_yunalesca", "nefaelTidusLaugh"],
+		"keyword": ["!nefael_yunalesca", "nefaelTidusLaugh"],
 		"task":[{"alert": ["assets/alerts/nefael_yunalesca.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "nefael_yunalesca"
 	},
@@ -1967,79 +1969,77 @@
 		"author": "nefael_yunalesca"
 	},
 	{
-		"keyword": ["paramixzeph"],
+		"keyword": ["!paramixzeph"],
 		"task":[{"alert": ["assets/alerts/paramixzeph.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "paramixzeph"
 	},
 	{
-		"keyword": ["popcyclopsicle"],
+		"keyword": ["!popcyclopsicle"],
 		"task":[{"alert": ["assets/alerts/pops.mp4", "rotateIn", "flip", "zoomOutDown"]}],
 		"author": "popcyclopsicle"
 	},
 	{
-		"keyword": ["rebecadraws"],
+		"keyword": ["!rebecadraws"],
 		"task":[{"alert": ["assets/alerts/rebecadraws.gif", "bounceIn", "pulse", "rotateOut"]}],
 		"author": "rebecadraws"
 	},
 	{
-		"keyword": ["residentemil_"],
+		"keyword": ["!residentemil_"],
 		"task":[{"alert": ["assets/alerts/residentemil_.gif", "bounceIn", "pulse", "hinge"]}],
 		"author": "residentemil_"
 	},
 	{
-		"keyword": ["rpggamershub"],
+		"keyword": ["!rpggamershub"],
 		"task":[{"alert": ["assets/alerts/rpggamershub.mp4", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "rpggamershub"
 	},
 	{
-		"keyword": ["siegemunde"],
+		"keyword": ["!siegemunde"],
 		"task":[{"alert": ["assets/alerts/siegemunde.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "siegemunde"
 	},
 	{
-		"keyword": ["skizzlethewicked"],
+		"keyword": ["!skizzlethewicked"],
 		"task":[{"alert": ["assets/alerts/skizzlethewicked.gif", "slideInDown", "pulse", "slideOutDown"]}],
 		"author": "skizzlethewicked"
 	},
 	{
-		"keyword": ["subtlewookie"],
+		"keyword": ["!subtlewookie"],
 		"task":[{"alert": ["assets/alerts/subtlewookie.mp4", "fadeIn", "pulse", "fadeOut"]}],
 		"author": "subtlewookie"
 	},
 	{
-		"keyword": ["rob"],
+		"altkey": ["!thedandygaymer"],
+		"keyword": ["rob|thedandygaymer"],
 		"task":[{"alert": ["assets/alerts/thedandygaymer.gif", "jackInTheBox", "pulse", "bounceOut"]}],
 		"author": "thedandygaymer"
 	},
 	{
-		"keyword": ["thedandygaymer"],
-		"task":[{"alert": ["assets/alerts/thedandygaymer.gif", "jackInTheBox", "pulse", "slideOutUp"]}],
-		"author": "thedandygaymer"
-	},
-	{
-		"keyword": ["ultraminimalist"],
+		"keyword": ["!ultraminimalist"],
 		"task":[{"alert": ["assets/alerts/ultraminimalist.mp4", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "ultraminimalist"
 	},
 	{
-		"keyword": ["unordinarywarlord"],
+		"altkey": ["!unordinarywarlord"],
+		"keyword": ["!unordinarywarlord|!pika"],
 		"task":[{"alert": ["assets/alerts/unordinarywarlord.gif", "bounceIn", "pulse", "rollOut"]}],
 		"author": "unordinarywarlord"
 	},
 	{
-		"keyword": ["viggotheecarpathian"],
+		"altkey": ["!viggotheecarpathian"],
+		"keyword": ["!viggotheecarpathian|!viggo"],
 		"task":[{"media": "viggotheecarpathian.mp3"}],
 		"author": "viggotheecarpathian"
 	},
 	{
-		"keyword": ["wengday"],
+		"keyword": ["!wengday"],
 		"task":[{"alert": ["assets/alerts/wengday.gif", "flipInX", "flip", "flipOutY"]}],
 		"author": "wengday"
 	},
 	{
-		"keyword": ["zellsh0t"],
+		"keyword": ["!zellsh0t"],
 		"task":[{"alert": ["assets/alerts/zellsh0t.gif", "slideInDown", "shake", "slideOutUp"]}],
-		"author": "zellsh0"
+		"author": "zellsh0t"
 	},
 
 	{
