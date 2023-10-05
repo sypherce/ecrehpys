@@ -427,8 +427,8 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 			continue;//skips command, continues iterating
 
 		log('verbose', `this_command.task: ${this_command.task}`);
-		for (let keyword_i = 0; keyword_i < this_command.keyword.length; keyword_i++) {
-			let comparison = this_command.keyword.at(keyword_i);
+		for (let keyword_index = 0; keyword_index < this_command.keyword.length; keyword_index++) {
+			let comparison = this_command.keyword.at(keyword_index);
 			const query = message.substr(message_lower.indexOf(comparison) + comparison.length);
 
 			log('verbose', `keywordIsIndexOf: ${comparison}`);
@@ -446,8 +446,8 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 				}
 				commands[index].timestamp = extra.timestamp;
 
-				for (let task_i = 0; task_i < this_command.task.length; task_i++) {
-					let this_task = this_command.task[task_i];
+				for (let task_index = 0; task_index < this_command.task.length; task_index++) {
+					let this_task = this_command.task[task_index];
 					if(this_task.customaudio) {
 						this_task = null;
 						let args = message_lower.substr(message_lower.indexOf('!ca ') + 4).split(' ');
@@ -489,10 +489,10 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 					if(this_task.media) {
 						let this_media = this_task.media;
 						if(typeof this_media === 'object') {
-							if(commands[index].task[task_i].media_counter >= commands[index].task[task_i].media.length)
-								commands[index].task[task_i].media_counter = 0;
-							this_media = commands[index].task[task_i].media[commands[index].task[task_i].media_counter];
-							commands[index].task[task_i].media_counter++;
+							if(commands[index].task[task_index].media_counter >= commands[index].task[task_index].media.length)
+								commands[index].task[task_index].media_counter = 0;
+							this_media = commands[index].task[task_index].media[commands[index].task[task_index].media_counter];
+							commands[index].task[task_index].media_counter++;
 						}
 
 						if(this_media.endsWith('.mp4'))
@@ -500,13 +500,11 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 						else
 							sendMessage('Audio', this_media);
 					}
-					const enable_videos_and_songs = true;
 					if(this_task.song) {
-						if(enable_videos_and_songs) sendMessage('Song', this_task.song);
-						else sendMessage('SongSprite', this_task.song);
+						sendMessage('Song', this_task.song);
 					}
 					if(this_task.videonow) {
-						if(!enable_videos_and_songs || (typeof this_command.tired.active !== 'undefined') && this_command.tired.active === true) {
+						if(typeof this_command.tired.active !== 'undefined' && this_command.tired.active === true) {
 							sendMessage('SongSprite', this_task.videonow);
 						}
 						else {
