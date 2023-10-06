@@ -306,7 +306,7 @@ function initWebSocket() {
 		}
 		case 'Video': {
 			const video = document.createElement('video');
-			video.sy('id', 'NewVideo');
+			video.setAttribute('id', 'NewVideo');
 			video.src = value;
 			video.autoplay = true;
 			video.controls = false;
