@@ -19,7 +19,7 @@ function replaceExtension(filename, original, replacement) {
 
 function playSongSprite(file) {
 	//we pass gifs into this for some reason. reason is laziness
-	file = replaceExtension(file, '.gif', '.mp3');
+	//file = replaceExtension(file, '.gif', '.mp3');
 
 	function urlExists(url){
 		const http = new XMLHttpRequest();
@@ -153,9 +153,9 @@ export function sendMessage(id, contents) {
 
 const temp_x = {
 	list: [],
-	play: (filename) => {
+	play: function(filename) {
 		let playing = false;
-		this.list.forEach((item, index) => {
+		this.list.forEach(function (item, index) {
 			console.log(item, index);
 
 			if(item._src === filename) {
@@ -195,7 +195,7 @@ function playSound(file) {
 	let sound = new Howl({
 		src: [file],
 		html5: true,
-		onend: () => {
+		onend: function() {
 			sound.unload();
 			console.log('Unloaded!');
 		},
@@ -215,11 +215,11 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 			key1: [offset, duration]
 		},
 		html5: true,
-		onend: () => {
+		onend: function() {
 			sound.unload();
 			console.log('Unloaded!');
 		},
-		onload: () => {
+		onload: function()  {
 			if(duration === -1) {
 				duration = Math.floor(Math.random() * 7000) + 3000;
 			}
@@ -233,14 +233,14 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 }
 function initWebSocket() {
 	connection = new WebSocket('ws://derrick-server.local:1338');
-	connection.onopen = () => {
+	connection.onopen = function() {
 		sendMessage('Message', 'Client');
 	};
 
-	connection.onclose = (e) => {
+	connection.onclose = function(e) {
 		console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
 
-		setTimeout(() => {
+		setTimeout(function() {
 			initWebSocket();
 		}, 1000);
 	};
@@ -334,7 +334,7 @@ function initWebSocket() {
 			video.autoplay = true;
 			video.controls = false;
 			video.muted = false;
-			video.onended = (_event) => {
+			video.onended = function (_event) {
 				const video = document.getElementById('NewVideo');
 				video.pause();
 				video.src = '';
@@ -353,11 +353,11 @@ function initWebSocket() {
 				console.log(`value_array: ${value}`);
 				break;
 			}
-			const [video_file,
+			let [video_file,
 				start_animation,
 				mid_animation,
 				end_animation] = value;
-			const audio_file = replaceExtension(video_file, '.gif', '.mp3');
+			let audio_file = replaceExtension(video_file, '.gif', '.mp3');
 
 			async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
 				// We create a Promise and return it
@@ -393,17 +393,17 @@ function initWebSocket() {
 					src: audio_file,
 					html5: true,
 					preload: true,
-					onplay: () => {
+					onplay: function() {
 						const duration = `${parseInt((sound.duration()*1000)/3)}ms`;
-						animateCSS(img, start_animation, duration, () => {
-								animateCSS(img, mid_animation, duration, () => {
+						animateCSS(img, start_animation, duration, function() {
+								animateCSS(img, mid_animation, duration, function() {
 									animateCSS(img, end_animation, duration);
 								});
 							}
 						);
 						document.getElementById('video_div').appendChild(img);
 					},
-					onend: () => {
+					onend: function() {
 						sound.unload();
 					},
 				});
@@ -416,11 +416,11 @@ function initWebSocket() {
 				video.autoplay = true;
 				video.controls = false;
 				video.muted = false;
-				video.onplay= () => {
+				video.onplay= function() {
 					console.log(video.duration);
 					const duration = `${parseInt((video.duration*1000)/3)}ms`;
-					animateCSS(video, start_animation, duration, () => {
-							animateCSS(video, mid_animation, duration, () => {
+					animateCSS(video, start_animation, duration, function() {
+							animateCSS(video, mid_animation, duration, function() {
 								animateCSS(video, end_animation, duration);
 							});
 						}
@@ -457,7 +457,7 @@ function initWebSocket() {
 			};
 			video.onplay = () => video.isplaying = true;
 
-			video.interval = setInterval(async () => {
+			video.interval = setInterval(async function() {
 				const video_file = decodeURI(basefilename(video.src));
 				const foobar_file = await fb2000.getActiveItemFilename();
 				if(video_file !== foobar_file) {
@@ -512,7 +512,7 @@ function initWebSocket() {
 		}
 	}
 
-	connection.onmessage = (message) => {
+	connection.onmessage = function(message) {
 		log('temp', message.data);
 		const object = JSON.parse(message.data);
 		if((Array.isArrayobject)) {
@@ -524,7 +524,7 @@ function initWebSocket() {
 			}
 		}
 		else if(typeof object === 'object') {
-			Object.entries(object).forEach(([key, value]) => {
+			Object.entries(object).forEach(function([key, value]) {
 				handleMessage(object, key, value);
 				log('temp', key);
 				log('temp', value);
@@ -535,7 +535,7 @@ function initWebSocket() {
 		}
 	};
 
-	connection.onerror = (error) => {
+	connection.onerror = function(error) {
 		console.error(`WebSocket error: ${error.message} Closing socket`);
 		connection.close();
 	};

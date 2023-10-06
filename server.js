@@ -16,7 +16,7 @@ async function generateCommandsPHP(command_list) {
 	const html = require('./command_html.js').html;
 
 	html[1] = command_list;
-	await fs.promises.writeFile('./commands.html', html.join(''));
+	await fs.promises.writeFile('../stream/sounds.html', html.join(''));
 }
 
 let global_commands_list;
@@ -38,9 +38,10 @@ function loadCommands(filename) {
 				this_command.task[task_i].media_counter = 0;
 		}
 
-		let keyword = (this_command.altkey === 'undefined') ?
-			this_command.altkey:
-			this_command.keyword.at(0);
+		let keyword = (typeof this_command.altkey === 'undefined') ?
+			this_command.keyword.at(0):
+			this_command.altkey;
+		console.log("thiskeyword"+keyword);
 
 		if(keyword !== this_command.altkey) {
 //			for(let i = 0; i < 5; i++) {
@@ -226,7 +227,7 @@ async function processCommands(user, message, flags, self, extra) {
 			console.log('Disable', query);
 		}
 	}
-	if(message_lower.startsWith('!so')) {
+	if(message_lower.startsWith('!so ')) {
 		let query = getQuery(message_lower, '!so').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ')[0];
 		if(query.length === 0)
 			query = 'sypherce';
@@ -254,7 +255,7 @@ async function processCommands(user, message, flags, self, extra) {
 		const item = item_list[Math.floor(Math.random() * item_list.length)];
 		bot.Say(`${user} says that ${item} is in the Library!`);
 	}
-	if(message_lower.startsWith('!unso')) {
+	if(message_lower.startsWith('!unso ')) {
 		let query = getQuery(message_lower, '!unso').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ')[0];
 		if(query.length === 0)
 			query = 'sypherce';
@@ -429,7 +430,7 @@ function replaceExtension(filename, original, replacement) {
 }
 
 async function processCommandsPart2(user, message, _flags, _self, extra, commands = global_commands_list) {
-	let message_lower = message.toLowerCase();
+	let message_lower = message.toLowerCase().replace(/\s+/g,' ').trim();
 	let retVal = 0;
 
 	for (let index = 0; index < commands.length; index++) {

@@ -635,7 +635,7 @@
 	},
 	{
 		"altkey": ["fart"],
-		"keyword": ["d(ookie|)\\s*c(ough|)", "fart(s|)"],
+		"keyword": ["d(ookie|)\\s*c(ough|)", "fart(s|)|test"],
 		"task":[{"media": "dookiecough.mp3"}],
 		"author": ""
 	},
@@ -2098,6 +2098,37 @@
 		"keyword": ["wheelofbeef"],
 		"task":[{"media": "emil_wheelofbeef.mp3"}],
 		"author": "residentemil_"
+	},
+	{
+		"keyword": ["firehose"],
+		"task":[{"media": "emil_firehose.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["!cleveland_tom"],
+		"task":[{"media": "cleveland_tom.mp3"}],
+		"author": "cleveland_tom"
+	},
+	{
+		"keyword": ["cublock"],
+		"task":[{"media": "emil_cublock.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["omae"],
+		"task":[{"media": "emil_omae.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["nani"],
+		"task":[{"media": "emil_nani.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"altkey": ["atata"],
+		"keyword": ["a[ta]{2,}"],
+		"task":[{"media": "vaiencea_atata.mp3"}],
+		"author": "vaiencea"
 	}
 
 ]
