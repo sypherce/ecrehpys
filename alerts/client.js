@@ -92,27 +92,6 @@ async function fb2000QueueSong(file) {
 	queue_pos++;
 }
 
-
-/*
- idea:
-
- flip sound channels
-playing a new sound flips to another sound at the same percent of played
- so if a 10 second sound is 2 seconds in, and you switch to a 1000 second sound it's jump to the 200th second or 20% of the way through
-*/
-
-/*	todo:
-	take down current position in song
-	add "playnow song" to previous index
-	when song ends, jump back
-	if another song is "playnow"'d only start song
-	then it'll continue with the originally interuppted song
-
-	if original song is within first 20% or last 20% start song over, or skip song
-
-	if "playnow" song is currently playing, play a random 10 second clip
-	along side the song instead
-*/
 let play_now_active_file = '';
 async function fb2000PlaySongNow(file) {
 	const this_active_file = await fb2000.getActiveItemFilename();
@@ -151,44 +130,43 @@ export function sendMessage(id, contents) {
 	connection.send(message);
 }
 
-const temp_x = {
-	list: [],
-	play: function(filename) {
-		let playing = false;
-		this.list.forEach(function (item, index) {
-			console.log(item, index);
-
-			if(item._src === filename) {
-				playing = true;
-				item.play();
-			}
-			else {
-				item.pause();
-			}
-		});
-		if(!playing) {
-			let sound;
-			this.list.push(
-				sound = new Howl({
-					src: [filename],
-					html5: true,
-					loop: true,
-				})
-			);
-			sound.play();
-		}
-		console.log('length', this.list.length);
-
-		//check if game changed, if it did, toss everything
-		//search [list] for filename
-		//if it's in [list] continue playing song
-		//if not, start it
-	},
-};
-
 function playSplitSound(file) {
 	console.log(file);
-	temp_x.play(file);
+	const sound = {
+		list: [],
+		play: function(filename) {
+			let playing = false;
+			this.list.forEach(function (item, index) {
+				console.log(item, index);
+
+				if(item._src === filename) {
+					playing = true;
+					item.play();
+				}
+				else {
+					item.pause();
+				}
+			});
+			if(!playing) {
+				let sound;
+				this.list.push(
+					sound = new Howl({
+						src: [filename],
+						html5: true,
+						loop: true,
+					})
+				);
+				sound.play();
+			}
+			console.log('length', this.list.length);
+
+			//check if game changed, if it did, toss everything
+			//search [list] for filename
+			//if it's in [list] continue playing song
+			//if not, start it
+		},
+	};
+	sound.play(file);
 }
 function playSound(file) {
 	console.log(file);
