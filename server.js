@@ -43,12 +43,10 @@ function loadCommands(filename) {
 			this_command.altkey;
 
 		if(keyword !== this_command.altkey) {
-//			for(let i = 0; i < 5; i++) {
 			keyword = keyword.replaceAll('\')', '');
 			keyword = keyword.replaceAll('.*', '');
 			keyword = keyword.replaceAll('\\s*', ' ');
 			keyword = keyword.replaceAll('[s]', ' ');
-//			}
 		}
 		let task_string = this_command.task[0].song || this_command.task[0].videonow;
 		if(typeof this_command.description !== 'undefined') task_string = this_command.description;
@@ -77,7 +75,7 @@ laugh<br>`);
 	const html_split = html.split(/\r?\n/);
 	html_split.sort((a, b) => {
 		a = a.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "");
-		b = b.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, ""); // ignore upper and lowercase
+		b = b.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "");
 		if (a < b) return -1;
 		if (a > b) return 1;
 
@@ -111,50 +109,6 @@ function tired(command, setting, message, command_list = global_commands_list) {
 	}
 	return false;
 }
-
-/*
-intros
-bits, follows, subs, raids, channel points redeem
-multi-audio-commands
-	random
-gif
-	GL
-	Hydrate
-	sabalink
-	dookie
-	stab
-	westernworld
-	emily
-	i'mout
-	catJAM
-
-txt
-	flippers
-	focker D:
-	lurk
-	notfine
-
-	sprites
-	sso
-	stickers
-	unlurk
-	wurk
-	z1wrap
-	!srinfo
-
-
-other
-	!1
-	cocadeeznuts
-tts
-	jim
-
-
-special
-	watch time
-	timeout
-	tts
-*/
 
 const ShuffleBag = require('giffo-shufflebag');
 const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -202,7 +156,6 @@ async function processCommands(user, message, flags, self, extra) {
 	if(user === process.env.BOT_USER) return;
 
 	let message_lower = message.toLowerCase();
-	//console.log(`x: ${test2(message)}`);
 
 	if(flags.broadcaster) {
 		if(message_lower.indexOf('!reload') !== -1)
@@ -335,8 +288,6 @@ async function processCommands(user, message, flags, self, extra) {
 }
 
 async function processVariables(user, query_string, task_string) {
-
-	//console.log('query_string:' + query_string + ' task_string:' + task_string);
 	task_string= task_string.replace(/\$\(\s*query\s*\)/, query_string);
 	log('temp', `new task_string: ${task_string}`);
 	let channel_info = null;
@@ -409,13 +360,8 @@ function findCommandByString(string, commands = global_commands_list) {
 			else if(typeof commands[index].task.at(0).song !== 'undefined')
 				return commands[index].task.at(0).song.toString();
 
-			//console.log(`${commands[index]} __ ${commands[index].task}__ ${commands[index].task.media}`);
-			//console.log(`${JSON.stringify(commands[index])} __ ${JSON.stringify(commands[index].task)}__ ${JSON.stringify(commands[index].task.media)}`);
-
 			return "";
 		}
-		//else
-		//	console.log(`${keyword} __ ${command_string}`);
 	}
 	return undefined;
 }
@@ -652,7 +598,6 @@ async function getAuthToken(CLIENTIDGOESHERE, CLIENTSECRETGOESHERE) {
 	};
 	streamer.onTimeout = (timedOutUsername, durationInSeconds, extra) => {
 		console.log(`streamer.onTimeout ${timedOutUsername} ${durationInSeconds} ${extra}`);
-		//test3(`_timeout ${timedOutUsername} ${durationInSeconds}`);
 	};
 	streamer.onRaid = (user, viewers, extra) => {
 		console.log(`streamer.onRaid ${user} ${viewers} ${extra}`);
@@ -703,7 +648,7 @@ function say_wrapper(message) {
 function whisper_wrapper(message, _user) {
 	//whisper restriction https://discuss.dev.twitch.tv/t/my-bot-cant-send-a-whisp/21481
 	log('debug', message);
-	bot.Say(`Whisper: ${message}`);//bot.Whispter(message);
+	bot.Say(`Whisper: ${message}`);//bot.Whisper(message);
 }
 
 const socket = new server({
