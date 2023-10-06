@@ -41,7 +41,6 @@ function loadCommands(filename) {
 		let keyword = (typeof this_command.altkey === 'undefined') ?
 			this_command.keyword.at(0):
 			this_command.altkey;
-		console.log("thiskeyword"+keyword);
 
 		if(keyword !== this_command.altkey) {
 //			for(let i = 0; i < 5; i++) {
