@@ -252,11 +252,10 @@ function initWebSocket() {
 				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
 				playSoundSprite(cmd_path, start, duration);
 
-				console.log(`if(${position} + ${duration} >= ${max_duration})`);
-				if(position + duration >= max_duration)
+				position = position + duration;
+				if(position >= max_duration)
 					break;
 
-				position = position + duration;
 				delay = duration;
 			}
 			return;
