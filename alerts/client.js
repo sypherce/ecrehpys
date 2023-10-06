@@ -239,16 +239,16 @@ function initWebSocket() {
 			for(let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
 				const max_duration = 10000;
 				const cmd = `${value[i].startsWith('assets/alerts/') ? '../../' : ''}${value[i].split(',')[0]}`;
-				const start = parseInt(value[i+1]);
-				let duration = (parseInt(value[i+2]) < max_duration) ?
-					parseInt(value[i+2]) :
-					max_duration;
 				const cmd_path = `assets/${(cmd.endsWith('mp4')|cmd.endsWith('gif')) ? `music` : `alerts`}/${cmd}`;
+				const start = parseInt(value[i+1]);
+				let duration = parseInt(value[i+2]);
+				if(position + duration > max_duration)
+					duration = max_duration - position;
+				else if(duration > max_duration)
+					duration = max_duration;
 
 				if(delay !== 0)//if there's a delay from the last sound
 					await new Promise(r => setTimeout(r, delay));
-				if(position + duration > max_duration)
-					duration = max_duration - position;
 				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
 				playSoundSprite(cmd_path, start, duration);
 
