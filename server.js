@@ -12,6 +12,9 @@ const emote = require('./emote.js');
 const log = require('esm')(module)('./alerts/log.js').log;
 let debug = require('esm')(module)('./alerts/log.js').debug;
 
+//!this is used once.
+//!probably needs moved into command_html.js
+//!inserts command_list into html[1] and writes it out to the file
 async function generateCommandsPHP(command_list) {
 	const html = require('./command_html.js').html;
 
@@ -19,12 +22,35 @@ async function generateCommandsPHP(command_list) {
 	await fs.promises.writeFile('../stream/sounds.html', html.join(''));
 }
 
-let global_commands_list;
+//!this is temporary for the new command I'm writing
+function addCustomAudio(user, keyword, command) {//new
+	let this_command;
+	this_command.cooldown         = 0;
+	this_command.timestamp        = 0;
+	this_command.active           = true;
+	this_command.tired            = [];
+	this_command.tired.active     = false;
+
+	this_command.author           = user;
+	this_command.keyword          = keyword;
+
+	this_command.task.customaudio = command;
+}
+//!this loads all the commands from commands.json
+//!sets defaults that aren't defined
+//!processes regexps
+//!and adds a couple nightbot commands to the list
+//!while also prepping for sounds.html to be generated
+//retuns all the commands in an object? maybe array?
+//!check this
 function loadCommands(filename) {
 	let html = '';
 	const command_list = JSON.parse(fs.readFileSync(filename));
+	function isTired() { return (typeof this_command.tired.active !== 'undefined' && this_command.tired.active === true) }
+
 
 	for (let index = 0; index < command_list.length; index++) {
+		//set defaults that may not be defined
 		const this_command          = command_list[index];
 		this_command.author       ??= '';
 		this_command.cooldown     ??= 0;
@@ -33,21 +59,28 @@ function loadCommands(filename) {
 		this_command.tired        ??= [];
 		this_command.tired.active ??= false;
 
+		//!this might be done elsewhere, idk
+		//set media_count to 0 if it's needed
 		for (let task_i = 0; task_i < this_command.task.length; task_i++) {
 			if(typeof this_command.task[task_i].media === 'object')
 				this_command.task[task_i].media_counter = 0;
 		}
 
+		//altkey takes priority
 		let keyword = (typeof this_command.altkey === 'undefined') ?
 			this_command.keyword.at(0):
 			this_command.altkey;
 
+		//process regexps
 		if(keyword !== this_command.altkey) {
 			keyword = keyword.replaceAll('\')', '');
 			keyword = keyword.replaceAll('.*', '');
 			keyword = keyword.replaceAll('\\s*', ' ');
 			keyword = keyword.replaceAll('[s]', ' ');
 		}
+
+		//!this currently isn't used
+		//setup the description
 		let task_string = this_command.task[0].song || this_command.task[0].videonow;
 		if(typeof this_command.description !== 'undefined') task_string = this_command.description;
 		if(typeof task_string              === 'undefined') task_string = "";
@@ -56,11 +89,13 @@ function loadCommands(filename) {
 			'' :
 			` [${this_command.author}]`;
 		switch(keyword) {
+			//ignore commands that aren't media related
 			case '!lips':
 			case 'joe':
 			case '!ca':
 			case '!nc':
 				break;
+			//everything else gets added to the html page
 			default:
 				html = html.concat(`${keyword}${formatted_author_string}<br>\n`);
 				break;
@@ -72,6 +107,7 @@ hydrate<br>
 !inu [resident_emil_]<br>
 laugh<br>`);
 
+	//sort commands alphabetically, ignoring '!', numbers are first
 	const html_split = html.split(/\r?\n/);
 	html_split.sort((a, b) => {
 		a = a.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "");
@@ -85,7 +121,7 @@ laugh<br>`);
 
 	return command_list;
 }
-global_commands_list = loadCommands('commands.json');
+let global_commands_list = loadCommands('commands.json');
 
 
 function getQuery(message, command) {
@@ -146,7 +182,7 @@ async function processCommands(user, message, flags, self, extra) {
 	if(isNewUser) {
 		user_array.push(user);
 		//handle intro
-		const alert = findAlertByString(`!${user.toLowerCase()}`);
+		const alert = findAlertByString(`!${user.toLowerCase()}`);//user commands all have !prefix
 		if(alert)
 			sendMessage('Alert', alert);
 		//setup profile image for chat overlay
@@ -162,8 +198,6 @@ async function processCommands(user, message, flags, self, extra) {
 			global_commands_list = loadCommands('commands.json');
 		if(message_lower.indexOf('!debug') !== -1)
 			debug = !debug;
-		if(message_lower.indexOf('!ec') !== -1)
-			console.log(await twitchInfo.getChannelInformation('sypherce'));
 		if(message_lower.indexOf('!test') !== -1) {
 			bot.Say(message);
 			streamer.Say(message);
@@ -219,6 +253,7 @@ async function processCommands(user, message, flags, self, extra) {
 		switch (replyBag.next()){
 		case 0:
 			bot.Say(`Meow @${user}`);
+			sendMessage('Audio', `emil_mgow.mp3`);
 			break;
 		case 1:
 			bot.Say(`@${user} sypher18Awkward`);
@@ -227,6 +262,7 @@ async function processCommands(user, message, flags, self, extra) {
 			bot.Say(`@${user} sypher18OMG`);
 			break;
 		case 3:
+			sendMessage('Audio', `muten_whaat.mp3`);
 			bot.Say(`WHAT @${user.toUpperCase()}!?!??!!?!?`);
 			break;
 		case 4:
@@ -376,14 +412,16 @@ function replaceExtension(filename, original, replacement) {
 
 async function processCommandsPart2(user, message, _flags, _self, extra, commands = global_commands_list) {
 	let message_lower = message.toLowerCase().replace(/\s+/g,' ').trim();
-	let retVal = 0;
+	let commands_triggered = 0;
 
+	//iterate through each command
 	for (let index = 0; index < commands.length; index++) {
 		let this_command = commands[index];
 		if(!this_command.active)
 			continue;//skips command, continues iterating
 
 		log('verbose', `this_command.task: ${this_command.task}`);
+		//iterate through multiple keywords
 		for (let keyword_index = 0; keyword_index < this_command.keyword.length; keyword_index++) {
 			let comparison = this_command.keyword.at(keyword_index);
 			const query = message.substr(message_lower.indexOf(comparison) + comparison.length);
@@ -402,33 +440,31 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 					continue;
 				}
 				commands[index].timestamp = extra.timestamp;
-
+				//iterate through each task
 				for (let task_index = 0; task_index < this_command.task.length; task_index++) {
 					let this_task = this_command.task[task_index];
 
 					if(this_task.nocommand) {//this needs to be 1st to override other commands
-						return 0;
+						return commands_triggered;
 					}
-
 					if(this_task.customaudio) {//this needs to be 2nd to override other commands
-						this_task = null;
-						let args = message_lower.substr(message_lower.indexOf('!ca ') + 4).split(' ');
+						const args = getQuery(message_lower, '!ca ').split(' ');
 						if(args.length %3 !== 0) {
 							say_wrapper(`Syntax Error: !ca cmd start duration ...`);
-							return retVal;
+							return commands_triggered;
 						}
-						for (let i = 0; i < args.length; i+=3) {
-							args[i] = findCommandByString(args[i]);
-							if(typeof args[i] === 'undefined')
+						for (let index = 0; index < args.length; index+=3) {
+							args[index] = findCommandByString(args.at(index));
+							if(typeof args.at(index) === 'undefined')
 								continue;
-							if(typeof args[i] === 'object')
-								args[i] = args[i].at(0);
-							replaceExtension(args[i], '.gif', '.mp3');
+							if(typeof args.at(index) === 'object')
+								args[index] = args.at(index).at(0);
+							replaceExtension(args[index], '.gif', '.mp3');
+							commands_triggered++;
 						}
 						sendMessage('CustomAudio', args);
-						return retVal;
+						return commands_triggered;
 					}
-
 					if(this_task.tts) {
 						let processed_message = await processVariables(user, query, this_task.tts);
 						sendMessage('TTS', processed_message);
@@ -444,14 +480,15 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 					if(this_task.alert) {
 						sendMessage('Alert', this_task.alert);
 					}
-
 					if(this_task.media) {
 						let this_media = this_task.media;
+						//don't forget to use commands[index].task[task_index] when setting values
+						let this_task = commands[index].task[task_index];
 						if(typeof this_media === 'object') {
-							if(commands[index].task[task_index].media_counter >= commands[index].task[task_index].media.length)
-								commands[index].task[task_index].media_counter = 0;
-							this_media = commands[index].task[task_index].media[commands[index].task[task_index].media_counter];
-							commands[index].task[task_index].media_counter++;
+							if(this_task.media_counter >= this_media.length)
+								commands[index].task[task_index].media_counter = 0;//setting
+							this_task.media = this_task.media[this_media];
+							commands[index].task[task_index].media_counter++;//setting
 						}
 
 						if(this_media.endsWith('.mp4'))
@@ -515,13 +552,13 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 						say_wrapper(result);
 					}
 
-					retVal++;
+					commands_triggered++;
 				}
 			}
 		}
 	}
 
-	return retVal;
+	return commands_triggered;
 }
 
 let connection = null;
