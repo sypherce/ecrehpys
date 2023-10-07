@@ -482,13 +482,11 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 					}
 					if(this_task.media) {
 						let this_media = this_task.media;
-						//don't forget to use commands[index].task[task_index] when setting values
-						let this_task = commands[index].task[task_index];
 						if(typeof this_media === 'object') {
-							if(this_task.media_counter >= this_media.length)
-								commands[index].task[task_index].media_counter = 0;//setting
-							this_task.media = this_task.media[this_media];
-							commands[index].task[task_index].media_counter++;//setting
+							if(commands[index].task[task_index].media_counter >= commands[index].task[task_index].media.length)
+								commands[index].task[task_index].media_counter = 0;
+							this_media = commands[index].task[task_index].media[commands[index].task[task_index].media_counter];
+							commands[index].task[task_index].media_counter++;
 						}
 
 						if(this_media.endsWith('.mp4'))
@@ -567,6 +565,10 @@ async function init() {
 	streamer.Init(process.env.STREAMER_USER, process.env.STREAMER_OAUTH);
 	bot.Init(process.env.BOT_USER, process.env.BOT_OAUTH, process.env.STREAMER_USER);
 	twitchInfo.init(process.env.STREAMER_ID, process.env.STREAMER_SECRET);
+//let user = await twurple.GetUserByName('nightbot');
+//console.log(user);
+//console.log(JSON.stringify(user));
+
 
 	//return await getAuthToken(process.env.BOT_ID, process.env.BOT_SECRET);
 }
