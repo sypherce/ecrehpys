@@ -1,6 +1,7 @@
 'use strict';
 require('dotenv').config();
 const twitchInfo = require('./twitchInfo.js');
+//const twurple = require('./twurple.js');
 const fs = require('fs');
 const streamer = require('comfy.js');
 const bot = require('comfybot.js');
@@ -11,16 +12,7 @@ const mp3Library = require('./mp3Library.js');
 const emote = require('./emote.js');
 const log = require('esm')(module)('./alerts/log.js').log;
 let debug = require('esm')(module)('./alerts/log.js').debug;
-
-//!this is used once.
-//!probably needs moved into command_html.js
-//!inserts command_list into html[1] and writes it out to the file
-async function generateCommandsPHP(command_list) {
-	const html = require('./command_html.js').html;
-
-	html[1] = command_list;
-	await fs.promises.writeFile('../stream/sounds.html', html.join(''));
-}
+const command_html = require('./command_html.js');
 
 //!this is temporary for the new command I'm writing
 function addCustomAudio(user, keyword, command) {//new
@@ -117,7 +109,7 @@ laugh<br>`);
 
 		return 0;
 	});
-	generateCommandsPHP(html_split.join("\r\n"));
+	command_html.writeHTMLFile('../stream/sounds.html', html_split.join("\r\n"));
 
 	return command_list;
 }
@@ -559,8 +551,6 @@ async function processCommandsPart2(user, message, _flags, _self, extra, command
 	return commands_triggered;
 }
 
-let connection = null;
-
 async function init() {
 	streamer.Init(process.env.STREAMER_USER, process.env.STREAMER_OAUTH);
 	bot.Init(process.env.BOT_USER, process.env.BOT_OAUTH, process.env.STREAMER_USER);
@@ -694,6 +684,7 @@ const socket = new server({
 	httpServer: http.createServer().listen(1338)
 });
 
+let connection = null;
 function sendMessage(id, contents) {
 	if(connection === null) return;
 

@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const html = [`
 <html>
 	<head>
@@ -36,4 +38,10 @@ const html = [`
 	</body>
 </html>`];
 
-module.exports.html = html;
+//inserts command_list into html[1] and writes it out to the file
+async function writeHTMLFile(filename, command_list) {
+	html[1] = command_list;
+	await fs.promises.writeFile(filename, html.join(''));
+}
+
+module.exports.writeHTMLFile = writeHTMLFile;
