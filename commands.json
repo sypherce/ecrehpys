@@ -389,7 +389,7 @@
 	{
 		"altkey": ["badgers"],
 		"keyword": ["badger(s|)"],
-		"task":[{"media": "missliss_badgers.mp3"}],
+		"task":[{"videonow": "0 - Other/missliss_badgers.mp3"}],
 		"author": "missliss15"
 	},
 	{
@@ -1658,7 +1658,7 @@
 	{
 		"altkey": ["water"],
 		"keyword": ["water", "what\\s*(a|')re"],
-		"task":[{"media": "emil_water.mp3"}],
+		"task":[{"videonow": "0 - Other/emil_water.mp3"}],
 		"author": "residentemil_"
 	},
 	{
@@ -2129,6 +2129,16 @@
 		"keyword": ["a[ta]{2,}"],
 		"task":[{"media": "vaiencea_atata.mp3"}],
 		"author": "vaiencea"
+	},
+	{
+		"keyword": ["toxic"],
+		"task":[{"media": "emil_wookie_toxic.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["oatmealwarp"],
+		"task":[{"media": "emil_oatmealwarp.mp3"}],
+		"author": "residentemil_"
 	}
 
 ]
