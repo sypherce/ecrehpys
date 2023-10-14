@@ -1529,7 +1529,7 @@
 	},
 	{
 		"altkey": ["witw"],
-		"keyword": ["witw", "reside53CarmenJAM"],
+		"keyword": ["witw|reside53carmenjam"],
 		"task":[{"song": "0 - Other/Where in the World is Carmen Sandiego.mp3"}],
 		"author": "missliss15"
 	},
@@ -1562,7 +1562,7 @@
 	},
 	{
 		"altkey": ["wookiebark"],
-		"keyword": ["wook(i|ii)(e|ee)(_|\\s*)bark"],
+		"keyword": ["wook(i|ii)(e|ee)bark"],
 		"task":[{"media": "wookie_bark.mp3"}],
 		"author": "subtlewookie"
 	},
@@ -1658,7 +1658,7 @@
 	{
 		"altkey": ["water"],
 		"keyword": ["water", "what\\s*(a|')re"],
-		"task":[{"videonow": "0 - Other/emil_water.mp3"}],
+		"task":[{"videonow": "0 - Other/emil_water.mp4"}],
 		"author": "residentemil_"
 	},
 	{
@@ -1771,6 +1771,18 @@
 		"author": ""
 	},
 	{
+		"altkey": ["brokeit"],
+		"keyword": ["broke\\s*it|broke\\s*shit"],
+		"task":[{"media":
+		[
+		 "muten_it_worked_before_you_broke_it_short1.mp3",
+		 "muten_it_worked_before_you_broke_it_short2.mp3",
+		 "muten_it_worked_before_you_broke_it_full.mp3",
+		 "muten_it_worked_before_you_broke_it_short3.mp3",
+		 "muten_it_worked_before_you_broke_it_short4.mp3"]}],
+		"author": "muten_pizza"
+	},
+	{
 		"keyword": ["cave"],
 		"task":[{"media":
 		["xjrigsx_rygar_sagilas_cave_1.mp3",
@@ -1780,6 +1792,18 @@
 		 "xjrigsx_rygar_sagilas_cave_5.mp3",
 		 "xjrigsx_rygar_sagilas_cave_6.mp3"]}],
 		"author": "xjrigsx"
+	},
+	{
+		"altkey": ["shaun"],
+		"keyword": ["!x|shaun|shawn|sean"],
+		"task":[{"media":
+		["shaun1.mp3",
+		 "shaun2.mp3",
+		 "shaun3.mp3",
+		 "shaun4.mp3",
+		 "shaun5.mp3",
+		 "shaun6.mp3"]}],
+		"author": "hellomrrobot"
 	},
 	{
 		"keyword": ["chaos"],
@@ -1897,18 +1921,26 @@
 	},
 	{
 		"altkey": ["!xjrigsx"],
-		"keyword": ["!xjrigsx|!rigs"],
+		"keyword": ["!xjrigsx|!jrigs"],
 		"task":[{"alert": ["assets/alerts/xjrigsx.mp4", "bounceIn", "pulse", "hinge"]}],
+		"author": "xjrigsx"
+	},
+	{
+		"altkey": ["!blacksquall"],
+		"keyword": ["!blacksquall|!squall"],
+		"task":[{"alert": ["assets/alerts/muten_youre_welcome.mp3", "bounceIn", "pulse", "hinge"]}],
 		"author": "xjrigsx"
 	},
 
 	{
-		"keyword": ["!adamj93"],
+		"altkey": ["!adamj93"],
+		"keyword": ["!adamj93|!adam"],
 		"task":[{"alert": ["assets/alerts/adamj93.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "adamj93"
 	},
 	{
-		"keyword": ["!bogmired"],
+		"altkey": ["!bogmired"],
+		"keyword": ["!bogmired|!bog"],
 		"task":[{"alert": ["assets/alerts/bogmired.gif", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "bogmired"
 	},
@@ -1984,7 +2016,8 @@
 		"author": "rebecadraws"
 	},
 	{
-		"keyword": ["!residentemil_"],
+		"altkey": ["!residentemil_"],
+		"keyword": ["!residentemil_|!emil"],
 		"task":[{"alert": ["assets/alerts/residentemil_.gif", "bounceIn", "pulse", "hinge"]}],
 		"author": "residentemil_"
 	},
@@ -2004,18 +2037,20 @@
 		"author": "skizzlethewicked"
 	},
 	{
-		"keyword": ["!subtlewookie"],
+		"altkey": ["!subtlewookie"],
+		"keyword": ["!subtlewookie|!wookie"],
 		"task":[{"alert": ["assets/alerts/subtlewookie.mp4", "fadeIn", "pulse", "fadeOut"]}],
 		"author": "subtlewookie"
 	},
 	{
 		"altkey": ["!thedandygaymer"],
-		"keyword": ["rob|thedandygaymer"],
+		"keyword": ["!rob|!thedandygaymer"],
 		"task":[{"alert": ["assets/alerts/thedandygaymer.gif", "jackInTheBox", "pulse", "bounceOut"]}],
 		"author": "thedandygaymer"
 	},
 	{
-		"keyword": ["!ultraminimalist"],
+		"altkey": ["!ultraminimalist"],
+		"keyword": ["!ultraminimalist|!ultra"],
 		"task":[{"alert": ["assets/alerts/ultraminimalist.mp4", "slideInDown", "pulse", "slideOutUp"]}],
 		"author": "ultraminimalist"
 	},
@@ -2078,6 +2113,12 @@
 		"author": "subtlewookie"
 	},
 	{
+		"altkey": ["kickit"],
+		"keyword": ["kickit2"],
+		"task":[{"media": "wookie_kickit2.mp3"}],
+		"author": "subtlewookie"
+	},
+	{
 		"altkey": ["peaceful"],
 		"keyword": ["peace(ful|)"],
 		"task":[{"media": "emil_peaceful.mp3"}],
@@ -2131,8 +2172,24 @@
 		"author": "vaiencea"
 	},
 	{
+		"keyword": ["muda"],
+		"task":[{"media": "emil_muda.mp3"}],
+		"author": "residentemil_"
+	},
+	{
 		"keyword": ["toxic"],
 		"task":[{"media": "emil_wookie_toxic.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"keyword": ["ora"],
+		"task":[{"media": "emil_ora.mp3"}],
+		"author": "residentemil_"
+	},
+	{
+		"altkey": ["wookiedeath"],
+		"keyword": ["wookie\\s*death"],
+		"task":[{"media": "emil_wookiedeath.mp3"}],
 		"author": "residentemil_"
 	},
 	{
