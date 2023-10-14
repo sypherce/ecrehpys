@@ -6,6 +6,37 @@ const log = require('esm')(module)('./alerts/log.js').log;
 const twurple = require('./twurple.js');
 const mp3Library = require('./mp3Library.js');
 
+let global_commands_list;
+function addCa(author, keyword, command) {
+
+	const this_command = {
+		author       : author,
+		cooldown     : 0,
+		timestamp    : 0,
+		active       : true,
+		tired        : {active: false},
+		keyword      : [keyword],
+		task         : [{customaudio: command}]
+	};
+
+	global_commands_list.push(this_command);
+	global_commands_list = saveCommands();
+}
+function editCa(author, keyword, command) {
+
+	for (let index = 0; index < global_commands_list.length; index++) {
+		let this_keyword = global_commands_list[index].keyword.toString();
+		if(typeof global_commands_list[index].altkey !== 'undefined')
+		this_keyword = global_commands_list[index].altkey.toString();
+
+		if(this_keyword === keyword) {
+			//global_commands_list[index].author = author,
+			global_commands_list[index].task   = [{customaudio: command}]
+		}
+	};
+
+	global_commands_list = saveCommands();
+}
 
 /**
  * @param {string} filename JSON containing commands
@@ -61,6 +92,8 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 			case '!lips':
 			case 'joe':
 			case '!ca':
+			case '!caa':
+			case '!cae':
 			case '!nc':
 				break;
 			//everything else gets added to the html page
@@ -90,7 +123,34 @@ laugh<br>`);
 
 	return command_list;
 }
-let global_commands_list = loadCommands();
+/**
+ * @param {string} filename JSON containing commands
+ * @return {object} The results of JSON.parse()
+ */
+function saveCommands(filename = 'commands.json', command_list = global_commands_list) {
+	/*for (let index = 0; index < command_list.length; index++) {
+		//set defaults that may not be defined
+		const this_command = command_list[index];
+		if(this_command.cooldown === 0)     delete this_command.cooldown;
+		if(this_command.active === true)    delete this_command.active;
+		if(this_command.tired.active)       delete this_command.tired.active;
+		if(typeof this_command.tired !== 'undefined')     delete this_command.tired;
+		if(this_command.timestamp === 0)    delete this_command.timestamp;
+
+		//!this might be done elsewhere, idk
+		//set media_count to 0 if it's needed
+		for (let task_i = 0; task_i < this_command.task.length; task_i++) {
+			if(typeof this_command.task[task_i].media !== 'undefined' && typeof this_command.task[task_i].media_counter  !== 'undefined')
+				delete this_command.task[task_i].media_counter;
+		}
+	}*/
+	fs.writeFileSync(`${filename}.${Date.now()}`, JSON.stringify(command_list, null, '\t'));
+	fs.writeFileSync(`${filename}`, JSON.stringify(command_list, null, '\t'));
+
+	return command_list;
+}
+
+global_commands_list = loadCommands();
 //returns sub-string after 'command' in 'message'
 /**
  * @param {string} message message being parsed
@@ -362,6 +422,21 @@ async function processMessage(user, message, flags, self, extra) {
 			}
 			return undefined;
 		}
+		function isCommandCustomAudio(string, commands = global_commands_list) {
+			for (let index = 0; index < commands.length; index++) {
+				let keyword = commands[index].keyword.toString();
+				if(typeof commands[index].altkey !== 'undefined')
+					keyword = commands[index].altkey.toString();
+
+				if(keyword === string) {
+					if(typeof commands[index].task.at(0).customaudio !== 'undefined')
+						return true
+
+					return false;
+				}
+			}
+			return false;
+		}
 		async function taskIterator9000(user, index, this_command, query){
 			for (let task_index = 0; task_index < this_command.task.length; task_index++) {
 				const this_task = this_command.task[task_index];
@@ -370,7 +445,9 @@ async function processMessage(user, message, flags, self, extra) {
 					return true;
 				}
 				if(this_task.customaudio) {//this needs to be 2nd to override other commands
-					const args = getQuery(message_lower, '!ca ').split(' ');
+					let args = getQuery(message_lower, '!ca ').split(' ');
+					if(this_task.customaudio !== 'ca')//reset args if this is a stored audio command
+						args = this_task.customaudio.split(' ');
 					if(args.length % 3 !== 0) {
 						server.sayWrapper(`@ ${user} Syntax Error: !ca cmd start duration ...`);
 						return true;
@@ -389,6 +466,38 @@ async function processMessage(user, message, flags, self, extra) {
 						commands_triggered++;
 					}
 					server.sendMessage('CustomAudio', args);
+
+					if(this_task.customaudio === 'ca')//return only if this isn't a stored audio command
+						return true;
+				}
+				if(this_task.customaudioadd) {//this needs to be 3rd to override other commands
+					query = getQuery(message_lower, '!caa ');
+					const firstWord = query.split(" ")[0];
+					query = query.substr(firstWord.length+1, query.length - firstWord.length-1);
+					const commandExists = typeof findCommandByString(firstWord) !== 'undefined';
+					if(commandExists) {
+						server.sayWrapper(`@${user} Command "${firstWord}" already exists. Try using !cae to edit.`);
+					}
+					else {
+						addCa(user, firstWord, query);
+						server.sayWrapper(`@${user} Command "${firstWord}" added.`);
+					}
+
+					return true;
+				}
+				if(this_task.customaudioedit) {//this needs to be 3rd to override other commands
+					query = getQuery(message_lower, '!cae ');
+					const firstWord = query.split(" ")[0];
+					query = query.substr(firstWord.length+1, query.length - firstWord.length-1);
+					const command_to_edit = isCommandCustomAudio(firstWord);
+					if(!command_to_edit) {
+						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command. Try using !caa to add it.`);
+					}
+					else {
+						editCa(user, firstWord, query);
+						server.sayWrapper(`@${user} Command "${firstWord}" edited.`);
+					}
+
 					return true;
 				}
 				if(this_task.tts) {
