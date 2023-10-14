@@ -2,8 +2,9 @@
   "dependencies": {
     "@twurple/api": "^7.0.2",
     "@twurple/auth": "^7.0.2",
+    "@twurple/easy-bot": "^7.0.3",
     "@twurple/eventsub-ws": "^7.0.2",
-    "comfy.js": "^1.1.16",
+    "@twurple/pubsub": "^7.0.3",
     "dotenv": "^16.0.1",
     "fuse.js": "^6.6.2",
     "giffo-shufflebag": "^0.0.2",
