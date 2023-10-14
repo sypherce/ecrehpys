@@ -5,12 +5,7 @@ const ws = require('websocket');
 const http = require('http');
 const log = require('esm')(module)('./alerts/log.js').log;
 const commands = require('./server.commands.js');
-const isSingleInstance = require('./single_instance.js');
 
-if(isSingleInstance.check() == false) {
-	console.log('multiple instances running');
-	return;
-}
 
 async function init() {
 	twurple.init(process.env.STREAMER_ID, process.env.STREAMER_OAUTH, process.env.BOT_USER, process.env.BOT_OAUTH);
