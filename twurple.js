@@ -110,7 +110,7 @@ async function getStreamByUserName(user_name) {
 	return await api_client.streams.getStreamsByUserNames(user_name);
 }
 async function getChannelInfoById(user_id) {
-	return await api_client.channels.getChannelInfoById(id);
+	return await api_client.channels.getChannelInfoById(user_id);
 }
 async function getChannelInfoByUsername(user_name) {
 	let user = await getUserByName(user_name);

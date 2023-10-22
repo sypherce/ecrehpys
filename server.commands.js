@@ -5,6 +5,7 @@ const ShuffleBag = require('giffo-shufflebag');
 const log = require('esm')(module)('./alerts/log.js').log;
 const twurple = require('./twurple.js');
 const mp3Library = require('./mp3Library.js');
+const prettyStringify = require("@aitodotai/json-stringify-pretty-compact")
 
 let global_commands_list;
 function addCa(author, keyword, command) {
@@ -128,14 +129,16 @@ laugh<br>`);
  * @return {object} The results of JSON.parse()
  */
 function saveCommands(filename = 'commands.json', command_list = global_commands_list) {
-	/*for (let index = 0; index < command_list.length; index++) {
+	for (let index = 0; index < command_list.length; index++) {
 		//set defaults that may not be defined
 		const this_command = command_list[index];
-		if(this_command.cooldown === 0)     delete this_command.cooldown;
-		if(this_command.active === true)    delete this_command.active;
-		if(this_command.tired.active)       delete this_command.tired.active;
-		if(typeof this_command.tired !== 'undefined')     delete this_command.tired;
-		if(this_command.timestamp === 0)    delete this_command.timestamp;
+		if(this_command.cooldown === 0) delete this_command.cooldown;
+		if(this_command.active === true) delete this_command.active;
+		if(typeof this_command.tired !== 'undefined') {
+			if(typeof this_command.tired.active !== 'undefined') delete this_command.tired.active;
+			delete this_command.tired;
+		}
+		if(typeof this_command.timestamp !== 'undefined') delete this_command.timestamp;
 
 		//!this might be done elsewhere, idk
 		//set media_count to 0 if it's needed
@@ -143,9 +146,9 @@ function saveCommands(filename = 'commands.json', command_list = global_commands
 			if(typeof this_command.task[task_i].media !== 'undefined' && typeof this_command.task[task_i].media_counter  !== 'undefined')
 				delete this_command.task[task_i].media_counter;
 		}
-	}*/
-	fs.writeFileSync(`${filename}.${Date.now()}`, JSON.stringify(command_list, null, '\t'));
-	fs.writeFileSync(`${filename}`, JSON.stringify(command_list, null, '\t'));
+	}
+	fs.writeFileSync(`${filename}.${Date.now()}`, prettyStringify(command_list, {indent: '\t', maxLength: 1000, maxNesting: 2}));
+	fs.writeFileSync(`${filename}`, prettyStringify(command_list, {indent: '\t', maxLength: 1000, maxNesting: 2}));
 
 	return command_list;
 }
@@ -449,7 +452,7 @@ async function processMessage(user, message, flags, self, extra) {
 					if(this_task.customaudio !== 'ca')//reset args if this is a stored audio command
 						args = this_task.customaudio.split(' ');
 					if(args.length % 3 !== 0) {
-						server.sayWrapper(`@ ${user} Syntax Error: !ca cmd start duration ...`);
+						server.sayWrapper(`@${user} Syntax Error: !ca cmd start duration ...`);
 						return true;
 					}
 					for (let index = 0; index < args.length; index += 3) {
@@ -595,7 +598,7 @@ async function processMessage(user, message, flags, self, extra) {
 		//iterate through each command
 		for (let index = 0; index < commands.length; index++) {
 			let this_command = commands[index];
-			if(!this_command.active)
+			if(this_command.active === false)
 				continue;//skips command, continues iterating
 
 			log('verbose', `this_command.task: ${this_command.task}`);
