@@ -134,10 +134,9 @@ function saveCommands(filename = 'commands.json', command_list = global_commands
 		const this_command = command_list[index];
 		if(this_command.cooldown === 0) delete this_command.cooldown;
 		if(this_command.active === true) delete this_command.active;
-		if(typeof this_command.tired !== 'undefined') {
-			if(typeof this_command.tired.active !== 'undefined') delete this_command.tired.active;
-			delete this_command.tired;
-		}
+		if(typeof this_command.tired !== 'undefined' &&
+		   typeof this_command.tired.active !== 'undefined') delete this_command.tired.active;
+		if(typeof this_command.tired !== 'undefined') delete this_command.tired;
 		if(typeof this_command.timestamp !== 'undefined') delete this_command.timestamp;
 
 		//!this might be done elsewhere, idk
