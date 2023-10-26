@@ -20,6 +20,16 @@
 		"author": ""
 	},
 	{
+		"keyword": ["!cal"],
+		"task": [{"customaudiolist": "cal"}],
+		"author": ""
+	},
+	{
+		"keyword": ["!tts"],
+		"task": [{"tts": "tts"}],
+		"author": ""
+	},
+	{
 		"keyword": ["dream"],
 		"task": [{"customaudio": "!popcyclopsicle 0 2500 !popcyclopsicle 16500 2000"}],
 		"author": ""
@@ -27,6 +37,11 @@
 	{
 		"keyword": ["rigsmgow"],
 		"task": [{"customaudio": "!xjrigsx 0 2500 mgow 200 1500"}],
+		"author": ""
+	},
+	{
+		"keyword": ["rigshee"],
+		"task": [{"customaudio": "!xjrigsx 0 2500 banshee 200 1500"}],
 		"author": ""
 	},
 	{
@@ -350,7 +365,8 @@
 		"altkey": ["fhqwhgads"],
 		"keyword": ["f(h|)(q|)(w|)(h|)g(a|)(w|)(d|)(s|)", "every\\s*body\\s*to\\s*the\\s*limit"],
 		"task": [{"videonow": "0 - Other/fhqwhgads - Everybody to the Limit.mp4"}],
-		"author": "missliss15"
+		"author": "missliss15",
+		"lasttimestamp": "2023-10-25T19:46:20.011Z"
 	},
 	{
 		"keyword": ["007"],
@@ -1688,7 +1704,7 @@
 	},
 	{
 		"altkey": ["water"],
-		"keyword": ["water", "what\\s*(a|')re"],
+		"keyword": ["water(s|)", "what\\s*(a|')re"],
 		"task": [{"videonow": "0 - Other/emil_water.mp4"}],
 		"author": "residentemil_",
 		"lasttimestamp": "2023-10-15T12:47:50.758Z"
@@ -1770,37 +1786,12 @@
 	},
 	{
 		"keyword": ["beefawful"],
-		"task": [{"media": "ca_beefawful.mp3"}],
+		"task": [{"customaudio": "awful 0 900 beefbark 0 900 awful 1300 900"}],
 		"author": ""
 	},
 	{
 		"keyword": ["beefmweep"],
-		"task": [{"media": "ca_beefmweep.mp3"}],
-		"author": ""
-	},
-	{
-		"keyword": ["beefwater"],
-		"task": [{"media": "ca_beefwater.mp3"}],
-		"author": ""
-	},
-	{
-		"keyword": ["ded"],
-		"task": [{"media": "ca_ded.mp3"}],
-		"author": ""
-	},
-	{
-		"keyword": ["gonnadie"],
-		"task": [{"media": "ca_gonnadie.mp3"}],
-		"author": ""
-	},
-	{
-		"keyword": ["!sh"],
-		"task": [{"media": "ca_sh.mp3"}],
-		"author": ""
-	},
-	{
-		"keyword": ["ultimateyes"],
-		"task": [{"media": "ca_ultimateyes.mp3"}],
+		"task": [{"customaudio": "beefbark 0 1200 mweep 0 600"}],
 		"author": ""
 	},
 	{
@@ -2282,7 +2273,7 @@
 		"task": [{"customaudio": "daftnuts 0 3280 beep 1000 300 firehose 4476 575"}]
 	},
 	{
-		"author": "sypherce",
+		"author": "",
 		"keyword": ["wataaa"],
 		"task": [{"customaudio": "water 0 800 atata 9500 1400"}]
 	},
@@ -2307,12 +2298,12 @@
 		"task": [
 			{"alert": ["assets/alerts/vaiencea.mp3", "bounceIn", "pulse", "hinge"]}
 		],
-		"author": "xjrigsx"
+		"author": "vaiencea"
 	},
 	{
-		"author": "sypherce",
 		"keyword": ["chickenattack"],
-		"task": [{"customaudio": "!vaiencea 100 3500"}]
+		"task": [{"customaudio": "!vaiencea 100 3500"}],
+		"author": "vaiencea"
 	},
 	{
 		"altkey": ["barkshack"],
@@ -2330,5 +2321,61 @@
 		"author": "itteramatv",
 		"keyword": ["yabooty"],
 		"task": [{"customaudio": "chunkybooty 300 300 chunkybooty 300 300 chunkybooty 300 300 chunkybooty 300 300 chunkybooty 300 300 chunkybooty 0 1000"}]
+	},
+	{
+		"keyword": ["banshee"],
+		"task": [{"media": "xjrigsx_banshee.mp3"}],
+		"author": "xjrigsx"
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["beefwater"],
+		"task": [{"customaudio": "beefbark 0 1200 heywater 1800 600"}]
+	},
+	{
+		"author": "",
+		"keyword": ["ded"],
+		"task": [{"customaudio": "ohno 0 700 beep 1000 1000 left 20000 2000"}]
+	},
+	{
+		"author": "muten_pizza",
+		"keyword": ["!sh"],
+		"task": [{"customaudio": "shush 0 100 beep 1000 500"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["ultimateyes"],
+		"task": [{"customaudio": "yesyes 3500 500 yesyes 3500 500 yesyes 3500 500 yesyes 3500 500 yesyes 3500 500"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["gonnadie"],
+		"task": [{"customaudio": "left 20000 5000"}]
+	},
+	{
+		"author": "",
+		"keyword": ["heybark"],
+		"task": [{"customaudio": "heywater 0 1600 beefbark 1200 1200"}]
+	},
+	{
+		"author": "sypherce",
+		"keyword": ["banshory"],
+		"task": [{"customaudio": "victory 0 3000 banshee 0 1000"}]
+	},
+	{
+		"author": "sypherce",
+		"keyword": ["stupid"],
+		"task": [{"customaudio": "hey 300 650"}]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["!errr"],
+		"keyword": ["!errr", "!err"],
+		"task": [{"customaudio": "water 10000 1000 water 10000 1000 water 10000 1000 water 10000 1000 water 10000 1000 water 10000 1000 water 10000 1000 water 10000 1000"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["oatmeal"],
+		"task": [{"customaudio": "firehose 4460 575"}]
 	}
 ]

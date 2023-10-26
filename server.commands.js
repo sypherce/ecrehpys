@@ -6,6 +6,7 @@ const log = require('esm')(module)('./alerts/log.js').log;
 const twurple = require('./twurple.js');
 const mp3Library = require('./mp3Library.js');
 const prettyStringify = require("@aitodotai/json-stringify-pretty-compact")
+const tts = require('./tts.js')
 
 let global_commands_list;
 function addCa(author, keyword, command) {
@@ -37,6 +38,20 @@ function editCa(author, keyword, command) {
 	};
 
 	global_commands_list = saveCommands();
+}
+function listCa(keyword) {
+
+	for (let index = 0; index < global_commands_list.length; index++) {
+		let this_keyword = global_commands_list[index].keyword.toString();
+		if(typeof global_commands_list[index].altkey !== 'undefined')
+		this_keyword = global_commands_list[index].altkey.toString();
+
+		if(this_keyword === keyword &&
+			(typeof global_commands_list[index].task[0].customaudio !== 'undefined'))
+				return `!ca ${global_commands_list[index].task[0].customaudio}`
+	};
+
+	return "";
 }
 
 /**
@@ -95,6 +110,8 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 			case '!ca':
 			case '!caa':
 			case '!cae':
+			case '!cal':
+			case '!tts':
 			case '!nc':
 				break;
 			//everything else gets added to the html page
@@ -502,9 +519,28 @@ async function processMessage(user, message, flags, self, extra) {
 
 					return true;
 				}
+				if(this_task.customaudiolist) {//this needs to be 3rd to override other commands
+					query = getQuery(message_lower, '!cal ');
+					const firstWord = query.split(" ")[0];
+					query = query.substr(firstWord.length+1, query.length - firstWord.length-1);
+					const command_to_list = isCommandCustomAudio(firstWord);
+					if(!command_to_list) {
+						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command.`);
+					}
+					else {
+						let response = listCa(firstWord);
+						server.sayWrapper(`@${user} "${response}"`);
+					}
+
+					return true;
+				}
 				if(this_task.tts) {
-					const processed_message = await processVariables(user, query, this_task.tts);
-					server.sendMessage('TTS', processed_message);
+					const sub_message = message.substr(message_lower.indexOf('!tts ') + 5);
+					const processed_message = await processVariables(user, query, sub_message);
+					const timestamp = `${this_command.timestamp}`.replace(/[/\\?% *:|"<>]/g, '');
+					const tts_filename = `../${(await tts.ttsToMP3(processed_message, `alerts/assets/alerts/tts/${timestamp}`))}.mp3`;
+					console.log(tts_filename);
+					server.sendMessage('TTS', tts_filename);
 				}
 				if(this_task.delay) {
 					await new Promise(resolve => setTimeout(resolve, this_task.delay));

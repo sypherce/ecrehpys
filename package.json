@@ -13,6 +13,7 @@
     "node-twitch": "^0.4.5",
     "pastebin-api": "^6.1.0",
     "sanitize-filename": "^1.6.3",
+    "tiktok-tts": "^1.1.13",
     "tmi.js": "^1.5.0",
     "websocket": "^1.0.34"
   },

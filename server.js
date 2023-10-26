@@ -6,7 +6,6 @@ const http = require('http');
 const log = require('esm')(module)('./alerts/log.js').log;
 const commands = require('./server.commands.js');
 
-
 async function init() {
 	twurple.init(process.env.STREAMER_ID, process.env.STREAMER_OAUTH, process.env.BOT_USER, process.env.BOT_OAUTH);
 }

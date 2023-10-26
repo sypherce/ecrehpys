@@ -3,11 +3,8 @@
 'use strict';
 
 import {log} from './log.js';
-import {ttsInit, ttsSpeak} from './tts.js';
-
 import * as fb2000 from './foobar2000.js';
 
-ttsInit();
 const local_music_path = 'assets/music';
 
 function replaceExtension(filename, original, replacement) {
@@ -456,7 +453,7 @@ function initWebSocket() {
 			break;
 		}
 		case 'TTS': {
-			ttsSpeak(value);
+			playSound(value);
 			break;
 		}
 		case 'SplitSong': {
