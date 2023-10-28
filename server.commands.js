@@ -504,7 +504,7 @@ async function processMessage(user, message, flags, self, extra) {
 
 					return true;
 				}
-				if(this_task.customaudioedit) {//this needs to be 3rd to override other commands
+				if(this_task.customaudioedit) {//this needs to be 4th to override other commands
 					query = getQuery(message_lower, '!cae ');
 					const firstWord = query.split(" ")[0];
 					query = query.substr(firstWord.length+1, query.length - firstWord.length-1);
@@ -519,7 +519,7 @@ async function processMessage(user, message, flags, self, extra) {
 
 					return true;
 				}
-				if(this_task.customaudiolist) {//this needs to be 3rd to override other commands
+				if(this_task.customaudiolist) {//this needs to be 5th to override other commands
 					query = getQuery(message_lower, '!cal ');
 					const firstWord = query.split(" ")[0];
 					query = query.substr(firstWord.length+1, query.length - firstWord.length-1);
