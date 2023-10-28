@@ -4,62 +4,6 @@ const prettyStringify = require("@aitodotai/json-stringify-pretty-compact")
 
 const isLinux = false;
 let music_path = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
-/*async function setPosition(position, absolute = false) {
-	let command = '';
-	if(absolute) {
-		command = `player?position=${position}`;
-	} else {
-		command = `player?relativePosition=${position}`;
-	}
-	return postSimple(command);
-}
-async function getActiveItemIndex() {
-	const json = await getJSON('player');
-	return json.player.activeItem.index;
-}
-async function getPosition() {
-	const json = await getJSON('player');
-	return json.player.activeItem.position;
-}
-async function getPositionRelative() {
-	const json = await getJSON('player');
-	return json.player.activeItem.position / json.player.activeItem.duration;
-}
-async function getCoverartURL(index) {
-	const playlist = await getActivePlaylistIndex();
-	return `${base_url}/artwork/${playlist}/${index}`;
-}
-async function getActiveItemFilename() {
-	const json = await getJSON('player?columns=%filename%');
-	return json.player.activeItem.columns[0];
-}
-async function getPlaybackState() {
-	getPlaybackState.state = getPlaybackState.state ?? 'stopped';
-
-	const json = await getJSON('player');
-	const this_state = json.player.playbackState;
-
-	if(getPlaybackState.state === this_state)
-		return false;
-
-	getPlaybackState.state = this_state;
-	return getPlaybackState.state;
-}
-async function isPlaying() {
-	const json = await getJSON('player');
-	const this_state = json.player.playbackState;
-
-	return this_state === 'playing';
-}
-async function getActivePlaylistIndex() {
-	const json = await getJSON('player');
-	const index = json.player.activeItem.playlistIndex;
-	if(index === -1)
-		return (await getCurrentPlaylist()).index;
-
-	return index;
-}*/
-//pl
 
 const playlists = [];
 let player = {
