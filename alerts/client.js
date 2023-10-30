@@ -126,8 +126,8 @@ export function sendMessage(id, contents) {
 	log('debug', message);
 	connection.send(message);
 }
-
-function playSplitSound(file) {
+const VOLUME_ADJUSTMENT = 0.1;
+function playSplitSound(file, adjustedVolume = VOLUME_ADJUSTMENT) {
 	console.log(file);
 	const sound = {
 		list: [],
@@ -150,6 +150,7 @@ function playSplitSound(file) {
 					sound = new Howl({
 						src: [filename],
 						html5: true,
+						volume: adjustedVolume,
 						loop: true,
 					})
 				);
@@ -165,11 +166,12 @@ function playSplitSound(file) {
 	};
 	sound.play(file);
 }
-function playSound(file) {
+function playSound(file, adjustedVolume = VOLUME_ADJUSTMENT) {
 	console.log(file);
 	let sound = new Howl({
 		src: [file],
 		html5: true,
+  		volume: adjustedVolume,
 		onend: function() {
 			sound.unload();
 			console.log('Unloaded!');
@@ -180,7 +182,7 @@ function playSound(file) {
 
 //todo: gif needs handled elsewhere, proper console.log
 //research: do i need to sound.unload() the sound myself?
-function playSoundSprite(file, offset = -1, duration = -1) {
+function playSoundSprite(file, adjustedVolume = VOLUME_ADJUSTMENT, offset = -1, duration = -1) {
 	//we pass gifs into this for some reason. reason is laziness
 	file = replaceExtension(file, '.gif', '.mp3');
 
@@ -190,6 +192,7 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 			key1: [offset, duration]
 		},
 		html5: true,
+		volume: adjustedVolume,
 		onend: function() {
 			sound.unload();
 			console.log('Unloaded!');
@@ -247,7 +250,7 @@ function initWebSocket() {
 				if(delay !== 0)//if there's a delay from the last sound
 					await new Promise(r => setTimeout(r, delay));
 				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
-				playSoundSprite(cmd_path, start, duration);
+				playSoundSprite(cmd_path, VOLUME_ADJUSTMENT, start, duration);
 
 				position = position + duration;
 				if(position >= max_duration)
@@ -366,6 +369,7 @@ function initWebSocket() {
 				const sound = new Howl({
 					src: audio_file,
 					html5: true,
+					volume: VOLUME_ADJUSTMENT,
 					preload: true,
 					onplay: function() {
 						const duration = `${parseInt((sound.duration()*1000)/3)}ms`;

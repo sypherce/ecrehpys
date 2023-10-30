@@ -1,0 +1,12 @@
+foobar2000.js:195 {getJSON: {…}}
+foobar2000.js:196 {postSimple: Array(2)}
+foobar2000.js:197 {setPosition: Array(2)}
+foobar2000.js:198 {getPlaybackState: false}
+foobar2000.js:199 {isPlaying: false}
+foobar2000.js:202 {active_item_index: 0}
+foobar2000.js:203 {getPosition: 69}
+foobar2000.js:204 {getPositionRelative: 0.16428571428571428}
+foobar2000.js:205 {getCoverartURL: 'http://192.168.1.20:8880/api/artwork/0/0'}
+foobar2000.js:206 {getActiveItemFilename: 'album'}
+foobar2000.js:207 {getPlaylists: Array(1)}
+foobar2000.js:208 {getActivePlaylistIndex: 0}

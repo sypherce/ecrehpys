@@ -58,7 +58,7 @@ function listCa(keyword) {
  * @param {string} filename JSON containing commands
  * @return {object} The results of JSON.parse()
  */
-function loadCommands(filename = 'commands.json') {//loads and returns all commands from 'commands.json' in an JSON.parse() object
+function loadCommands(filename = 'assets/commands.json') {//loads and returns all commands from 'assets/commands.json' in an JSON.parse() object
 	let html = '';
 	const command_list = JSON.parse(fs.readFileSync(filename));
 	function isTired() { return (typeof this_command.tired.active !== 'undefined' && this_command.tired.active === true) }
@@ -145,7 +145,7 @@ laugh<br>`);
  * @param {string} filename JSON containing commands
  * @return {object} The results of JSON.parse()
  */
-function saveCommands(filename = 'commands.json', command_list = global_commands_list) {
+function saveCommands(filename = 'assets/commands.json', command_list = global_commands_list) {
 	for (let index = 0; index < command_list.length; index++) {
 		//set defaults that may not be defined
 		const this_command = command_list[index];

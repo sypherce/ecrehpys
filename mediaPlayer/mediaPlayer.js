@@ -1,4 +1,5 @@
 'use strict';
+const server = require('../modules/server.js');
 
 const prettyStringify = require("@aitodotai/json-stringify-pretty-compact")
 
@@ -7,40 +8,40 @@ let music_path = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Strea
 
 const playlists = [];
 let player = {
-	player: {
-		"info": {
-		  "name": "string",
-		  "title": "string",
-		  "version": "string",
-		  "pluginVersion": "string"
-		},
-		activeItem: {
-			"playlistId": "string",
-			playlistIndex: 0,
-			index: 0,
-			position: 69,
-			duration: 420,
-			columns: [
-				'album', 'title', 'http://192.168.1.20/nodejs/main/alerts/assets/alerts/0.mp3'
-			],
-			all_columns: [{
-				album: 'running with scissors',
-				title: 'living in the fridge',
-				filename: 'http://192.168.1.20/nodejs/main/alerts/assets/alerts/0.mp3',
-			}],
-		},
-		playbackState: 'stopped',
-		"volume": {
-		  "type": "db",
-		  "min": 0,
-		  "max": 0,
-		  "value": 0,
-		  "isMuted": true
-		}
+	info: {
+		name: 'ecrehpys.media',
+		title: 'ecrehpys.media',
+		version: '1.0',
+		pluginVersion: '1.0'
+	},
+	activeItem: {
+		playlistId: 'p69',
+		playlistIndex: 0,
+		index: 0,
+		position: 0,
+		duration: 420,
+		columns: [
+			'album', 'title', 'http://192.168.1.20/nodejs/main/alerts/assets/alerts/0.mp3'
+		],
+		all_columns: [{
+			album: 'running with scissors',
+			title: 'living in the fridge',
+			filename: 'http://192.168.1.20/nodejs/main/alerts/assets/alerts/0.mp3',
+		}],
+	},
+	playbackState: 'playing',
+	volume: {
+		type: "db",
+		min: -100,
+		max: 0,
+		value: 0,
+		isMuted: false
 	}
 };
 
-
+setInterval(() => {
+		player.activeItem.position++;
+	}, '1000');
 
 /*
 	find playlist
@@ -62,7 +63,14 @@ function addItems(playlistIndex, itemIndex, play, items) {
 	}
 
 	items.forEach((element) => {
-		playlists[thisPlaylist].items.push({columns: ['album', 'title', JSON.stringify(element)]});
+		playlists[thisPlaylist].items.splice(itemIndex, 0, {columns: ['album', 'title', JSON.stringify(element)]});
+		if(play === true) {
+			element = `../music/${element.replace(/G\:\/media\/music\/Stream\//gi, '')}`;
+			server.sendMessage('Audio', element);
+			console.log(element);
+			console.log(JSON.stringify(element));
+			player.activeItem.position = 0;
+		}
 	});
 
 	return true;
@@ -255,7 +263,7 @@ const foobarGetItemsObject = {
 };
 */
 
-(async () => {
+async function init() {
 	var cors = require('cors')
 	const express = require('express')
 	const app = express()
@@ -263,10 +271,9 @@ const foobarGetItemsObject = {
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
 
-
 	app.get('/api/player', (request, response) => {
 		const query = new URLSearchParams(request._parsedUrl.query);
-		response.json(player);
+		response.json({player: player});
 	})
 	app.post('/api/player', (request, response) => {
 		const req = request;//remove me
@@ -275,22 +282,21 @@ const foobarGetItemsObject = {
 		console.log(query);
 		if(query.has('columns')) {
 			console.log(`columns: ${query.get('columns')}`);
-			response.json(player);
+			response.json({player: player});
 		}
 		else {
-			response.json(player);
+			response.json({player: player});
 		}
 	})
 	app.get('/api/playlists', (request, response) => {
 		const query = new URLSearchParams(request._parsedUrl.query);
 		console.log(playlists);
-		response.json({
-			playlists: playlists
-		});
+		response.json({playlists: playlists});
 	})
 	app.post('/api/playlists/:id/items/add', (request, response) => {
 		const req = request;//remove me
 		const res = response;//remove me
+
 console.log('1234567890');
 console.log(request.body);
 //which playlist? probably current, 0 for now
@@ -332,9 +338,13 @@ addItems(0, request.body.index, request.body.play, request.body.items);
 		console.log('request.query: ',request.query)
 	});
 
+
+    app.get(new RegExp('/.*'), function(request, response) {
+        console.log(response.req.url);
+        response.sendFile(`/var/www/html/nodejs/main/mediaPlayer${response.req.url}`);
+         // response.sendFile('/var/www/html/nodejs/main/mediaPlayer/index.html');
+    });
 	app.listen(8880)
-
-
 
 	let line = 0;
 	addItems(0, 0, false, [
@@ -359,6 +369,7 @@ addItems(0, request.body.index, request.body.play, request.body.items);
 	console.log(JSON.stringify(playlists));
 	console.log(`${line++}: ${getItems(0, "0:2")}`)
 	console.log(`${line++}: ${prettyStringify(playlists, {indent: '\t', maxLength: 1000, maxNesting: 2})}`);
-})();
+};
 
+module.exports.init = init;
 //export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path};

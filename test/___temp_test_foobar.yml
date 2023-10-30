@@ -1,0 +1,16 @@
+foobar2000.js:196 {postSimple: Array(2)}postSimple: (2) [true, 15][[Prototype]]: Object
+foobar2000.js:197 {setPosition: Array(2)}setPosition: Array(2)0: true1: 25length: 2[[Prototype]]: Array(0)[[Prototype]]: Object
+foobar2000.js:198 {getPlaybackState: 'playing'}getPlaybackState: "playing"[[Prototype]]: Object
+foobar2000.js:199 {isPlaying: true}
+foobar2000.js:202 {active_item_index: 0}
+foobar2000.js:203 {getPosition: 25}
+foobar2000.js:204 {getPositionRelative: 0.34693387550470617}
+foobar2000.js:205 {getCoverartURL: 'http://derrick-desktop:8880/api/artwork/0/0'}
+foobar2000.js:206 {getActiveItemFilename: 'Crabs- MrWeebl'}
+foobar2000.js:207 {getPlaylists: Array(3)}
+foobar2000.js:208 {getActivePlaylistIndex: 0}
+foobar2000.js:181 {playlistItems: {…}}
+foobar2000.js:209 {getItems: {…}}
+foobar2000.js:181 {playlistItems: {…}}
+foobar2000.js:212 {postJSON: true}
+foobar2000.js:220 0 -- G:/media/music/Stream/0 - Other/Crabs- MrWeebl.mp3

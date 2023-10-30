@@ -1,0 +1,126 @@
+<html>
+
+    <head>
+<style>:root {
+  --debug-border-size: 0px;
+  --default-animation: 1.3s ease-out;
+  --body-h: 1080px;
+  --body-w: 1920px;
+  --scale: 0.5;
+  --padding_default: calc(var(--scale) * 20px);
+  --padding_1: calc(var(--scale) * 175px);
+  --padding_4: calc(var(--scale) * 125px);
+  --image_width: calc(var(--scale) * 256px);
+  --image_height: calc(var(--scale) * 256px);
+}
+
+body {}
+
+div.block {
+  border: 1px dotted red;
+  padding: 10px;
+  background-image: url('https://cdn.pixabay.com/photo/2016/11/14/04/45/adventure-1822636_1280.jpg');
+}
+
+#anchor_div {
+  overflow-anchor: auto;
+  height: 1px;
+}
+
+#main_div {
+  overflow-anchor: none;
+  height: auto;
+  /**/
+  border: 5px solid black;
+  padding: 10px;
+  display: flex;
+  flex-direction: column-reverse;
+
+  -webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
+  }
+
+  .container {
+    overflow: auto;
+  }
+}
+
+</style>
+
+    </head>
+
+    <body>
+		<div data-from="sypherce" data-id="{messageId}">
+
+			<div class="message-box" style="
+						border:0xFFFF00;
+						background: url('http://192.168.1.20/stream/assets/users/text_background/sypherce.png');
+						background-color: 0xFFFF0040;">
+				<div class="meta">
+					<div class="username-box">
+						<span class="name" style="color: 0xFFFF00;margin-top: -10px;">
+							<span style="background-color: 0xFFFF00;
+							border-radius: 50%;
+							margin:0px;
+							padding:0 0px;display:inline-block ">
+							<img style="vertical-align: middle;
+							border-radius: 50%;"  onerror='this.style.display = "none"' height="32" width="32" src="http://192.168.1.20/stream/assets/users/icon/sypherce.php"></span>sypherce</span>
+					</div>
+				</div>
+	<!--
+				<div class="crown">
+					<span class="badges"></span>
+				</div>
+	--><!--
+				<span class="message" style="margin-top: -15px;">{message}<?php echo time();?></span>
+			</div>
+
+		</div>
+        <div id="main_div"></div>
+        <div id="anchor_div"></div>
+		<script>const main_div = document.getElementById('main_div');
+
+			function addChat(user, message, commandcount) {
+				const new_div = document.createElement('div');
+				commandcount = commandcount.toString();
+				new_div.className = 'block';
+				new_div.innerHTML = `[${new Date().toLocaleTimeString()}] ${user} (${commandcount}): ${message}`;
+				//new_div.classList.add('scroll-left-fade-out');
+				main_div.prepend(new_div);
+			}
+			setInterval(() => {
+			addChat('sypherce', '!crash', 1);
+			}, "1000");
+			</script>
+    </body>
+
+</html>
+<!--
+	<div data-from="sypherce" data-id="{messageId}">
+
+		<div class="message-box" style="
+					border:0xFFFF00;
+					background: url('http://192.168.1.20/stream/assets/users/text_background/sypherce.png');
+					background-color: 0xFFFF0040;">
+			<div class="meta">
+				<div class="username-box">
+					<span class="name" style="color: 0xFFFF00;margin-top: -10px;">
+						<span style="background-color: 0xFFFF00;
+						border-radius: 50%;
+						margin:0px;
+						padding:0 0px;display:inline-block ">
+						<img style="vertical-align: middle;
+						border-radius: 50%;"  onerror='this.style.display = "none"' height="32" width="32" src="http://192.168.1.20/stream/assets/users/icon/sypherce.php"></span>sypherce</span>
+				</div>
+			</div>
+<!--
+			<div class="crown">
+				<span class="badges"></span>
+			</div>
+--><!--
+			<span class="message" style="margin-top: -15px;">{message}<?php echo time();?></span>
+		</div>
+
+	</div>
+	-->
