@@ -74,7 +74,7 @@ function addItems(playlistIndex, itemIndex, play, items) {
         if(element.columns)
             element = element.columns[2];
         element = `../music/${element.replace(/G\:\/media\/music\/Stream\//gi, '')}`;
-        mediaPlayerServer.sendMessage('AddItem', {index: itemIndex, item: element});
+        mediaPlayerServer.sendMessage('AddItem', {index: itemIndex, path: element, title: 'title', album: 'album'});
         console.log(`element:${element}`);
         console.log(JSON.stringify(element));
 		if(play === true) {

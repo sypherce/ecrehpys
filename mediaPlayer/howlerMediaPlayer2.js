@@ -1,3 +1,22 @@
+function simpleStringify (object){
+    // stringify an object, avoiding circular structures
+    // https://stackoverflow.com/a/31557814
+    var simpleObject = {};
+    for (var prop in object ){
+        if (!object.hasOwnProperty(prop)){
+            continue;
+        }
+        if (typeof(object[prop]) == 'object'){
+            continue;
+        }
+        if (typeof(object[prop]) == 'function'){
+            continue;
+        }
+        simpleObject[prop] = object[prop];
+    }
+    return JSON.stringify(simpleObject); // returns cleaned up JSON
+};
+
 
 let current_song, next_song, song_index = 0;
 window.isPlaying = function() {
@@ -25,15 +44,15 @@ window.seek = function(position) {
 }
 
 export function play_song(index) {
-	console.log(`${index}`)
+	console.log(`play_song(${index})`)
 	//index = index < 0 ? 0: index;
 	let path = index;
 	if(!isNaN(Number(index))) {
 		const playlist = document.getElementById("playlist");
-		if(index < 0 || index >= playlist.childNodes.length - 1) return;
+		if(index < 0 || index >= playlist.childNodes.length - 1)
+			return;
 		song_index = index;
-		console.log(index);
-		const child = playlist.childNodes.item(song_index);
+		const child = playlist.childNodes.item(song_index + 1);
 		path = child.getAttributeNode("url").value;
 	}
 
@@ -55,11 +74,10 @@ export function play_song(index) {
 		current_song.fade(1, 0, 1000);
 	}
 	next_song.play();
-	//console.log(`currsong${JSON.stringify(current_song)}`);
 	//console.log(`nextsong${JSON.stringify(next_song)}`);
 	current_song = next_song;
-	current_song = next_song;
-	console.log(`currsong${(current_song)}`);
+	console.log(`currsong${simpleStringify(current_song)}`);
+	//console.log(`currsong${(current_song)}`);
 } window.play_song = play_song;
 
 //handle progressbar click
@@ -76,15 +94,23 @@ document.getElementById("progress_bar_container").addEventListener('mousedown', 
 		current_song.play();
 
 });
-export function addEntry(index, path) {
+export function addEntry(index, path, title, album) {
+	if(typeof title === 'undefined') {
+		const filename_with_extension = path.split('\\').pop().split('/').pop();
+		const filename = filename_with_extension.split('.').slice(0, -1).join('.');
+		title = filename;
+	}
+	if(typeof album === 'undefined') {
+		const pathArray = path.split("/");
+		album = pathArray[pathArray.length-2];
+	}
+
 	const div = document.createElement('div');
 	div.className = 'playlistEntry';
 	const url = document.createAttribute("url");
 		url.value = path;
 		div.setAttributeNode(url);
-	const filename_with_extension = path.split('\\').pop().split('/').pop();;
-	const filename = filename_with_extension.split('.').slice(0, -1).join('.')
-	div.innerHTML = filename;
+	div.innerHTML = `${album} - ${title}`;
 
 	const playlistElement = document.getElementById('playlist');
 	console.log(`temp: ${playlistElement.children.length} < ${index}`)
@@ -92,7 +118,7 @@ export function addEntry(index, path) {
 		playlistElement.appendChild(div);
 	else
 		playlistElement.insertBefore(div, playlistElement.childNodes[index]);
-	div.onclick = function () { play_song(index) };
+	div.onclick = function () { play_song(Array.prototype.indexOf.call(playlistElement.children, div)) };
 	console.log();
 }
 

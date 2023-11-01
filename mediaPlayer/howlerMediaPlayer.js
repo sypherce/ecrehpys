@@ -41,7 +41,7 @@ function initWebSocket(url) {
 		}
 		case 'AddItem': {
 			console.log(`${key}: ${value}`);
-			howlerMediaPlayer2.addEntry(value.index, value.item);
+			howlerMediaPlayer2.addEntry(value.index, value.path, value.title, value.album);
 			break;
 		}
 		case 'PlaySong': {
