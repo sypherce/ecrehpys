@@ -1,42 +1,44 @@
-function simpleStringify (object){
-    // stringify an object, avoiding circular structures
-    // https://stackoverflow.com/a/31557814
-    var simpleObject = {};
-    for (var prop in object ){
-        if (!object.hasOwnProperty(prop)){
-            continue;
-        }
-        if (typeof(object[prop]) == 'object'){
-            continue;
-        }
-        if (typeof(object[prop]) == 'function'){
-            continue;
-        }
-        simpleObject[prop] = object[prop];
-    }
-    return JSON.stringify(simpleObject); // returns cleaned up JSON
+
+import * as network from '../remote/remote_network.js';
+function simpleStringify(object) {
+	// stringify an object, avoiding circular structures
+	// https://stackoverflow.com/a/31557814
+	var simpleObject = {};
+	for (var prop in object) {
+		if (!object.hasOwnProperty(prop)) {
+			continue;
+		}
+		if (typeof (object[prop]) == 'object') {
+			continue;
+		}
+		if (typeof (object[prop]) == 'function') {
+			continue;
+		}
+		simpleObject[prop] = object[prop];
+	}
+	return JSON.stringify(simpleObject); // returns cleaned up JSON
 };
 
 
 let current_song, next_song, song_index = 0;
-window.isPlaying = function() {
+window.isPlaying = function () {
 	return current_song.playing();
 }
-window.playPause = function() {
-	if(current_song.playing())
+window.playPause = function () {
+	if (current_song.playing())
 		current_song.pause();
 	else
 		current_song.play();
 }
-window.stop = function() {
-	if(current_song.playing())
+window.stop = function () {
+	if (current_song.playing())
 		current_song.stop();
 }
-window.currentIndex = function() {
+window.currentIndex = function () {
 	return song_index;
 }
-window.seek = function(position) {
-	if(typeof position === 'undefined') {
+window.seek = function (position) {
+	if (typeof position === 'undefined') {
 		return current_song.seek()
 	}
 
@@ -47,12 +49,12 @@ export function play_song(index) {
 	console.log(`play_song(${index})`)
 	//index = index < 0 ? 0: index;
 	let path = index;
-	if(!isNaN(Number(index))) {
+	if (!isNaN(Number(index))) {
 		const playlist = document.getElementById("playlist");
-		if(index < 0 || index >= playlist.childNodes.length - 1)
+		if (index < 0 || index >= playlist.children.length - 1)
 			return;
 		song_index = index;
-		const child = playlist.childNodes.item(song_index + 1);
+		const child = playlist.children[song_index];
 		path = child.getAttributeNode("url").value;
 	}
 
@@ -90,44 +92,70 @@ document.getElementById("progress_bar_container").addEventListener('mousedown', 
 	current_song.seek((x / rect.width) * current_song._duration);
 
 	//play song if not already
-	if(!current_song.playing())
+	if (!current_song.playing())
 		current_song.play();
 
 });
 export function addEntry(index, path, title, album) {
-	if(typeof title === 'undefined') {
+	if (typeof title === 'undefined') {
 		const filename_with_extension = path.split('\\').pop().split('/').pop();
 		const filename = filename_with_extension.split('.').slice(0, -1).join('.');
 		title = filename;
 	}
-	if(typeof album === 'undefined') {
+	if (typeof album === 'undefined') {
 		const pathArray = path.split("/");
-		album = pathArray[pathArray.length-2];
+		album = pathArray[pathArray.length - 2];
 	}
 
 	const div = document.createElement('div');
 	div.className = 'playlistEntry';
 	const url = document.createAttribute("url");
-		url.value = path;
-		div.setAttributeNode(url);
+	url.value = path;
+	div.setAttributeNode(url);
 	div.innerHTML = `${album} - ${title}`;
 
 	const playlistElement = document.getElementById('playlist');
 	console.log(`temp: ${playlistElement.children.length} < ${index}`)
-	if(playlistElement.children.length < index)
+	if (playlistElement.children.length < index)
 		playlistElement.appendChild(div);
 	else
 		playlistElement.insertBefore(div, playlistElement.childNodes[index]);
 	div.onclick = function () { play_song(Array.prototype.indexOf.call(playlistElement.children, div)) };
 	console.log();
 }
+export function replaceEntry(index, path, title, album) {
+	if (typeof title === 'undefined' || title === 'title') {
+		const filename_with_extension = path.split('\\').pop().split('/').pop();
+		const filename = filename_with_extension.split('.').slice(0, -1).join('.');
+		title = filename;
+	}
+	if (typeof album === 'undefined' || album === 'album') {
+		const pathArray = path.split("/");
+		album = pathArray[pathArray.length - 2];
+	}
 
-addEntry(0, 'http://192.168.1.20/mnt/g/media/music/Stream/PS1/Final Fantasy VIII/Ending Theme.mp3');
-addEntry(0, 'http://192.168.1.20/mnt/g/media/music/Stream/PS1/Final Fantasy VIII/Fisherman´s Horizon.mp3');
-addEntry(0, 'http://192.168.1.20/mnt/g/media/music/Stream/PS1/Final Fantasy VIII/Liberi Fatali.mp3');
+	const playlistElement = document.getElementById('playlist');
+	if (index >= playlistElement.children.length) {
+
+		const div = document.createElement('div');
+		div.className = 'playlistEntry';
+		const url = document.createAttribute("url");
+		url.value = path;
+		div.setAttributeNode(url);
+		div.innerHTML = `${album} - ${title}`;
+
+		playlistElement.appendChild(div);
+		div.onclick = function () { play_song(Array.prototype.indexOf.call(playlistElement.children, div)) };
+	}
+	console.log();
+}
+replaceEntry(0, 'http://192.168.1.20/mnt/g/media/music/Stream/PS1/Final Fantasy VIII/Ending Theme.mp3');
+replaceEntry(1, 'http://192.168.1.20/mnt/g/media/music/Stream/PS1/Final Fantasy VIII/Fisherman´s Horizon.mp3');
+replaceEntry(2, 'http://192.168.1.20/mnt/g/media/music/Stream/PS1/Final Fantasy VIII/Liberi Fatali.mp3');
+
 
 play_song('http://192.168.1.20/mnt/g/media/music/Stream/PS1/Final Fantasy VIII/Ending Theme.mp3');
-setInterval(() => {
+setInterval(async () => {
 	// Your logic here
 	const seekPercent = (current_song.seek() / current_song._duration * 100);
 	const seekTime = new Date(current_song.seek() * 1000);
@@ -139,4 +167,13 @@ setInterval(() => {
 
 	document.getElementById("progress_bar").innerHTML = ` &emsp; ${seekString} / ${durationString} ${album} - ${title}`;
 	document.getElementById("progress_bar").style['width'] = `${seekPercent}%`;
+	const items = await network.getItems(0, '0:10');
+	for (let i = 0; i < 10; i++) {
+		if (typeof items.items[i] === 'undefined')
+			break;
+			let path = items.items[i].columns[2];
+
+		replaceEntry(i, path, items.items[i].columns[1], items.items[i].columns[0]);
+	}
+
 }, 1000 / 60);

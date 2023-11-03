@@ -200,8 +200,23 @@ function find(input) {
 
 	return result;
 }
+function getID3(filename)
+{
+	const nodeid3_options = {
+		include: ['TALB', 'TIT2', 'TLEN'],	// only read the specified tags (default: all)
+		noRaw: true							// don't generate raw object (default: false)
+	};
+
+	let fileExists = fs.existsSync(filename);
+	if(fileExists) {
+		return NodeID3.read(filename, nodeid3_options);;
+	}
+
+	return undefined;
+}
 
 module.exports.init = loadMp3Library;
 module.exports.find = find;
 module.exports.getEntry = getEntry;
 module.exports.entries = entries;
+module.exports.getID3 = getID3;

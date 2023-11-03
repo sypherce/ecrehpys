@@ -56,8 +56,8 @@
 	<p id="progress_bar"></p>
 </div>
 <script src="../alerts/howler.min.js"></script>
-<script type="module" src="howlerMediaPlayer.js"></script>
-<script type="module" src="howlerMediaPlayer2.js"></script>
+<script type="module" src="remote_network.js"></script>
+<script type="module" src="ui.js"></script>
 <div class="bar">
 	<div class="button" onclick="play_song(currentIndex()-1)">⏮</div>
 	<div class="button"	onclick="if(isPlaying()){seek(seek() - 10 >= 0 ? seek() - 10 : 0);}">◀</div>
@@ -66,7 +66,8 @@
 	<div class="button" onclick="if(isPlaying()){seek(seek()+10);}">▶</div>
 	<div class="button" onclick="play_song(currentIndex()+1)">⏭</div>
 </div>
-<div id="playlist">
+<div id="playlist" style="position: absolute; left: 0;bottom: 0; right:0;top: 30%;overflow-y:auto;
+		;">
 </div>
 </body>
 </html>

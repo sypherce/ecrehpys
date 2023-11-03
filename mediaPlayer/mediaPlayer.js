@@ -1,7 +1,8 @@
 'use strict';
-const mediaPlayerServer = require('./mediaPlayerServer.js');
+const mediaPlayerServer = require('./server_network.js');
 
 const prettyStringify = require("@aitodotai/json-stringify-pretty-compact")
+const mp3Library = require('../modules/mp3Library.js');
 
 const isLinux = false;
 let music_path = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
@@ -10,7 +11,7 @@ const playlists = [];
 playlists.push({
     index: 0,
     title: 'index title',
-    isCurrent: false,
+    isCurrent: true,
     itemCount: 0,
     items: []
 });
@@ -47,7 +48,10 @@ let player = {
 };
 
 setInterval(() => {
-		player.activeItem.position++;
+    //    mediaPlayerServer.sendMessage('GetPosition', '');
+
+		//console.log(`position = ${player.activeItem.position}`);
+
 	}, '1000');
 
 /*
@@ -70,11 +74,27 @@ function addItems(playlistIndex, itemIndex, play, items) {
 	}
 
 	items.forEach((element) => {
-		playlists[thisPlaylist].items.splice(itemIndex, 0, {columns: ['album', 'title', JSON.stringify(element)]});
-        if(element.columns)
-            element = element.columns[2];
-        element = `../music/${element.replace(/G\:\/media\/music\/Stream\//gi, '')}`;
-        mediaPlayerServer.sendMessage('AddItem', {index: itemIndex, path: element, title: 'title', album: 'album'});
+        console.log(`${prettyStringify(element)}`);
+        let title = 'GETTHISTTITLESETUPPROPERLY';
+        let album = 'album';
+        let path = element;
+        if(element.columns) {
+            title = element.columns[0];
+            album = element.columns[1];
+            path = element.columns[2];
+        }
+
+        console.log(`THIS ELEMENT: ${element}`)
+        path = `./music/${path.replace(/G\:\/media\/music\/Stream\//gi, '')}`;
+        const id3tag = mp3Library.getID3(path);
+        if(id3tag) {
+            title = id3tag.title;
+            album = id3tag.album;
+        }
+        path = `.${path}`;
+		playlists[thisPlaylist].items.splice(itemIndex, 0, {columns: [album, title, path]});
+
+        mediaPlayerServer.sendMessage('AddItem', {index: itemIndex, path: path, title: title, album: album});
         console.log(`element:${element}`);
         console.log(JSON.stringify(element));
 		if(play === true) {
@@ -283,15 +303,38 @@ async function init() {
 
 	app.get('/api/player', (request, response) => {
 		const query = new URLSearchParams(request._parsedUrl.query);
-		response.json({player: player});
+
+		if(query.has('columns')) {
+            let columns = query.get('columns');
+			columns = columns.replaceAll('%album%', 'album name')
+			columns = columns.replaceAll('%title%', 'this title')
+			columns = columns.replaceAll('%path%', 'R:/farts.mp3')
+			columns = columns.replaceAll('%filename%', 'R:/farts.mp3')
+            columns = columns.split(',')
+			console.log(`columns: ${query.get('columns')}`);
+            player.activeItem.columns = columns
+
+			response.json({player: player});
+		}
+		else {
+			response.json({player: player});
+		}
 	})
 	app.post('/api/player', (request, response) => {
 		const req = request;//remove me
 		const res = response;//remove me
 		const query = new URLSearchParams(request._parsedUrl.query);
-		console.log(query);
+        player = Object.assign(player, request.body);
+        player.activeItem.playlistIndex = 69;
 		if(query.has('columns')) {
-			console.log(`columns: ${query.get('columns')}`);
+            let columns = query.get('columns');
+			columns = columns.replaceAll('%album%', 'album name')
+			columns = columns.replaceAll('%title%', 'this title')
+			columns = columns.replaceAll('%path%', 'R:/farts.mp3')
+            columns = columns.split(',')
+            player.activeItem.columns = columns
+
+
 			response.json({player: player});
 		}
 		else {
@@ -309,7 +352,7 @@ async function init() {
 		const res = response;//remove me
         if(test_first_add_items === true) {
             test_first_add_items = false;
-            addItems(0, 0, false, [
+      /*      addItems(0, 0, false, [
                 {columns: [
                     "ducktales_splits", "3", "C:\\wave.mp3'"
                 ]},
@@ -327,33 +370,26 @@ async function init() {
                 {columns: [
                     "ducktales_splits", "7", "C:\\media.mp3'"
                 ]}
-            ]);
+            ]);*/
         }
 
 
-        console.log('1234567890');
-        console.log(request.body);
         //which playlist? probably current, 0 for now
         addItems(0, request.body.index, request.body.play, request.body.items);
 	});
 	app.get(`\/api\/playlists\/:id\/items\/\d{0,6}:\d{0,6}`, (request, response) => {
 		const query = new URLSearchParams(request._parsedUrl.query);
-		const playlistID = Number(request.params.id);
+		const playlistID = 0;
 		if(query.has('columns')) {
 			let columns = query.get('columns');
 			let [start, count] = request._parsedUrl.pathname.split('/').pop().split(':');
-			console.log(`start: ${start}, count:${count}`);
-			console.log(playlists[playlistID].items);
 			if(playlists[playlistID].items.length < start + count)
 				count = start - playlists[playlistID].items.length;
 			if(count < 0)
 				count = 0;
 			for(let position = start; position < start + count; position++) {
-				console.log(playlists[playlistID].items[position]);
+				//console.log(playlists[playlistID].items[position]);
 			}
-			//columns = columns.replaceAll('%album%', playlists[request.params.id])
-			//console.log(p.replace('dog', 'monkey'));
-			console.log(`columns: ${query.get('columns')}`);
 		}
 		response.json(playlists[playlistID]);
 
@@ -369,7 +405,6 @@ async function init() {
 			}
 		});*/
 
-		console.log('request.query: ',request.query)
 	});
 
 
@@ -383,6 +418,21 @@ async function init() {
 	let line = 0;
 
 	addItems(0, 0, false, [
+		{columns: [
+			"x", "y", "G:/media/music/Stream/PS1/Final Fantasy VIII/Ending Theme.mp3"
+		]},
+	]);
+	addItems(0, 0, false, [
+		{columns: [
+			"x", "y", "G:/media/music/Stream/PS1/Final Fantasy VIII/Fisherman´s Horizon.mp3"
+		]},
+	]);
+	addItems(0, 0, false, [
+		{columns: [
+			"x", "y", "G:/media/music/Stream/PS1/Final Fantasy VIII/Liberi Fatali.mp3"
+		]},
+	]);
+	/*addItems(0, 0, false, [
 		{columns: [
 			"ducktales_splits", "3", "C:\\wave.mp3'"
 		]},
@@ -400,11 +450,12 @@ async function init() {
 		{columns: [
 			"ducktales_splits", "7", "C:\\media.mp3'"
 		]}
-	]);	console.log(JSON.stringify(playlists));
-	console.log(`${line++}: ${getItems(0, "0:2")}`)
+	]);	console.log(JSON.stringify(playlists));*/
+	console.log(`${line++}: ${getItems(0, "0:20")}`)
 	console.log(`${line++}: ${prettyStringify(playlists, {indent: '\t', maxLength: 1000, maxNesting: 2})}`);
 };
 
 module.exports.init = init;
 module.exports.addItems = addItems;
+module.exports.player = player;
 //export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path};

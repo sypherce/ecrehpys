@@ -2,7 +2,7 @@
 'use strict';
 						//lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
 const isLinux = false;	//win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
-const isNewMediaPlayer = true;
+const isNewMediaPlayer = false;
 let base_url = `http://${(isLinux ? 'steamdeck.local' : 'derrick-desktop')}:8880/api`;
 if(isNewMediaPlayer)
 	base_url = `http://192.168.1.20:8880/api`;
@@ -107,6 +107,7 @@ async function getPlaybackState() {
 }
 async function getActiveItemIndex() {
 	const json = await getJSON('player');
+	console.log(json);
 	return json.player.activeItem.index;
 }
 async function getPosition() {
@@ -145,6 +146,7 @@ async function getActivePlaylistIndex() {
 	return index;
 }
 async function addItems(playlist_id, index, play, items) {
+	console.log(`addItems: ${JSON.stringify(items)}`)
 	return postJSON(`playlists/${playlist_id}/items/add`,
 		{
 			'index': index,

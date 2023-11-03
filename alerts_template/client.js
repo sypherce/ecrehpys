@@ -3,7 +3,6 @@
 'use strict';
 
 import {log} from '../alerts/log.js';
-import * as howlerMediaPlayer2 from './howlerMediaPlayer2.js';
 let connection;
 
 export function sendMessage(id, contents) {
@@ -22,7 +21,7 @@ export function sendMessage(id, contents) {
 function initWebSocket(url) {
 	connection = new WebSocket(url);
 	connection.onopen = function() {
-		sendMessage('Message', 'MediaClient');
+		sendMessage('Message', 'Client_Template');
 	};
 
 	connection.onclose = function(e) {
@@ -37,16 +36,6 @@ function initWebSocket(url) {
 		switch (key) {
 		case 'Message': {
 			console.log(`${key}: ${value}`);
-			break;
-		}
-		case 'AddItem': {
-			console.log(`${key}: ${value}`);
-			howlerMediaPlayer2.addEntry(value.index, value.path, value.title, value.album);
-			break;
-		}
-		case 'PlaySong': {
-			console.log(`${key}: ${value}`);
-			howlerMediaPlayer2.play_song(Number(value));
 			break;
 		}
 		default: {
@@ -86,4 +75,4 @@ function initWebSocket(url) {
 
 }
 
-initWebSocket('ws://derrick-server.local:1339');
+initWebSocket('ws://derrick-server.local:1338');
