@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- ?php header("Access-Control-Allow-Origin: *"); ?> -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<style>
+	body {
+		background-color: black;
+		color: white;
+	}
+
+	.button {
+		border: 0px;
+		display: flex;
+		justify-content: space-evenly;
+		font-family: 'NotoColorEmoji';
+		font-size: 60px;
+	}
+
+	.bar {
+		display: flex;
+		justify-content: space-evenly;
+	}
+
+
+	#progress_bar {
+		border: 1px solid white;
+		border-radius: 2rem;
+		width:0;background-color: #5599EB;white-space: nowrap;
+  		z-index: 1;
+	}
+
+	#progress_bar_container {
+		border: 1px solid white;
+ 		border-radius: 2rem;
+	}
+	#progress_bar_container::after {
+		-webkit-filter: blur(5px);
+		-moz-filter:    blur(5px);
+		-o-filter:      blur(5px);
+		-ms-filter:     blur(5px);
+		filter:         blur(5px);
+		z-index:        -1;
+	}
+
+	@font-face {
+		font-family: 'NotoColorEmoji';
+		src: url('assets/NotoColorEmoji-Regular.ttf') format('truetype');
+	}
+</style>
+</head>
+
+<body>
+<div id="progress_bar_container">
+	<p id="progress_bar"></p>
+</div>
+<script src="../alerts/howler.min.js"></script>
+<script type="module" src="howlerMediaPlayer.js"></script>
+<script type="module" src="howlerMediaPlayer2.js"></script>
+<div class="bar">
+	<div class="button" onclick="play_song(currentIndex()-1)">⏮</div>
+	<div class="button"	onclick="if(isPlaying()){seek(seek() - 10 >= 0 ? seek() - 10 : 0);}">◀</div>
+	<div class="button" onclick="playPause()">⏯</div>
+	<div class="button" onclick="stop()">⏹</div>
+	<div class="button" onclick="if(isPlaying()){seek(seek()+10);}">▶</div>
+	<div class="button" onclick="play_song(currentIndex()+1)">⏭</div>
+</div>
+<div id="playlist">
+</div>
+</body>
+</html>

@@ -1,4 +1,7 @@
 /alerts/assets
 .env
 node_modules
+server.twurple.js
+server.unused.js
 commands.json.*
+peaks.js-master
