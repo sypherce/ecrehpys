@@ -1,5 +1,5 @@
 'use strict';
-const mediaPlayerServer = require('./mediaPlayerServer.js');
+const server = require('../modules/server.js');
 
 const prettyStringify = require("@aitodotai/json-stringify-pretty-compact")
 
@@ -7,13 +7,6 @@ const isLinux = false;
 let music_path = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
 
 const playlists = [];
-playlists.push({
-    index: 0,
-    title: 'index title',
-    isCurrent: false,
-    itemCount: 0,
-    items: []
-});
 let player = {
 	info: {
 		name: 'ecrehpys.media',
@@ -61,7 +54,7 @@ function addItems(playlistIndex, itemIndex, play, items) {
 	if(thisPlaylist === -1) {
 		playlists.push({
 			index: playlistIndex,
-			title: 'index title',
+			title: 'this title',
 			isCurrent: false,
 			itemCount: 0,
 			items: []
@@ -71,15 +64,12 @@ function addItems(playlistIndex, itemIndex, play, items) {
 
 	items.forEach((element) => {
 		playlists[thisPlaylist].items.splice(itemIndex, 0, {columns: ['album', 'title', JSON.stringify(element)]});
-        if(element.columns)
-            element = element.columns[2];
-        element = `../music/${element.replace(/G\:\/media\/music\/Stream\//gi, '')}`;
-        mediaPlayerServer.sendMessage('AddItem', {index: itemIndex, path: element, title: 'title', album: 'album'});
-        console.log(`element:${element}`);
-        console.log(JSON.stringify(element));
 		if(play === true) {
-            player.activeItem.position = itemIndex;
-            mediaPlayerServer.sendMessage('PlaySong', itemIndex);
+			element = `../music/${element.replace(/G\:\/media\/music\/Stream\//gi, '')}`;
+			server.sendMessage('Audio', element);
+			console.log(element);
+			console.log(JSON.stringify(element));
+			player.activeItem.position = 0;
 		}
 	});
 
@@ -303,38 +293,14 @@ async function init() {
 		console.log(playlists);
 		response.json({playlists: playlists});
 	})
-    let test_first_add_items = true;
 	app.post('/api/playlists/:id/items/add', (request, response) => {
 		const req = request;//remove me
 		const res = response;//remove me
-        if(test_first_add_items === true) {
-            test_first_add_items = false;
-            addItems(0, 0, false, [
-                {columns: [
-                    "ducktales_splits", "3", "C:\\wave.mp3'"
-                ]},
-                {columns: [
-                    "ducktales_splits", "4", "C:\\media.mp3'"
-                ]}
-            ]);
-            addItems(0, 0, false, [
-                {columns: [
-                    "ducktales_splits", "5", "C:\\media.mp3'"
-                ]},
-                {columns: [
-                    "ducktales_splits", "6", "C:\\media.mp3'"
-                ]},
-                {columns: [
-                    "ducktales_splits", "7", "C:\\media.mp3'"
-                ]}
-            ]);
-        }
 
-
-        console.log('1234567890');
-        console.log(request.body);
-        //which playlist? probably current, 0 for now
-        addItems(0, request.body.index, request.body.play, request.body.items);
+console.log('1234567890');
+console.log(request.body);
+//which playlist? probably current, 0 for now
+addItems(0, request.body.index, request.body.play, request.body.items);
 	});
 	app.get(`\/api\/playlists\/:id\/items\/\d{0,6}:\d{0,6}`, (request, response) => {
 		const query = new URLSearchParams(request._parsedUrl.query);
@@ -381,7 +347,6 @@ async function init() {
 	app.listen(8880)
 
 	let line = 0;
-
 	addItems(0, 0, false, [
 		{columns: [
 			"ducktales_splits", "3", "C:\\wave.mp3'"
@@ -400,11 +365,11 @@ async function init() {
 		{columns: [
 			"ducktales_splits", "7", "C:\\media.mp3'"
 		]}
-	]);	console.log(JSON.stringify(playlists));
+	]);
+	console.log(JSON.stringify(playlists));
 	console.log(`${line++}: ${getItems(0, "0:2")}`)
 	console.log(`${line++}: ${prettyStringify(playlists, {indent: '\t', maxLength: 1000, maxNesting: 2})}`);
 };
 
 module.exports.init = init;
-module.exports.addItems = addItems;
 //export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path};
