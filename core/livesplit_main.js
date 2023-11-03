@@ -32,8 +32,8 @@ const tracklist = {
 //test
 tracklist.load('ducktales/tracklist.json');
 console.log(JSON.stringify(tracklist));
-console.log(tracklist.get( 0));
-console.log(tracklist.get( 1));
+console.log(tracklist.get(0));
+console.log(tracklist.get(1));
 console.log(tracklist.get(40));
 
 let splitIndex = null;

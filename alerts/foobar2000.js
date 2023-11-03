@@ -1,6 +1,6 @@
 /*global  */
 'use strict';
-						//lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
+//lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
 const isLinux = false;	//win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
 let base_url = `http://${(isLinux ? 'steamdeck.local' : 'derrick-desktop')}:8880/api`;
 //curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
@@ -23,7 +23,7 @@ async function getJSON(url) {
 
 		return await response.json();
 
-	} catch (err) {
+	} catch(err) {
 		console.log(err);
 		return '';
 	}
@@ -39,14 +39,14 @@ async function postJSON(url, data) {
 					'Content-Type': 'application/json'
 				},
 				body: //JSON.stringify(data)
-				JSON.stringify(data)
+					JSON.stringify(data)
 			}
 		);
 
 		//not sure if this should just return false. throw new error is a mystery to me
 		if(!response.ok)
 			throw new Error(`HTTP error! status: ${response.status}`);
-	} catch (err) {
+	} catch(err) {
 		console.log(err);
 		return false;
 	}
@@ -65,7 +65,7 @@ async function postSimple(url) {
 		//not sure if this should just return false. throw new error is a mystery to me
 		if(!response.ok)
 			throw new Error(`HTTP error! status: ${response.status}`);
-	} catch (err) {
+	} catch(err) {
 		console.log(err);
 		return false;
 	}
@@ -151,25 +151,25 @@ async function addItems(playlist_id, index, play, items) {
 			'items': items
 		});
 
-/* working vvvvv
-	fetch('http://derrick-desktop.local:8880/api/playlists/p1/items/add', {
-		method: 'POST',
-		headers: {
-			'accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		// body: '{ "index": 0, "async": false, "replace": false, "play": true, "items": [ "G:/media/music/Stream/Charlie - Candy Mountain.mp3" ]}',
-		body: JSON.stringify({
-			'index': 0,
-			'async': false,
-			'replace': false,
-			'play': true,
-			'items': [
-				'G:/media/music/Stream/Charlie - Candy Mountain.mp3'
-			]
-		})
-	});
-*/
+	/* working vvvvv
+		fetch('http://derrick-desktop.local:8880/api/playlists/p1/items/add', {
+			method: 'POST',
+			headers: {
+				'accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			// body: '{ "index": 0, "async": false, "replace": false, "play": true, "items": [ "G:/media/music/Stream/Charlie - Candy Mountain.mp3" ]}',
+			body: JSON.stringify({
+				'index': 0,
+				'async': false,
+				'replace': false,
+				'play': true,
+				'items': [
+					'G:/media/music/Stream/Charlie - Candy Mountain.mp3'
+				]
+			})
+		});
+	*/
 }
 
 //curl -X GET "http://derrick-desktop.local:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
@@ -187,36 +187,38 @@ async function _test() {
 	console.group('%cfoobar2000 test', 'color: white; background: blue;');
 	console.trace();
 	const active_playlist = await getActivePlaylistIndex();
-	console.log({active_playlist: active_playlist});
-	console.log({getJSON: await getJSON('player')});
-	console.log({postSimple: [await postSimple('player?position=15'), await getPosition()]});
-	console.log({setPosition: [await setPosition(25, true), await getPosition()]});
-	console.log({getPlaybackState: await getPlaybackState()});
-	console.log({isPlaying: await isPlaying()});
+	console.log({ active_playlist: active_playlist });
+	console.log({ getJSON: await getJSON('player') });
+	console.log({ postSimple: [await postSimple('player?position=15'), await getPosition()] });
+	console.log({ setPosition: [await setPosition(25, true), await getPosition()] });
+	console.log({ getPlaybackState: await getPlaybackState() });
+	console.log({ isPlaying: await isPlaying() });
 
 	const active_item_index = await getActiveItemIndex();
-	console.log({active_item_index: active_item_index});
-	console.log({getPosition: await getPosition()});
-	console.log({getPositionRelative: await getPositionRelative()});
-	console.log({getCoverartURL: await getCoverartURL(active_item_index)});
-	console.log({getActiveItemFilename: await getActiveItemFilename()});
-	console.log({getPlaylists: await getPlaylists()});
-	console.log({getActivePlaylistIndex: await getActivePlaylistIndex()});
-	console.log({getItems: await getItems(active_playlist,  '0:10')});
+	console.log({ active_item_index: active_item_index });
+	console.log({ getPosition: await getPosition() });
+	console.log({ getPositionRelative: await getPositionRelative() });
+	console.log({ getCoverartURL: await getCoverartURL(active_item_index) });
+	console.log({ getActiveItemFilename: await getActiveItemFilename() });
+	console.log({ getPlaylists: await getPlaylists() });
+	console.log({ getActivePlaylistIndex: await getActivePlaylistIndex() });
+	console.log({ getItems: await getItems(active_playlist, '0:10') });
 
 	await new Promise(r => setTimeout(r, 1000));
-	console.log({postJSON: await postJSON(`playlists/${active_playlist}/items/add`,
-		{
-			'index': 0,
-			'async': false,
-			'replace': false,
-			'play': true,
-			'items': [test_mp3_filename]
-		})});
-		console.log(`${active_playlist} -- ${test_mp3_filename}`);
+	console.log({
+		postJSON: await postJSON(`playlists/${active_playlist}/items/add`,
+			{
+				'index': 0,
+				'async': false,
+				'replace': false,
+				'play': true,
+				'items': [test_mp3_filename]
+			})
+	});
+	console.log(`${active_playlist} -- ${test_mp3_filename}`);
 
 	console.groupEnd();
 }
 //_test();
 
-export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path};
+export { setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path };

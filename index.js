@@ -22,10 +22,10 @@ async function processLivesplit() {
 
 const myArgs = process.argv.slice(2);
 let force_refresh = false;
-switch (myArgs[0]) {
-case '-refresh':
-	force_refresh = true;
-	break;
+switch(myArgs[0]) {
+	case '-refresh':
+		force_refresh = true;
+		break;
 }
 
 (async () => {

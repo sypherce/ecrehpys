@@ -7,18 +7,18 @@ import * as fb2000 from './foobar2000.js';
 
 function setFilterDisplay(entry, index) {
 	entry.style.filter = 'grayscale(0%)';
-	entry.style.display='';
+	entry.style.display = '';
 
 	//0 is playing, 1-3 are up for voting, 4-7 are coming up
 	if(index > 0)
 		entry.style.filter = `grayscale(${100 - ((7 - index) * 10)}%)`;
 	if(index > 6)
-		entry.style.display='none';
+		entry.style.display = 'none';
 }
 
 export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 'Invalid', index = undefined) {
 	//probably should check for this elsewhere
-	function urlExists(url){
+	function urlExists(url) {
 		const http = new XMLHttpRequest();
 
 		http.open('HEAD', url, false);
@@ -119,7 +119,7 @@ function lowerEntry(index = 0) {
 	parent.children[index].classList.add('scroll-left-fade-out');
 }
 
-export function rmEntry(index = 0){
+export function rmEntry(index = 0) {
 	let parent = document.getElementById('container');
 	if(parent.children.length <= index) {
 		console.log('Entry doesn\'t  exist');
@@ -131,7 +131,7 @@ export function rmEntry(index = 0){
 	//lowerEntry(index);
 }
 
-async function updateEntries(){
+async function updateEntries() {
 	const album_column = 0;
 	const title_column = 1;
 	const filepath_column = 2;
@@ -140,15 +140,15 @@ async function updateEntries(){
 	let index = await fb2000.getActiveItemIndex();
 	let playlist = await fb2000.getActivePlaylistIndex();
 	let entries = '';
-	if(index !== -1){
+	if(index !== -1) {
 		entries = await fb2000.getItems(playlist, `${index}:${count}`);
 	}
 
 	const container = document.querySelector('#container');
 	let playback_state = await fb2000.getPlaybackState();
 	if(playback_state && playback_state === 'stopped'
-	|| typeof entries.playlistItems === 'undefined') {
-		for(let i = 0; i < container.children.length; i++){
+		|| typeof entries.playlistItems === 'undefined') {
+		for(let i = 0; i < container.children.length; i++) {
 			rmEntry(i);
 		}
 		if(typeof entries.playlistItems === 'undefined') {
@@ -166,13 +166,13 @@ async function updateEntries(){
 		//this next block is broken
 		const entry_exists = document.querySelector(`div[data-filename="${filename}"]`);
 		if(entry_exists) {
-			for (let y = 0; y < entry_exists.childNodes.length; y++) {
-				if (entry_exists.childNodes[y].className === 'progress-bar') {
+			for(let y = 0; y < entry_exists.childNodes.length; y++) {
+				if(entry_exists.childNodes[y].className === 'progress-bar') {
 					let pos = 0;
 					if(i === 0)
 						pos = await fb2000.getPositionRelative();
 
-					entry_exists.childNodes[y].style.width=`calc(var(--image_width) * ${pos})`;
+					entry_exists.childNodes[y].style.width = `calc(var(--image_width) * ${pos})`;
 					break;
 				}
 			}
@@ -204,7 +204,7 @@ async function updateEntries(){
 
 	//if(entry_exists !== null) {
 	//	const this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);
-//
+	//
 	//	return;
 	//}
 }

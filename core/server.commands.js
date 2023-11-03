@@ -5,20 +5,20 @@ const ShuffleBag = require('giffo-shufflebag');
 const log = require('esm')(module)('../alerts/log.js').log;
 const twurple = require('../lib/twurple.js');
 const mp3Library = require('../lib/mp3Library.js');
-const prettyStringify = require("@aitodotai/json-stringify-pretty-compact")
-const tts = require('../lib/tts.js')
+const prettyStringify = require("@aitodotai/json-stringify-pretty-compact");
+const tts = require('../lib/tts.js');
 
 let global_commands_list;
 function addCa(author, keyword, command) {
 
 	const this_command = {
-		author       : author,
-		cooldown     : 0,
-		timestamp    : 0,
-		active       : true,
-		tired        : {active: false},
-		keyword      : [keyword],
-		task         : [{customaudio: command}]
+		author: author,
+		cooldown: 0,
+		timestamp: 0,
+		active: true,
+		tired: { active: false },
+		keyword: [keyword],
+		task: [{ customaudio: command }]
 	};
 
 	global_commands_list.push(this_command);
@@ -26,14 +26,14 @@ function addCa(author, keyword, command) {
 }
 function editCa(author, keyword, command) {
 
-	for (let index = 0; index < global_commands_list.length; index++) {
+	for(let index = 0; index < global_commands_list.length; index++) {
 		let this_keyword = global_commands_list[index].keyword.toString();
 		if(typeof global_commands_list[index].altkey !== 'undefined')
-		this_keyword = global_commands_list[index].altkey.toString();
+			this_keyword = global_commands_list[index].altkey.toString();
 
 		if(this_keyword === keyword) {
 			//global_commands_list[index].author = author,
-			global_commands_list[index].task   = [{customaudio: command}]
+			global_commands_list[index].task = [{ customaudio: command }];
 		}
 	};
 
@@ -41,14 +41,14 @@ function editCa(author, keyword, command) {
 }
 function listCa(keyword) {
 
-	for (let index = 0; index < global_commands_list.length; index++) {
+	for(let index = 0; index < global_commands_list.length; index++) {
 		let this_keyword = global_commands_list[index].keyword.toString();
 		if(typeof global_commands_list[index].altkey !== 'undefined')
-		this_keyword = global_commands_list[index].altkey.toString();
+			this_keyword = global_commands_list[index].altkey.toString();
 
 		if(this_keyword === keyword &&
 			(typeof global_commands_list[index].task[0].customaudio !== 'undefined'))
-				return `!ca ${global_commands_list[index].task[0].customaudio}`
+			return `!ca ${global_commands_list[index].task[0].customaudio}`;
 	};
 
 	return "";
@@ -61,29 +61,29 @@ function listCa(keyword) {
 function loadCommands(filename = 'commands.json') {//loads and returns all commands from 'commands.json' in an JSON.parse() object
 	let html = '';
 	const command_list = JSON.parse(fs.readFileSync(filename));
-	function isTired() { return (typeof this_command.tired.active !== 'undefined' && this_command.tired.active === true) }
+	function isTired() { return (typeof this_command.tired.active !== 'undefined' && this_command.tired.active === true); }
 
 
-	for (let index = 0; index < command_list.length; index++) {
+	for(let index = 0; index < command_list.length; index++) {
 		//set defaults that may not be defined
-		const this_command          = command_list[index];
-		this_command.author       ??= '';
-		this_command.cooldown     ??= 0;
-		this_command.timestamp    ??= 0;
-		this_command.active       ??= true;
-		this_command.tired        ??= [];
+		const this_command = command_list[index];
+		this_command.author ??= '';
+		this_command.cooldown ??= 0;
+		this_command.timestamp ??= 0;
+		this_command.active ??= true;
+		this_command.tired ??= [];
 		this_command.tired.active ??= false;
 
 		//!this might be done elsewhere, idk
 		//set media_count to 0 if it's needed
-		for (let task_i = 0; task_i < this_command.task.length; task_i++) {
+		for(let task_i = 0; task_i < this_command.task.length; task_i++) {
 			if(typeof this_command.task[task_i].media === 'object')
 				this_command.task[task_i].media_counter = 0;
 		}
 
 		//altkey takes priority
 		let keyword = (typeof this_command.altkey === 'undefined') ?
-			this_command.keyword.at(0):
+			this_command.keyword.at(0) :
 			this_command.altkey;
 
 		//process regexps
@@ -98,7 +98,7 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 		//setup the description
 		let task_string = this_command.task[0].song || this_command.task[0].videonow;
 		if(typeof this_command.description !== 'undefined') task_string = this_command.description;
-		if(typeof task_string              === 'undefined') task_string = "";
+		if(typeof task_string === 'undefined') task_string = "";
 
 		const formatted_author_string = (this_command.author === '') ?
 			'' :
@@ -146,25 +146,25 @@ laugh<br>`);
  * @return {object} The results of JSON.parse()
  */
 function saveCommands(filename = 'commands.json', command_list = global_commands_list) {
-	for (let index = 0; index < command_list.length; index++) {
+	for(let index = 0; index < command_list.length; index++) {
 		//set defaults that may not be defined
 		const this_command = command_list[index];
 		if(this_command.cooldown === 0) delete this_command.cooldown;
 		if(this_command.active === true) delete this_command.active;
 		if(typeof this_command.tired !== 'undefined' &&
-		   typeof this_command.tired.active !== 'undefined') delete this_command.tired.active;
+			typeof this_command.tired.active !== 'undefined') delete this_command.tired.active;
 		if(typeof this_command.tired !== 'undefined') delete this_command.tired;
 		if(typeof this_command.timestamp !== 'undefined') delete this_command.timestamp;
 
 		//!this might be done elsewhere, idk
 		//set media_count to 0 if it's needed
-		for (let task_i = 0; task_i < this_command.task.length; task_i++) {
-			if(typeof this_command.task[task_i].media !== 'undefined' && typeof this_command.task[task_i].media_counter  !== 'undefined')
+		for(let task_i = 0; task_i < this_command.task.length; task_i++) {
+			if(typeof this_command.task[task_i].media !== 'undefined' && typeof this_command.task[task_i].media_counter !== 'undefined')
 				delete this_command.task[task_i].media_counter;
 		}
 	}
-	fs.writeFileSync(`${filename}.${Date.now()}`, prettyStringify(command_list, {indent: '\t', maxLength: 1000, maxNesting: 2}));
-	fs.writeFileSync(`${filename}`, prettyStringify(command_list, {indent: '\t', maxLength: 1000, maxNesting: 2}));
+	fs.writeFileSync(`${filename}.${Date.now()}`, prettyStringify(command_list, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
+	fs.writeFileSync(`${filename}`, prettyStringify(command_list, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
 
 	return command_list;
 }
@@ -230,7 +230,7 @@ function tired(command, setting, message, command_list = global_commands_list) {
 	if(message.indexOf(command) !== -1) {
 		const query = getQuery(message, `${command} `);
 
-		for (let i = 0; i < command_list.length; i++) {
+		for(let i = 0; i < command_list.length; i++) {
 			const this_command = command_list[i];
 
 			if(typeof this_command.altkey !== 'undefined' && this_command.altkey[0].indexOf(query) !== -1) {
@@ -271,7 +271,7 @@ async function processMessage(user, message, flags, self, extra) {
 		});
 	}
 	function findAlertByString(string, commands = global_commands_list) {
-		for (let index = 0; index < commands.length; index++) {
+		for(let index = 0; index < commands.length; index++) {
 			const keyword = (typeof commands[index].altkey === 'undefined') ?
 				commands[index].keyword.toString() :
 				commands[index].altkey.toString();
@@ -281,7 +281,7 @@ async function processMessage(user, message, flags, self, extra) {
 		}
 		return undefined;
 	}
-	async function proccessBuiltInCommands(user, message, flags, _self, _extra){
+	async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		message_lower = message;
 		if(flags.broadcaster) {
 			if(message_lower.indexOf('!reload') !== -1)
@@ -343,7 +343,7 @@ async function processMessage(user, message, flags, self, extra) {
 			server.sayWrapper(`I take it back, don't follow ${channel_info.displayName}`);
 		}
 		if(message_lower.indexOf('@ecrehpys') !== -1) {
-			switch (replyBag.next()) {
+			switch(replyBag.next()) {
 				case 0:
 					server.sayWrapper(`Meow @${user}`);
 					server.sendMessage('Audio', `emil_mgow.mp3`);
@@ -421,7 +421,7 @@ async function processMessage(user, message, flags, self, extra) {
 			return filename;
 		}
 		function findCommandByString(string, commands = global_commands_list) {
-			for (let index = 0; index < commands.length; index++) {
+			for(let index = 0; index < commands.length; index++) {
 				let keyword = commands[index].keyword.toString();
 				if(typeof commands[index].altkey !== 'undefined')
 					keyword = commands[index].altkey.toString();
@@ -442,22 +442,22 @@ async function processMessage(user, message, flags, self, extra) {
 			return undefined;
 		}
 		function isCommandCustomAudio(string, commands = global_commands_list) {
-			for (let index = 0; index < commands.length; index++) {
+			for(let index = 0; index < commands.length; index++) {
 				let keyword = commands[index].keyword.toString();
 				if(typeof commands[index].altkey !== 'undefined')
 					keyword = commands[index].altkey.toString();
 
 				if(keyword === string) {
 					if(typeof commands[index].task.at(0).customaudio !== 'undefined')
-						return true
+						return true;
 
 					return false;
 				}
 			}
 			return false;
 		}
-		async function taskIterator9000(user, index, this_command, query){
-			for (let task_index = 0; task_index < this_command.task.length; task_index++) {
+		async function taskIterator9000(user, index, this_command, query) {
+			for(let task_index = 0; task_index < this_command.task.length; task_index++) {
 				const this_task = this_command.task[task_index];
 
 				if(this_task.nocommand) {//this needs to be 1st to override other commands
@@ -471,7 +471,7 @@ async function processMessage(user, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Syntax Error: !ca cmd start duration ...`);
 						return true;
 					}
-					for (let index = 0; index < args.length; index += 3) {
+					for(let index = 0; index < args.length; index += 3) {
 						const this_query = args[index];
 						args[index] = findCommandByString(args.at(index));
 						if(typeof args.at(index) === 'undefined') {
@@ -492,7 +492,7 @@ async function processMessage(user, message, flags, self, extra) {
 				if(this_task.customaudioadd) {//this needs to be 3rd to override other commands
 					query = getQuery(message_lower, '!caa ');
 					const firstWord = query.split(" ")[0];
-					query = query.substr(firstWord.length+1, query.length - firstWord.length-1);
+					query = query.substr(firstWord.length + 1, query.length - firstWord.length - 1);
 					const commandExists = typeof findCommandByString(firstWord) !== 'undefined';
 					if(commandExists) {
 						server.sayWrapper(`@${user} Command "${firstWord}" already exists. Try using !cae to edit.`);
@@ -507,7 +507,7 @@ async function processMessage(user, message, flags, self, extra) {
 				if(this_task.customaudioedit) {//this needs to be 4th to override other commands
 					query = getQuery(message_lower, '!cae ');
 					const firstWord = query.split(" ")[0];
-					query = query.substr(firstWord.length+1, query.length - firstWord.length-1);
+					query = query.substr(firstWord.length + 1, query.length - firstWord.length - 1);
 					const command_to_edit = isCommandCustomAudio(firstWord);
 					if(!command_to_edit) {
 						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command. Try using !caa to add it.`);
@@ -522,7 +522,7 @@ async function processMessage(user, message, flags, self, extra) {
 				if(this_task.customaudiolist) {//this needs to be 5th to override other commands
 					query = getQuery(message_lower, '!cal ');
 					const firstWord = query.split(" ")[0];
-					query = query.substr(firstWord.length+1, query.length - firstWord.length-1);
+					query = query.substr(firstWord.length + 1, query.length - firstWord.length - 1);
 					const command_to_list = isCommandCustomAudio(firstWord);
 					if(!command_to_list) {
 						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command.`);
@@ -575,9 +575,9 @@ async function processMessage(user, message, flags, self, extra) {
 						server.sendMessage('SongSprite', this_task.videonow);
 					}
 					else {
-						this_command.lasttimestamp      ??= this_command.timestamp;
-						this_command.tired.max_count    ??= 3;
-						this_command.tired.counter      ??= 0;
+						this_command.lasttimestamp ??= this_command.timestamp;
+						this_command.tired.max_count ??= 3;
+						this_command.tired.counter ??= 0;
 						this_command.tired.active_delay ??= 1;
 
 						//console.log(this_command.timestamp);
@@ -599,7 +599,7 @@ async function processMessage(user, message, flags, self, extra) {
 					const string = message.substr(message.indexOf('!lips ') + 6).trim();
 					const array = string.split(' ');
 
-					await (async function () {
+					await (async function() {
 						array[0] = await emote.get(string);
 					})();
 
@@ -609,7 +609,7 @@ async function processMessage(user, message, flags, self, extra) {
 					const original = message_lower.substr(message_lower.indexOf('!joe ') + 5);
 					let repeat_length = 2;
 					let result = '';
-					for (let letter = 0; letter < original.length; letter++) {
+					for(let letter = 0; letter < original.length; letter++) {
 						if(letter === 0 || letter === original.length - 1) {
 							result += original[letter];
 							continue;
@@ -631,14 +631,14 @@ async function processMessage(user, message, flags, self, extra) {
 		let message_lower = message.toLowerCase().replace(/\s+/g, ' ').trim();
 
 		//iterate through each command
-		for (let index = 0; index < commands.length; index++) {
+		for(let index = 0; index < commands.length; index++) {
 			let this_command = commands[index];
 			if(this_command.active === false)
 				continue;//skips command, continues iterating
 
 			log('verbose', `this_command.task: ${this_command.task}`);
 			//iterate through multiple keywords
-			for (let keyword_index = 0; keyword_index < this_command.keyword.length; keyword_index++) {
+			for(let keyword_index = 0; keyword_index < this_command.keyword.length; keyword_index++) {
 				let comparison = this_command.keyword.at(keyword_index);
 				const query = message.substr(message_lower.indexOf(comparison) + comparison.length);
 
