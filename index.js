@@ -1,11 +1,11 @@
 'use strict';
 require('dotenv').config();
-const server = require('./server.js');
-const mp3Library = require('./mp3Library.js');
+const server = require('./core/server.js');
+const mp3Library = require('./lib/mp3Library.js');
 const log = require('esm')(module)('./alerts/log.js').log;
 const enable_livesplit = false;//needs enabled
 const livesplit_main = (enable_livesplit)
-	? require('./livesplit_main.js') :
+	? require('./core/livesplit_main.js') :
 	'';
 
 async function processLivesplit() {

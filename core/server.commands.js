@@ -2,11 +2,11 @@ const fs = require('fs');
 const command_html = require('./command_html.js');
 const server = require('./server.js');
 const ShuffleBag = require('giffo-shufflebag');
-const log = require('esm')(module)('./alerts/log.js').log;
-const twurple = require('./twurple.js');
-const mp3Library = require('./mp3Library.js');
+const log = require('esm')(module)('../alerts/log.js').log;
+const twurple = require('../lib/twurple.js');
+const mp3Library = require('../lib/mp3Library.js');
 const prettyStringify = require("@aitodotai/json-stringify-pretty-compact")
-const tts = require('./tts.js')
+const tts = require('../lib/tts.js')
 
 let global_commands_list;
 function addCa(author, keyword, command) {
