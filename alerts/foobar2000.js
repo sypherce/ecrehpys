@@ -2,10 +2,7 @@
 'use strict';
 						//lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
 const isLinux = false;	//win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
-const isNewMediaPlayer = true;
 let base_url = `http://${(isLinux ? 'steamdeck.local' : 'derrick-desktop')}:8880/api`;
-if(isNewMediaPlayer)
-	base_url = `http://192.168.1.20:8880/api`;
 //curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
 
 let music_path = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
@@ -178,7 +175,6 @@ async function addItems(playlist_id, index, play, items) {
 //curl -X GET "http://derrick-desktop.local:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
 async function getItems(playlist, range) {
 	const json = await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`);
-	console.log(json);
 	return json;
 }
 
@@ -187,7 +183,7 @@ async function _test() {
 		console.log(`%c${args}`, 'color: white; background: blue;');
 	}
 
-	let test_mp3_filename = music_path + '/0 - Other/Crabs- MrWeebl.mp3';
+	let test_mp3_filename = music_path + 'media/music/Stream/0 - Other/Crabs- MrWeebl.mp3';
 	console.group('%cfoobar2000 test', 'color: white; background: blue;');
 	console.trace();
 	const active_playlist = await getActivePlaylistIndex();
@@ -221,6 +217,6 @@ async function _test() {
 
 	console.groupEnd();
 }
-_test();
+//_test();
 
 export {setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path};

@@ -1,8 +1,7 @@
 'use strict';
 require('dotenv').config();
-const server = require('./modules/server.js');
-const mediaPlayer = require('./mediaPlayer/mediaPlayer.js');
-const mp3Library = require('./modules/mp3Library.js');
+const server = require('./server.js');
+const mp3Library = require('./mp3Library.js');
 const log = require('esm')(module)('./alerts/log.js').log;
 const enable_livesplit = false;//needs enabled
 const livesplit_main = (enable_livesplit)
@@ -36,7 +35,6 @@ case '-refresh':
 		setTimeout(processLivesplit, 500);
 	}
 	await server.init();
-	await mediaPlayer.init();
 
 	console.log('http://derrick-desktop.local/nodejs/main/alerts/');
 	if(enable_livesplit)
