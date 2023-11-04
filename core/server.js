@@ -11,11 +11,11 @@ async function init() {
 }
 
 function sayWrapper(message) {
-	log('debug', message);
+	console.log('D:', message);
 	twurple.sayWrapper(message);//bot.Say(message);
 }
 function streamerSayWrapper(message) {
-	log('debug', message);
+	console.log('D:', message);
 	twurple.streamerSayWrapper(message);//streamer.Say(message);
 }
 
@@ -30,7 +30,7 @@ function sendMessage(id, contents) {
 
 	const message = `{"${id}" : ${contents}}`;
 
-	log('debug', `sendMessage(${message})`);
+	console.log('D:', `sendMessage(${message})`);
 	connection.sendUTF(message);
 }
 

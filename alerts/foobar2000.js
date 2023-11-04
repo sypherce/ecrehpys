@@ -179,7 +179,7 @@ async function getItems(playlist, range) {
 }
 
 async function _test() {
-	function log(...args) {
+	function console.log(...args) {
 		console.log(`%c${args}`, 'color: white; background: blue;');
 	}
 

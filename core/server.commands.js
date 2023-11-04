@@ -2,7 +2,6 @@ const fs = require('fs');
 const command_html = require('./command_html.js');
 const server = require('./server.js');
 const ShuffleBag = require('giffo-shufflebag');
-const log = require('esm')(module)('../alerts/log.js').log;
 const twurple = require('../lib/twurple.js');
 const mp3Library = require('../lib/mp3Library.js');
 const prettyStringify = require("@aitodotai/json-stringify-pretty-compact");
@@ -183,7 +182,7 @@ function getQuery(message, command) {
 }
 async function processVariables(user, query_string, task_string) {
 	task_string = task_string.replace(/\$\(\s*query\s*\)/, query_string);
-	log('temp', `new task_string: ${task_string}`);
+	console.log('T:', `new task_string: ${task_string}`);
 	let channel_info = null;
 
 	if(task_string.search(/\$\(\s*user\s*\)/) !== -1 |
@@ -544,7 +543,7 @@ async function processMessage(user, message, flags, self, extra) {
 				}
 				if(this_task.delay) {
 					await new Promise(resolve => setTimeout(resolve, this_task.delay));
-					log('verbose', `!delay ${parseInt(this_task.delay)}`);
+					console.log('V:', `!delay ${parseInt(this_task.delay)}`);
 				}
 				if(this_task.chat) {
 					const processed_message = await processVariables(user, query, this_task.chat);
@@ -636,13 +635,13 @@ async function processMessage(user, message, flags, self, extra) {
 			if(this_command.active === false)
 				continue;//skips command, continues iterating
 
-			log('verbose', `this_command.task: ${this_command.task}`);
+			console.log('V:', `this_command.task: ${this_command.task}`);
 			//iterate through multiple keywords
 			for(let keyword_index = 0; keyword_index < this_command.keyword.length; keyword_index++) {
 				let comparison = this_command.keyword.at(keyword_index);
 				const query = message.substr(message_lower.indexOf(comparison) + comparison.length);
 
-				log('verbose', `keywordIsIndexOf: ${comparison}`);
+				console.log('V:', `keywordIsIndexOf: ${comparison}`);
 				let prefix = '';
 				if(comparison.indexOf('!') === 0) {
 					prefix = '!';
@@ -683,7 +682,7 @@ async function processMessage(user, message, flags, self, extra) {
 	proccessBuiltInCommands(user, message_lower, flags, self, extra);
 
 	const number = await processCustomCommands(user, message, flags, self, extra);
-	log('debug', `${user}(${number}): ${message}`);
+	console.log('D:', `${user}(${number}): ${message}`);
 }
 
 module.exports.process = processMessage;

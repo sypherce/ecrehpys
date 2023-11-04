@@ -3,7 +3,7 @@
 let debug = true;
 let temp = debug;
 
-export default function log(type, ...message) {
+export default function console.log(type, ...message) {
 	let prefix;
 	let bg;
 	if(type === 'debug' && debug) {

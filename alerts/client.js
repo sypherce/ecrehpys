@@ -2,7 +2,6 @@
 
 'use strict';
 
-import { log } from './log.js';
 import * as fb2000 from './foobar2000.js';
 
 const local_music_path = 'assets/music';
@@ -123,7 +122,7 @@ export function sendMessage(id, contents) {
 
 	const message = `{"${id}" : ${contents}}`;
 
-	log('debug', message);
+	console.log('D:', message);
 	connection.send(message);
 }
 
@@ -487,21 +486,21 @@ function initWebSocket() {
 	}
 
 	connection.onmessage = function(message) {
-		log('temp', message.data);
+		console.log('T:', message.data);
 		const object = JSON.parse(message.data);
 		if((Array.isArrayobject)) {
 			for(let i = 0; i < object.length; i++) {
 				for(const [key, value] of Object.entries(object[i])) {
 					handleMessage(object[i], key, value);
-					log('temp', object[i]);
+					console.log('T:', object[i]);
 				}
 			}
 		}
 		else if(typeof object === 'object') {
 			Object.entries(object).forEach(function([key, value]) {
 				handleMessage(object, key, value);
-				log('temp', key);
-				log('temp', value);
+				console.log('T:', key);
+				console.log('T:', value);
 			});
 		}
 		else {
