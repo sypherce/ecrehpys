@@ -2,7 +2,7 @@
 
 'use strict';
 
-import * as fb2000 from './foobar2000.js';
+import * as beefweb from './lib/beefweb.js';
 
 const local_music_path = 'assets/music';
 
@@ -60,21 +60,21 @@ let enable_song = true;
 /*	todo
 	need to check if song is in queue and skip if it is
 */
-async function fb2000QueueSong(file) {
-	if(!(await fb2000.isPlaying())) {
-		fb2000PlaySongNow(file);
+async function beefwebQueueSong(file) {
+	if(!(await beefweb.isPlaying())) {
+		beefwebPlaySongNow(file);
 		return;
 	}
-	const this_active_file = await fb2000.getActiveItemFilename();
+	const this_active_file = await beefweb.getActiveItemFilename();
 	const song_is_playing = play_now_active_file !== '' && (basefilename(file) === this_active_file);
 	console.log('basefilename(file), this_active_file, file:::', basefilename(file), this_active_file, file);
 	if(song_is_playing || !enable_song) {
 		playSongSprite(file);
 		return;
 	}
-	file = `${fb2000.music_path}/${file}`;
-	const current_playlist = await fb2000.getActivePlaylistIndex();
-	let next_index = await fb2000.getActiveItemIndex() + 1;
+	file = `${beefweb.music_path}/${file}`;
+	const current_playlist = await beefweb.getActivePlaylistIndex();
+	let next_index = await beefweb.getActiveItemIndex() + 1;
 	if(next_index == 0) next_index = 10000;//10000 is just temporary
 
 	//no real queue for now, just next playing
@@ -84,13 +84,13 @@ async function fb2000QueueSong(file) {
 		queue_pos = next_index;
 		last_playlist = current_playlist;
 	}*/
-	await fb2000.addItems(current_playlist, queue_pos, false, [file]);
+	await beefweb.addItems(current_playlist, queue_pos, false, [file]);
 	queue_pos++;
 }
 
 let play_now_active_file = '';
-async function fb2000PlaySongNow(file) {
-	const this_active_file = await fb2000.getActiveItemFilename();
+async function beefwebPlaySongNow(file) {
+	const this_active_file = await beefweb.getActiveItemFilename();
 	const song_is_playing = play_now_active_file !== '' && (play_now_active_file === this_active_file);
 	//if a forced song is already playing
 	if(song_is_playing || !enable_song) {
@@ -100,12 +100,12 @@ async function fb2000PlaySongNow(file) {
 
 	play_now_active_file = basefilename(file);
 
-	file = `${fb2000.music_path}/${file}`;
+	file = `${beefweb.music_path}/${file}`;
 
-	let current_playlist = await fb2000.getActivePlaylistIndex();
-	let next_index = await fb2000.getActiveItemIndex() + 1;
+	let current_playlist = await beefweb.getActivePlaylistIndex();
+	let next_index = await beefweb.getActiveItemIndex() + 1;
 	if(next_index === 0) next_index = 10000;//10000 is just temporary
-	await fb2000.addItems(current_playlist, next_index, true, [file]);
+	await beefweb.addItems(current_playlist, next_index, true, [file]);
 
 	return true;
 }
@@ -410,7 +410,7 @@ function initWebSocket() {
 			}
 
 			case 'VideoNow': {
-				if(await fb2000PlaySongNow(value) === false) {
+				if(await beefwebPlaySongNow(value) === false) {
 					break;
 				}
 
@@ -432,21 +432,21 @@ function initWebSocket() {
 
 				video.interval = setInterval(async function() {
 					const video_file = decodeURI(basefilename(video.src));
-					const foobar_file = await fb2000.getActiveItemFilename();
-					if(video_file !== foobar_file) {
+					const beefweb_file = await beefweb.getActiveItemFilename();
+					if(video_file !== beefweb_file) {
 						video.onended();
 						return;
 					}
-					let fb2000CurrentTime = await fb2000.getPosition();
+					let beefwebCurrentTime = await beefweb.getPosition();
 
 					if(video.isplaying !== true) {
-						console.log('first', fb2000CurrentTime - video.currentTime);
-						video.currentTime = fb2000CurrentTime;
+						console.log('first', beefwebCurrentTime - video.currentTime);
+						video.currentTime = beefwebCurrentTime;
 						video.play();
 					}
-					else if((fb2000CurrentTime - video.currentTime) > 0.2 || fb2000CurrentTime - video.currentTime < -0.2) {
-						console.log(fb2000CurrentTime - video.currentTime);
-						video.currentTime = fb2000CurrentTime;
+					else if((beefwebCurrentTime - video.currentTime) > 0.2 || beefwebCurrentTime - video.currentTime < -0.2) {
+						console.log(beefwebCurrentTime - video.currentTime);
+						video.currentTime = beefwebCurrentTime;
 					}
 				}, 400);
 				break;
@@ -460,12 +460,12 @@ function initWebSocket() {
 				break;
 			}
 			case 'Song': {
-				fb2000PlaySongNow(value);
+				beefwebPlaySongNow(value);
 				break;
 			}
 			case 'Sr': {
 				value.filename = value.filename.replace(/\/mnt\/g\/media\/music\/Stream\//g, '');
-				fb2000QueueSong(value.filename);
+				beefwebQueueSong(value.filename);
 				break;
 			}
 			case 'Enable':

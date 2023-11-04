@@ -3,7 +3,7 @@
 
 //import {log} from './log.js';
 //import {playSong, sendMessage} from './client.js';
-import * as fb2000 from './foobar2000.js';
+import * as beefweb from './lib/beefweb.js';
 
 function setFilterDisplay(entry, index) {
 	entry.style.filter = 'grayscale(0%)';
@@ -49,7 +49,7 @@ export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 
 
 	let show_album_text = `<div class="ticker-item">${album}</div><br>`;
 
-	let img_src = await fb2000.getCoverartURL(id + (await (fb2000.getActiveItemIndex())));
+	let img_src = await beefweb.getCoverartURL(id + (await (beefweb.getActiveItemIndex())));
 
 	entry.innerHTML = `
 		<div class="progress-bar"></div>
@@ -137,15 +137,15 @@ async function updateEntries() {
 	const filepath_column = 2;
 
 	let count = 10;
-	let index = await fb2000.getActiveItemIndex();
-	let playlist = await fb2000.getActivePlaylistIndex();
+	let index = await beefweb.getActiveItemIndex();
+	let playlist = await beefweb.getActivePlaylistIndex();
 	let entries = '';
 	if(index !== -1) {
-		entries = await fb2000.getItems(playlist, `${index}:${count}`);
+		entries = await beefweb.getItems(playlist, `${index}:${count}`);
 	}
 
 	const container = document.querySelector('#container');
-	let playback_state = await fb2000.getPlaybackState();
+	let playback_state = await beefweb.getPlaybackState();
 	if(playback_state && playback_state === 'stopped'
 		|| typeof entries.playlistItems === 'undefined') {
 		for(let i = 0; i < container.children.length; i++) {
@@ -170,7 +170,7 @@ async function updateEntries() {
 				if(entry_exists.childNodes[y].className === 'progress-bar') {
 					let pos = 0;
 					if(i === 0)
-						pos = await fb2000.getPositionRelative();
+						pos = await beefweb.getPositionRelative();
 
 					entry_exists.childNodes[y].style.width = `calc(var(--image_width) * ${pos})`;
 					break;
