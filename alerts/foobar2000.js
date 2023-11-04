@@ -179,10 +179,6 @@ async function getItems(playlist, range) {
 }
 
 async function _test() {
-	function console.log(...args) {
-		console.log(`%c${args}`, 'color: white; background: blue;');
-	}
-
 	let test_mp3_filename = music_path + 'media/music/Stream/0 - Other/Crabs- MrWeebl.mp3';
 	console.group('%cfoobar2000 test', 'color: white; background: blue;');
 	console.trace();
