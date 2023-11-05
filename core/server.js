@@ -3,7 +3,6 @@ require('dotenv').config();
 const twurple = require('../lib/twurple.js');
 const ws = require('websocket');
 const http = require('http');
-const log = require('esm')(module)('../alerts/log.js').log;
 const commands = require('./server.commands.js');
 
 async function init() {

@@ -635,13 +635,13 @@ async function processMessage(user, message, flags, self, extra) {
 			if(this_command.active === false)
 				continue;//skips command, continues iterating
 
-			console.log('V:', `this_command.task: ${this_command.task}`);
+			//console.log('V:', `this_command.task: ${this_command.task}`);
 			//iterate through multiple keywords
 			for(let keyword_index = 0; keyword_index < this_command.keyword.length; keyword_index++) {
 				let comparison = this_command.keyword.at(keyword_index);
 				const query = message.substr(message_lower.indexOf(comparison) + comparison.length);
 
-				console.log('V:', `keywordIsIndexOf: ${comparison}`);
+				//console.log('V:', `keywordIsIndexOf: ${comparison}`);
 				let prefix = '';
 				if(comparison.indexOf('!') === 0) {
 					prefix = '!';

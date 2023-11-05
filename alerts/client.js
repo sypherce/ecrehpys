@@ -270,7 +270,7 @@ function initWebSocket() {
 
 					let img = new Image();
 					img.id = 'emote_img';
-					img.src = 'why_tunak.png';
+					img.src = 'images/why_tunak.png';
 					img.setAttribute('style', `
 					position: absolute;
 					width: 1080px;

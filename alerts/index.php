@@ -20,8 +20,9 @@ video {
 </style>
 </head>
 <body>
+<!--
 <div id="main-group" style="display: none;">
-	<div id="container"><!--must not be empty?--></div>
+	<div id="container"><!--must not be empty?--><!--</div>
 	<button id="add-button">Add New</button>
 	<button id="rm-button0">-0</button>
 	<button id="rm-button1">-1</button>
@@ -31,15 +32,13 @@ video {
 	<button id="rm-button5">-5</button>
 	<button id="rm-button6">-6</button>
 </div>
+-->
 
-<script  type="module" src="index.js?time=<?php echo time();?>"></script>
+<!-- <script  type="module" src="index.js?time=<?php echo time();?>"></script> -->
 <script src="howler.min.js?time=<?php echo time();?>"></script>
 <script  type="module" src="client.js?time=<?php echo time();?>"></script>
 <div class="video_div_class" id="video_div"></div>
 <div id="content"></div>
-<div style="margin: auto;
-
-	width: 100vh;
-	height: 100vh;" id="Lips_Div"></div>
+<!-- <div style="margin: auto;width: 100vh;height: 100vh;" id="Lips_Div"></div> -->
 </body>
 </html>

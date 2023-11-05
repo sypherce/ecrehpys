@@ -1,8 +1,6 @@
 /*global document, XMLHttpRequest  */
 'use strict';
 
-//import {log} from './log.js';
-//import {playSong, sendMessage} from './client.js';
 import * as beefweb from './lib/beefweb.js';
 
 function setFilterDisplay(entry, index) {
@@ -132,10 +130,6 @@ export function rmEntry(index = 0) {
 }
 
 async function updateEntries() {
-	const album_column = 0;
-	const title_column = 1;
-	const filepath_column = 2;
-
 	let count = 10;
 	let index = await beefweb.getActiveItemIndex();
 	let playlist = await beefweb.getActivePlaylistIndex();
@@ -159,7 +153,7 @@ async function updateEntries() {
 	count = entries.playlistItems.items.length;
 
 	for(let i = 0; i < count; i++) {
-		let filename = entries.playlistItems.items[i].columns[filepath_column];
+		let filename = entries.playlistItems.items[i].columns.path;
 		filename = filename.replace(/G:/g, '/mnt/g');
 		filename = filename.replace(/\\/g, '/');
 
@@ -188,8 +182,8 @@ async function updateEntries() {
 			}
 		}
 		else {
-			addEntry(entries.playlistItems.items[i].columns[album_column],
-				entries.playlistItems.items[i].columns[title_column],
+			addEntry(entries.playlistItems.items[i].columns.album,
+				entries.playlistItems.items[i].columns.title,
 				filename,
 				i);
 		}

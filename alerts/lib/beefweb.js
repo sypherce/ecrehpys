@@ -175,11 +175,20 @@ async function addItems(playlist_id, index, play, items) {
 //curl -X GET "http://derrick-desktop.local:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
 async function getItems(playlist, range) {
 	const json = await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`);
+	console.log(json);
+	json.playlistItems.items.forEach((element) =>  {
+		let temporary = element.columns;
+		element.columns = {
+				album:	temporary[0],
+				title:	temporary[1],
+				path:	temporary[2]
+		}
+	});
+	console.log(json);
 	return json;
 }
 
 async function _test() {
-	let test_mp3_filename = music_path + 'media/music/Stream/0 - Other/Crabs- MrWeebl.mp3';
 	console.group('%cfoobar2000 test', 'color: white; background: blue;');
 	console.trace();
 	const active_playlist = await getActivePlaylistIndex();
@@ -198,9 +207,14 @@ async function _test() {
 	console.log({ getActiveItemFilename: await getActiveItemFilename() });
 	console.log({ getPlaylists: await getPlaylists() });
 	console.log({ getActivePlaylistIndex: await getActivePlaylistIndex() });
-	console.log({ getItems: await getItems(active_playlist, '0:10') });
+	const get_items = await getItems(active_playlist, '0:10');
+	console.log(get_items);
+	get_items.playlistItems.items.forEach((element) => {
+		console.log(element.columns);
+	});
 
 	await new Promise(r => setTimeout(r, 1000));
+	const test_mp3_filename = music_path + '/0 - Other/Crabs- MrWeebl.mp3';
 	console.log({
 		postJSON: await postJSON(`playlists/${active_playlist}/items/add`,
 			{
@@ -215,6 +229,6 @@ async function _test() {
 
 	console.groupEnd();
 }
-//_test();
+_test();
 
 export { setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path };
