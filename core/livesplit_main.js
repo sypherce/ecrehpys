@@ -1,6 +1,6 @@
 'use strict';
 require('dotenv').config();
-const livesplit = require('../lib/split.js');
+const livesplit = require('../lib/liveSplit.js');
 
 const timeout_length = 500;
 
