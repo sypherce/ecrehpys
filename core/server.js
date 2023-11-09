@@ -41,20 +41,12 @@ socket.on('request', (request) => {
 	console.log(request.origin);
 
 	connection.on('message', (message) => {
-		let object = JSON.parse(message.utf8Data);
+		const object = JSON.parse(message.utf8Data);
 		console.log(message.utf8Data);
 		switch(object.Message) {
 			case 'Client':
 				sendMessage('Message', 'Server');
 				break;
-			/*case 'Request Queue':
-				let entry = [mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries())),
-					mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries())),
-					mp3Library.getEntry(Math.floor(Math.random()*mp3Library.entries()))];
-				sendMessage('Sr', entry[0]);
-				sendMessage('Sr', entry[1]);
-				sendMessage('Sr', entry[2]);
-				break;*/
 			default:
 				console.log('Unsupported!');
 				break;

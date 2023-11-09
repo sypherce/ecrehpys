@@ -25,8 +25,13 @@
 		"author": ""
 	},
 	{
-		"keyword": ["!tts"],
+		"keyword": ["!tts", "!tss", "!ttsanta", "!tts1", "!tts2", "!tts3", "!tts4", "!tts5", "!tts6", "!tts7", "!tts8", "!tts9", "!tts10", "!tts11", "!tts12", "!tts13", "!tts14", "!tts15", "!tts16", "!tts17", "!tts18", "!tts19", "!tts20", "!tts21", "!tts22", "!tts23", "!tts24", "!tts25", "!tts26", "!tts27", "!tts28", "!tts29", "!tts30", "!tts31", "!tts32", "!tts33", "!tts34", "!tts35", "!tts36", "!tts37", "!tts38", "!tts39", "!tts40", "!tts41", "!tts42", "!tts43", "!tts44", "!tts45", "!tts46", "!tts47", "!tts48", "!tts49", "!tts50", "!tts51", "!tts52", "!tts53", "!tts54", "!tts55", "!tts56", "!tts57", "!tts58", "!tts59", "!tts60", "!tts61", "!tts62", "!tts63", "!tts64", "!tts65", "!tts66", "!tts67", "!tts68", "!tts69", "!tts70", "!tts71", "!tts72", "!tts73", "!tts74", "!tts75", "!tts76", "!tts77", "!tts78", "!tts79"],
 		"task": [{"tts": "tts"}],
+		"author": ""
+	},
+	{
+		"keyword": [ "!ttsing", "!ttssing", "!tssing", "!ttsing1", "!ttsing2", "!ttsing3", "!ttsing4", "!ttsing5", "!ttsing6", "!ttsing7", "!ttsing8", "!ttsing9", "!ttsing10", "!ttsing11", "!ttsing12", "!ttsing13", "!ttsing14", "!ttsing15", "!ttsing16", "!ttsing17", "!ttsing18", "!ttsing19", "!ttsing20", "!ttsing21", "!ttsing22", "!ttsing23", "!ttsing24", "!ttsing25", "!ttsing26", "!ttsing27", "!ttsing28", "!ttsing29", "!ttsing30", "!ttsing31", "!ttsing32", "!ttsing33", "!ttsing34", "!ttsing35", "!ttsing36", "!ttsing37", "!ttsing38", "!ttsing39", "!ttsing40", "!ttsing41", "!ttsing42", "!ttsing43", "!ttsing44", "!ttsing45", "!ttsing46", "!ttsing47", "!ttsing48", "!ttsing49", "!ttsing50", "!ttsing51", "!ttsing52", "!ttsing53", "!ttsing54", "!ttsing55", "!ttsing56", "!ttsing57", "!ttsing58", "!ttsing59", "!ttsing60", "!ttsing61", "!ttsing62", "!ttsing63", "!ttsing64", "!ttsing65", "!ttsing66", "!ttsing67", "!ttsing68", "!ttsing69", "!ttsing70", "!ttsing71", "!ttsing72", "!ttsing73", "!ttsing74", "!ttsing75", "!ttsing76", "!ttsing77", "!ttsing78", "!ttsing79"],
+		"task": [{"ttsing": "ttsing"}],
 		"author": ""
 	},
 	{
@@ -654,7 +659,8 @@
 		"author": "muten_pizza"
 	},
 	{
-		"keyword": ["crab"],
+		"altkey": ["crabs"],
+		"keyword": ["crab(|s)"],
 		"task": [{"videonow": "0 - Other/Crabs- MrWeebl.mp4"}],
 		"author": "residentemil_",
 		"lasttimestamp": "2023-10-15T14:57:05.130Z"
@@ -1927,7 +1933,7 @@
 	},
 	{
 		"altkey": ["imout"],
-		"keyword": ["i(\\'|a|)m\\s*out"],
+		"keyword": ["i(\\'|a|)m\\s*out", "xjrigsleave"],
 		"task": [
 			{"alert": ["assets/alerts/muten_imout.mp4", "bounceIn", "shake", "lightSpeedOut"]}
 		],
@@ -2377,5 +2383,21 @@
 		"author": "residentemil_",
 		"keyword": ["oatmeal"],
 		"task": [{"customaudio": "firehose 4460 575"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["potion"],
+		"task": [{"media": "emil_potion.mp3"}]
+	},
+	{
+		"altkey": ["ghostieboys"],
+		"keyword": ["ghostieboys", "intergalactic"],
+		"task": [{"videonow": "0 - Other/Beastie Boys - Intergalactic But It's Ghostbusters.mp4"}],
+		"author": "subtlewookie"
+	},
+	{
+		"author": "sypherce",
+		"keyword": ["mgowshee"],
+		"task": [{"customaudio": "mgow 0 600 banshee 400 1000"}]
 	}
 ]

@@ -1,3 +1,4 @@
+'use strict';
 const fs = require('fs');
 const command_html = require('./command_html.js');
 const server = require('./server.js');
@@ -111,6 +112,7 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 			case '!cae':
 			case '!cal':
 			case '!tts':
+			case '!ttsing':
 			case '!nc':
 				break;
 			//everything else gets added to the html page
@@ -242,8 +244,19 @@ function tired(command, setting, message, command_list = global_commands_list) {
 }
 const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const replyBag = new ShuffleBag(attacks);
-const user_array = [];
+let user_array = [];
 async function processMessage(user, message, flags, self, extra) {
+	async function loadUserArray() {
+		try {
+			return JSON.parse(fs.readFileSync('chatters.json'));
+		} catch (e) {
+			console.error(e); // error in the above string (in this case, yes)!
+			return [];
+		}
+	}
+	async function saveUserArray(array) {
+		fs.writeFileSync('chatters.json', prettyStringify(array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
+	}
 	async function checkProfileImage(user) {
 		async function writeProfileImage(filename) {
 			const profile_image_url = (await twurple.getUserByName(user)).profilePictureUrl;
@@ -283,13 +296,33 @@ async function processMessage(user, message, flags, self, extra) {
 	async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		message_lower = message;
 		if(flags.broadcaster) {
-			if(message_lower.indexOf('!reload') !== -1)
-				global_commands_list = loadCommands();
+			if(message_lower.indexOf('!reload') !== -1) {
+				const saved_commands_list = global_commands_list;
+				try {
+					global_commands_list = loadCommands();
+					console.log('Commands Reloaded.');
+				} catch (e) {
+					global_commands_list = saved_commands_list;
+					console.error(e); // error in the above string (in this case, yes)!
+					console.log('Commands failed to reload.');
+				}
+			}
+			if(message_lower.indexOf('!restart') !== -1) {
+				process.exit();
+			}
+			if(message_lower.indexOf('!clear_intros') !== -1) {
+				user_array = [];
+				fs.unlink("chatters.json", (err => {
+					if(err)
+						console.log(err);
+					else
+						console.log("\nDeleted file: chatters.json");
+				}));
+			}
 			if(message_lower.indexOf('!debug') !== -1)
 				debug = !debug;
 			if(message_lower.indexOf('!test') !== -1) {
 				server.sayWrapper(message);
-				streamer.Say(message);
 			}
 			if(message_lower.indexOf('!enable') !== -1) {
 				const query = getQuery(message_lower, '!enable');
@@ -533,13 +566,43 @@ async function processMessage(user, message, flags, self, extra) {
 
 					return true;
 				}
-				if(this_task.tts) {
-					const sub_message = message.substr(message_lower.indexOf('!tts ') + 5);
+				if(this_task.tts || this_task.ttsing) {
+					function isNumber(number) {
+						if(number === false ||
+							number === true ||
+							number === '')
+							return false;
+						return !isNaN(number)
+					}
+					const type = (this_task.tts + this_task.ttsing).replace('undefined', '');
+					let sub_message = getQuery(message_lower, `!${type}`);
+					let voice = type;
+					let tts_number = sub_message.substring(0, sub_message.indexOf(' '));
+					if(tts_number === '') {
+						tts_number = sub_message;
+						sub_message = '';
+					}
+					console.log('tts_number', tts_number, isNumber(tts_number));
+					if(isNumber(tts_number)) {
+						console.log(1, tts_number, isNumber(tts_number), type);
+						if(type === 'ttsing')
+							voice = tts.all_singing_voices[tts_number];
+						else
+							voice = tts.voices[tts_number];
+					}
+					console.log(2, tts_number);
+					if(tts_number === 'anta')
+						voice = tts.voices[28];
+
+					sub_message = sub_message.substring(sub_message.indexOf(' '));
+
 					const processed_message = await processVariables(user, query, sub_message);
 					const timestamp = `${this_command.timestamp}`.replace(/[/\\?% *:|"<>]/g, '');
-					const tts_filename = `../${(await tts.ttsToMP3(processed_message, `alerts/assets/alerts/tts/${timestamp}`))}.mp3`;
+					const tts_filename = `../${(await tts.ttsToMP3(processed_message, `alerts/assets/alerts/tts/${timestamp}`, voice))}.mp3`;
 					console.log(tts_filename);
 					server.sendMessage('TTS', tts_filename);
+
+					return true;
 				}
 				if(this_task.delay) {
 					await new Promise(resolve => setTimeout(resolve, this_task.delay));
@@ -665,9 +728,14 @@ async function processMessage(user, message, flags, self, extra) {
 		return commands_triggered;
 	}
 
+	if(user_array.length === 0) {
+		user_array = await loadUserArray();
+	}
 	const isNewUser = !user_array.includes(user);
 	if(isNewUser) {
 		user_array.push(user);
+		await saveUserArray(user_array);
+
 		//handle intro
 		const alert = findAlertByString(`!${user.toLowerCase()}`);//user commands all have !prefix
 		if(alert)

@@ -177,6 +177,31 @@ function playSound(file) {
 	sound.play();
 }
 
+const sound_array = [];
+function playSoundQueued(file) {
+	console.log(file);
+	if(sound_array.length > 4 )
+		return;
+	let sound = new Howl({
+		src: [file],
+		html5: true,
+		onloaderror: function() {
+			if(sound_array.length > 1)
+				sound_array.at(1).play();
+			sound_array.shift();
+		},
+		onend: function() {
+			if(sound_array.length > 1)
+				sound_array.at(1).play();
+			sound.unload();
+			sound_array.shift();
+		},
+	});
+	sound_array.push(sound)
+	if(sound_array.length === 1)
+		sound_array.at(0).play();
+}
+
 //todo: gif needs handled elsewhere, proper console.log
 //research: do i need to sound.unload() the sound myself?
 function playSoundSprite(file, offset = -1, duration = -1) {
@@ -228,6 +253,9 @@ function initWebSocket() {
 				console.log(`${key}: ${value}`);
 				break;
 			}
+
+			//todo take care of paths properly.
+			//include direct paths for browser, not relative, not direct paths for server
 			case 'CustomAudio': {
 				let delay = 0;
 				const max_sound_cmds = 100;
@@ -235,7 +263,12 @@ function initWebSocket() {
 				for(let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
 					const max_duration = 10000;
 					const cmd = `${value[i].startsWith('assets/alerts/') ? '../../' : ''}${value[i].split(',')[0]}`;
-					const cmd_path = `assets/${(cmd.endsWith('mp4') | cmd.endsWith('gif')) ? `music` : `alerts`}/${cmd}`;
+					let cmd_path;
+					//this is really bad ;_;
+					if(cmd.endsWith('mp4') | cmd.endsWith('gif') | (cmd.indexOf('0 - Other') !== -1))
+						cmd_path = `assets/music/${cmd}`;
+					else
+						cmd_path = `assets/alerts/${cmd}`;
 					const start = parseInt(value[i + 1]);
 					let duration = parseInt(value[i + 2]);
 					if(position + duration > max_duration)
@@ -452,7 +485,7 @@ function initWebSocket() {
 				break;
 			}
 			case 'TTS': {
-				playSound(value);
+				playSoundQueued(value);
 				break;
 			}
 			case 'SplitSong': {
