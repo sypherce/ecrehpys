@@ -229,6 +229,6 @@ async function _test() {
 
 	console.groupEnd();
 }
-_test();
+//_test();
 
 export { setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path };
