@@ -164,7 +164,6 @@ function saveCommands(filename = 'commands.json', command_list = global_commands
 				delete this_command.task[task_i].media_counter;
 		}
 	}
-	fs.writeFileSync(`${filename}.${Date.now()}`, prettyStringify(command_list, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
 	fs.writeFileSync(`${filename}`, prettyStringify(command_list, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
 
 	return command_list;
