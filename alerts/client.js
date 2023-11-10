@@ -262,13 +262,9 @@ function initWebSocket() {
 				let position = 0;
 				for(let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
 					const max_duration = 10000;
-					const cmd = `${value[i].startsWith('assets/alerts/') ? '../../' : ''}${value[i].split(',')[0]}`;
-					let cmd_path;
-					//this is really bad ;_;
-					if(cmd.endsWith('mp4') | cmd.endsWith('gif') | (cmd.indexOf('0 - Other') !== -1))
-						cmd_path = `assets/music/${cmd}`;
-					else
-						cmd_path = `assets/alerts/${cmd}`;
+					const cmd = value[i].split(',')[0];
+					let	cmd_path = cmd.replace('/var/www/html/nodejs/main/alerts/', '');
+					cmd_path = cmd_path.replace('/mnt/g/media/music/Stream/', 'assets/music/');
 					const start = parseInt(value[i + 1]);
 					let duration = parseInt(value[i + 2]);
 					if(position + duration > max_duration)
@@ -290,7 +286,8 @@ function initWebSocket() {
 				return;
 			}
 			case 'Audio': {
-				playSound(`assets/alerts/${value}`);
+				value = value.replace('/var/www/html/nodejs/main/alerts/', '');
+				playSound(value);
 				break;
 			}
 			case 'Lips': {
@@ -363,6 +360,7 @@ function initWebSocket() {
 					start_animation,
 					mid_animation,
 					end_animation] = value;
+				video_file = video_file.replace('/var/www/html/nodejs/main/alerts/', '');
 				let audio_file = replaceExtension(video_file, '.gif', '.mp3');
 
 				async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
@@ -443,13 +441,15 @@ function initWebSocket() {
 			}
 
 			case 'VideoNow': {
-				if(await beefwebPlaySongNow(value) === false) {
+				let beefweb_value = value.replace('/mnt/g/media/music/Stream', '');
+				let video_value = value.replace('/mnt/g/media/music/Stream', 'assets/music/');
+				if(await beefwebPlaySongNow(beefweb_value) === false) {
 					break;
 				}
 
 				const video = document.createElement('video');
 				video.setAttribute('id', 'NewVideo');
-				video.src = `assets/music/${value}`;
+				video.src = video_value;
 				video.autoplay = false;
 				video.controls = false;
 				video.muted = true;
@@ -497,7 +497,7 @@ function initWebSocket() {
 				break;
 			}
 			case 'Sr': {
-				value.filename = value.filename.replace(/\/mnt\/g\/media\/music\/Stream\//g, '');
+				value.filename = value.filename.replace('/mnt/g/media/music/Stream', '');
 				beefwebQueueSong(value.filename);
 				break;
 			}
