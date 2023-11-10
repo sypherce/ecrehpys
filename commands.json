@@ -25,11 +25,18 @@
 		"author": ""
 	},
 	{
+		"altkey": ["!tts"],
 		"keyword": ["!tts([0-9]|[1-9][0-9])", "!tss([0-9]|[1-9][0-9])", "!ttsanta"],
 		"task": [{"tts": "tts"}],
 		"author": ""
 	},
 	{
+		"keyword": ["!ttsanta"],
+		"task": [{"tts": "tts"}],
+		"author": ""
+	},
+	{
+		"altkey": ["!ttsing"],
 		"keyword": [ "!ttsing([0-9]|[1-9][0-9])", "!ttssing([0-9]|[1-9][0-9])", "!tssing([0-9]|[1-9][0-9])"],
 		"task": [{"ttsing": "ttsing"}],
 		"author": ""
