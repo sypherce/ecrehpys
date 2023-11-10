@@ -663,7 +663,7 @@ async function processMessage(user, message, flags, self, extra) {
 					server.sendMessage('Lips', array);
 				}
 				if(this_task.joe) {
-					const original = message_lower.substr(message_lower.indexOf('!joe ') + 5);
+					const original = getQuery(message_lower, '!joe ');
 					let repeat_length = 2;
 					let result = '';
 					for(let letter = 0; letter < original.length; letter++) {
