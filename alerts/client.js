@@ -177,29 +177,28 @@ function playSound(file) {
 	sound.play();
 }
 
-const sound_array = [];
+const sound_queue = [];
 function playSoundQueued(file) {
-	console.log(file);
-	if(sound_array.length > 4 )
+	if(sound_queue.length > 4 )
 		return;
 	let sound = new Howl({
 		src: [file],
 		html5: true,
 		onloaderror: function() {
-			if(sound_array.length > 1)
-				sound_array.at(1).play();
-			sound_array.shift();
+			if(sound_queue.length > 1)
+				sound_queue.at(1).play();
+			sound_queue.shift();
 		},
 		onend: function() {
-			if(sound_array.length > 1)
-				sound_array.at(1).play();
+			if(sound_queue.length > 1)
+				sound_queue.at(1).play();
 			sound.unload();
-			sound_array.shift();
+			sound_queue.shift();
 		},
 	});
-	sound_array.push(sound)
-	if(sound_array.length === 1)
-		sound_array.at(0).play();
+	sound_queue.push(sound)
+	if(sound_queue.length === 1)
+		sound_queue.at(0).play();
 }
 
 //todo: gif needs handled elsewhere, proper console.log
@@ -262,9 +261,9 @@ function initWebSocket() {
 				let position = 0;
 				for(let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
 					const max_duration = 10000;
-					const cmd = value[i].split(',')[0];
-					let	cmd_path = cmd.replace('/var/www/html/nodejs/main/alerts/', '');
-					cmd_path = cmd_path.replace('/mnt/g/media/music/Stream/', 'assets/music/');
+					let cmd = value[i].split(',')[0];
+						cmd = cmd.replace('/home/user/root/stream/alerts/', 'assets/alerts/');
+						cmd = cmd.replace('/home/user/root/stream/music/', 'assets/music/');
 					const start = parseInt(value[i + 1]);
 					let duration = parseInt(value[i + 2]);
 					if(position + duration > max_duration)
@@ -275,7 +274,7 @@ function initWebSocket() {
 					if(delay !== 0)//if there's a delay from the last sound
 						await new Promise(r => setTimeout(r, delay));
 					console.log(`!ca: ${cmd}: ${start}, ${duration}`);
-					playSoundSprite(cmd_path, start, duration);
+					playSoundSprite(cmd, start, duration);
 
 					position = position + duration;
 					if(position >= max_duration)
@@ -286,7 +285,7 @@ function initWebSocket() {
 				return;
 			}
 			case 'Audio': {
-				value = value.replace('/var/www/html/nodejs/main/alerts/', '');
+				value = value.replace('/home/user/root/stream/alerts/', 'assets/alerts/');
 				playSound(value);
 				break;
 			}
@@ -360,7 +359,7 @@ function initWebSocket() {
 					start_animation,
 					mid_animation,
 					end_animation] = value;
-				video_file = video_file.replace('/var/www/html/nodejs/main/alerts/', '');
+				video_file = video_file.replace('/home/user/root/stream/alerts/', 'assets/alerts/');
 				let audio_file = replaceExtension(video_file, '.gif', '.mp3');
 
 				async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
@@ -441,8 +440,8 @@ function initWebSocket() {
 			}
 
 			case 'VideoNow': {
-				let beefweb_value = value.replace('/mnt/g/media/music/Stream', '');
-				let video_value = value.replace('/mnt/g/media/music/Stream', 'assets/music/');
+				let beefweb_value = value.replace('/home/user/root/stream/music/', '');
+				let video_value = value.replace('/home/user/root/stream/music/', 'assets/music/');
 				if(await beefwebPlaySongNow(beefweb_value) === false) {
 					break;
 				}
@@ -493,11 +492,12 @@ function initWebSocket() {
 				break;
 			}
 			case 'Song': {
+				value = value.replace('/home/user/root/stream/music/', '');
 				beefwebPlaySongNow(value);
 				break;
 			}
 			case 'Sr': {
-				value.filename = value.filename.replace('/mnt/g/media/music/Stream', '');
+				value.filename = value.filename.replace('/home/user/root/stream/music/', '');
 				beefwebQueueSong(value.filename);
 				break;
 			}
