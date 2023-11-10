@@ -425,11 +425,7 @@ async function processMessage(user, message, flags, self, extra) {
 			if(tired("!tired", true, message_lower)) return;
 		}
 
-		const is_broken = false;
-		if(is_broken && (message_lower.indexOf('!sr') !== -1)) {
-			server.sayWrapper('Song requests are currently broken.');
-		}
-		else if(message_lower.indexOf('!srinfo') !== -1) {
+		if(message_lower.indexOf('!srinfo') !== -1) {
 			server.sayWrapper('https://sypherce.github.io/stream/sr.html');
 		}
 		else if(message_lower.indexOf('!sr') !== -1) {
