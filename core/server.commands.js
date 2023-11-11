@@ -178,8 +178,7 @@ global_commands_list = loadCommands();
  */
 function getQuery(message, command) {
 	const start = message.indexOf(command) + command.length;
-	const length = message.length - start;
-	return message.substr(start, length);
+	return message.substring(start, message.length);
 }
 async function processVariables(user, query_string, task_string) {
 	task_string = task_string.replace(/\$\(\s*query\s*\)/, query_string);
@@ -199,7 +198,7 @@ async function processVariables(user, query_string, task_string) {
 			const max_title_length = 45;
 			let title = channel_info.title;
 			if(title.length > max_title_length)
-				title = `${title.substr(0, max_title_length)}...`;
+				title = `${title.substring(0, max_title_length)}...`;
 
 			channel_info.game_and_title = `${channel_info.gameName} (${title})`;
 		}
@@ -347,7 +346,7 @@ async function processMessage(user, message, flags, self, extra) {
 				const max_title_length = 45;
 				let title = channel_info.title;
 				if(title.length > max_title_length)
-					title = `${title.substr(0, max_title_length)}...`;
+					title = `${title.substring(0, max_title_length)}...`;
 
 				channel_info.game_and_title = `${channel_info.gameName} (${title})`;
 			}
@@ -443,7 +442,7 @@ async function processMessage(user, message, flags, self, extra) {
 		let commands_triggered = 0;
 		function replaceExtension(filename, original, replacement) {
 			if(filename.endsWith(original))
-				filename = filename.substr(0, filename.lastIndexOf(original)) + replacement;
+				filename = filename.substring(0, filename.lastIndexOf(original)) + replacement;
 
 			return filename;
 		}
@@ -519,7 +518,7 @@ async function processMessage(user, message, flags, self, extra) {
 				if(this_task.customaudioadd) {//this needs to be 3rd to override other commands
 					query = getQuery(message_lower, '!caa ');
 					const firstWord = query.split(" ")[0];
-					query = query.substr(firstWord.length + 1, query.length - firstWord.length - 1);
+					query = query.substring(firstWord.length + 1, firstWord.length + 1 + query.length - firstWord.length - 1);
 					const commandExists = typeof findCommandByString(firstWord) !== 'undefined';
 					if(commandExists) {
 						server.sayWrapper(`@${user} Command "${firstWord}" already exists. Try using !cae to edit.`);
@@ -534,7 +533,7 @@ async function processMessage(user, message, flags, self, extra) {
 				if(this_task.customaudioedit) {//this needs to be 4th to override other commands
 					query = getQuery(message_lower, '!cae ');
 					const firstWord = query.split(" ")[0];
-					query = query.substr(firstWord.length + 1, query.length - firstWord.length - 1);
+					query = query.substring(firstWord.length + 1, firstWord.length + 1 + query.length - firstWord.length - 1);
 					const command_to_edit = isCommandCustomAudio(firstWord);
 					if(!command_to_edit) {
 						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command. Try using !caa to add it.`);
@@ -549,7 +548,7 @@ async function processMessage(user, message, flags, self, extra) {
 				if(this_task.customaudiolist) {//this needs to be 5th to override other commands
 					query = getQuery(message_lower, '!cal ');
 					const firstWord = query.split(" ")[0];
-					query = query.substr(firstWord.length + 1, query.length - firstWord.length - 1);
+					query = query.substring(firstWord.length + 1, firstWord.length + 1 + query.length - firstWord.length - 1);
 					const command_to_list = isCommandCustomAudio(firstWord);
 					if(!command_to_list) {
 						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command.`);
@@ -653,7 +652,7 @@ async function processMessage(user, message, flags, self, extra) {
 					}
 				}
 				if(this_task.lips) {
-					const string = message.substr(message.indexOf('!lips ') + 6).trim();
+					const string = message.substring(message.indexOf('!lips ') + 6).trim();
 					const array = string.split(' ');
 
 					await (async function() {
@@ -697,13 +696,13 @@ async function processMessage(user, message, flags, self, extra) {
 			//iterate through multiple keywords
 			for(let keyword_index = 0; keyword_index < this_command.keyword.length; keyword_index++) {
 				let comparison = this_command.keyword.at(keyword_index);
-				const query = message.substr(message_lower.indexOf(comparison) + comparison.length);
+				const query = message.substring(message_lower.indexOf(comparison) + comparison.length);
 
 				//console.log('V:', `keywordIsIndexOf: ${comparison}`);
 				let prefix = '';
 				if(comparison.indexOf('!') === 0) {
 					prefix = '!';
-					comparison = comparison.substr(1);
+					comparison = comparison.substring(1);
 				}
 
 				if(comparison !== '' && message_lower.search(new RegExp(prefix + '\\b' + comparison + '\\b')) !== -1) {

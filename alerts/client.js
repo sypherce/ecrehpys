@@ -8,7 +8,7 @@ const local_music_path = 'assets/music';
 
 function replaceExtension(filename, original, replacement) {
 	if(filename.endsWith(original))
-		filename = filename.substr(0, filename.lastIndexOf(original)) + replacement;
+		filename = filename.substring(0, filename.lastIndexOf(original)) + replacement;
 
 	return filename;
 }
@@ -26,7 +26,7 @@ function playSongSprite(file) {
 		return http.status !== 404;
 	}
 	function removeExt(filename) {
-		return filename.substr(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
+		return filename.substring(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
 	}
 	file = `${local_music_path}/${file}`;
 
@@ -51,7 +51,7 @@ function basefilename(filename) {
 		ext_index = filename.length;
 	ext_index -= folder_index;
 
-	return filename.substr(folder_index, ext_index);
+	return filename.substring(folder_index, folder_index + ext_index);
 }
 
 let queue_pos = 0;
