@@ -1,5 +1,6 @@
 'use strict';
 const fs = require('fs');
+const path = require('path');
 const command_html = require('./command_html.js');
 const server = require('./server.js');
 const ShuffleBag = require('giffo-shufflebag');
@@ -9,52 +10,12 @@ const prettyStringify = require("@aitodotai/json-stringify-pretty-compact");
 const tts = require('../lib/tts.js');
 
 let global_commands_list;
-function addCa(author, keyword, command) {
-
-	const this_command = {
-		author: author,
-		cooldown: 0,
-		timestamp: 0,
-		active: true,
-		tired: { active: false },
-		keyword: [keyword],
-		task: [{ customaudio: command }]
-	};
-
-	global_commands_list.push(this_command);
-	global_commands_list = saveCommands();
-}
-function editCa(author, keyword, command) {
-
-	for(let index = 0; index < global_commands_list.length; index++) {
-		let this_keyword = global_commands_list[index].keyword.toString();
-		if(typeof global_commands_list[index].altkey !== 'undefined')
-			this_keyword = global_commands_list[index].altkey.toString();
-
-		if(this_keyword === keyword) {
-			//global_commands_list[index].author = author,
-			global_commands_list[index].task = [{ customaudio: command }];
-		}
-	};
-
-	global_commands_list = saveCommands();
-}
-function listCa(keyword) {
-
-	for(let index = 0; index < global_commands_list.length; index++) {
-		let this_keyword = global_commands_list[index].keyword.toString();
-		if(typeof global_commands_list[index].altkey !== 'undefined')
-			this_keyword = global_commands_list[index].altkey.toString();
-
-		if(this_keyword === keyword &&
-			(typeof global_commands_list[index].task[0].customaudio !== 'undefined'))
-			return `!ca ${global_commands_list[index].task[0].customaudio}`;
-	};
-
-	return "";
-}
 
 /**
+ *
+ * Loads 'commands object' from a JSON file
+ * Generates and Saves sounds.html
+ *
  * @param {string} filename JSON containing commands
  * @return {object} The results of JSON.parse()
  */
@@ -86,7 +47,7 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 			this_command.keyword.at(0) :
 			this_command.altkey;
 
-		//process regexps
+		//remove regexps for simplicity
 		if(keyword !== this_command.altkey) {
 			keyword = keyword.replaceAll('\')', '');
 			keyword = keyword.replaceAll('.*', '');
@@ -121,11 +82,11 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 				break;
 		}
 	}
-	//add mixitup commands. no extra whitespace
+	//add mixitup commands. remove tabs from formatting
 	html = html.concat(`!chomp<br>
-hydrate<br>
-!inu [resident_emil_]<br>
-laugh<br>`);
+						hydrate<br>
+						!inu [resident_emil_]<br>
+						laugh<br>`).replace(/\t/g,'');
 
 	//sort commands alphabetically, ignoring '!', numbers are first
 	const html_split = html.split(/\r?\n/);
@@ -143,6 +104,9 @@ laugh<br>`);
 	return command_list;
 }
 /**
+ *
+ * Formats and saves 'commands object' to a JSON file
+ *
  * @param {string} filename JSON containing commands
  * @return {object} The results of JSON.parse()
  */
@@ -170,8 +134,11 @@ function saveCommands(filename = 'commands.json', command_list = global_commands
 }
 
 global_commands_list = loadCommands();
-//returns sub-string after 'command' in 'message'
 /**
+ * Returns sub-string after 'command' in 'message'
+ *
+ * Example: getQuery(message_lower, '!joe ');
+ *
  * @param {string} message message being parsed
  * @param {string} command command or "prefix" we're searching for
  * @return {string} searches for a command and returns the text following it
@@ -294,6 +261,7 @@ async function processMessage(user, message, flags, self, extra) {
 	async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		message_lower = message;
 		if(flags.broadcaster) {
+			//reload commands list, loadCommands()
 			if(message_lower.indexOf('!reload') !== -1) {
 				const saved_commands_list = global_commands_list;
 				try {
@@ -305,28 +273,47 @@ async function processMessage(user, message, flags, self, extra) {
 					console.log('Commands failed to reload.');
 				}
 			}
-			if(message_lower.indexOf('!restart') !== -1) {
+			//stop bot (restart if running in a loop)
+			if(message_lower.indexOf('!halt') !== -1) {
 				process.exit();
 			}
-			if(message_lower.indexOf('!clear_intros') !== -1) {
+			//clear users enabling intros again
+			//also clears user avatars for chat
+			if(message_lower.indexOf('!clear_users') !== -1) {
+				function deleteFile(filename) {
+					fs.unlink(filename, (err => {
+						if(err)
+							console.log(err);
+						else
+							console.log(`Deleted file: ${filename}`);
+					}));
+				}
+				function clearDirectory(directory) {
+					fs.readdir(directory, (err, files) => {
+						if (err) throw err;
+
+						for (const file of files) {
+							deleteFile(path.join(directory, file));
+						}
+					  });
+				}
 				user_array = [];
-				fs.unlink("chatters.json", (err => {
-					if(err)
-						console.log(err);
-					else
-						console.log("\nDeleted file: chatters.json");
-				}));
+				deleteFile("chatters.json");
+				clearDirectory('../../stream/assets/users/icon');
+			//	/var/www/html/stream/assets/users/icon/
 			}
 			if(message_lower.indexOf('!debug') !== -1)
 				debug = !debug;
 			if(message_lower.indexOf('!test') !== -1) {
 				server.sayWrapper(message);
 			}
+			//play full length songs if enabled
 			if(message_lower.indexOf('!enable') !== -1) {
 				const query = getQuery(message_lower, '!enable');
 				server.sendMessage('Enable', query);
 				console.log('Enable', query);
 			}
+			//play songsprites if disabled
 			if(message_lower.indexOf('!disable') !== -1) {
 				const query = getQuery(message_lower, '!disable');
 				server.sendMessage('Disable', query);
@@ -524,7 +511,20 @@ async function processMessage(user, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Command "${firstWord}" already exists. Try using !cae to edit.`);
 					}
 					else {
-						addCa(user, firstWord, query);
+						const addCustomAudio = function (author=user, keyword=firstWord, command=query) {
+							const this_command = {
+								author: author,
+								cooldown: 0,
+								timestamp: 0,
+								active: true,
+								tired: { active: false },
+								keyword: [keyword],
+								task: [{ customaudio: command }]
+							};
+
+							global_commands_list.push(this_command);
+							global_commands_list = saveCommands();
+						}; addCustomAudio();
 						server.sayWrapper(`@${user} Command "${firstWord}" added.`);
 					}
 
@@ -539,7 +539,20 @@ async function processMessage(user, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command. Try using !caa to add it.`);
 					}
 					else {
-						editCa(user, firstWord, query);
+						const editCustomAudio = function(author = user, keyword = firstWord, command = query) {
+							for(let this_command of global_commands_list) {
+								let this_keyword = this_command.keyword.toString();
+								if(typeof this_command.altkey !== 'undefined')
+									this_keyword = this_command.altkey.toString();
+
+								if(this_keyword === keyword) {
+									//global_commands_list[index].author = author,
+									this_command.task = [{ customaudio: command }];
+								}
+							}
+
+							global_commands_list = saveCommands();
+						}; editCustomAudio();
 						server.sayWrapper(`@${user} Command "${firstWord}" edited.`);
 					}
 
@@ -554,7 +567,19 @@ async function processMessage(user, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command.`);
 					}
 					else {
-						let response = listCa(firstWord);
+						const listCustomAudio = function () {
+							for(let this_command of global_commands_list) {
+								let keyword_or_altkey = this_command.keyword.toString();
+								if(typeof this_command.altkey !== 'undefined')
+									keyword_or_altkey = this_command.altkey.toString();
+
+								if(keyword_or_altkey === firstWord &&
+									(typeof this_command.task[0].customaudio !== 'undefined'))
+									return `!ca ${this_command.task[0].customaudio}`;
+							};
+
+							return "";
+						}; let response = listCustomAudio(firstWord);
 						server.sayWrapper(`@${user} "${response}"`);
 					}
 
