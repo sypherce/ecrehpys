@@ -22,7 +22,6 @@ let global_command_array;
 function loadCommands(filename = 'commands.json') {//loads and returns all commands from 'commands.json' in an JSON.parse() object
 	let html = '';
 	const command_array = JSON.parse(fs.readFileSync(filename));
-	function isTired() { return (typeof this_command.tired.active !== 'undefined' && this_command.tired.active === true); }
 
 	for(const command of command_array) {
 		//set defaults that may not be defined
@@ -30,8 +29,6 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 		command.cooldown ??= 0;
 		command.timestamp ??= 0;
 		command.active ??= true;
-		command.tired ??= [];
-		command.tired.active ??= false;
 
 		//!this might be done elsewhere, idk
 		//set media_count to 0 if it's needed
@@ -113,9 +110,6 @@ function saveCommands(filename = 'commands.json', command_array = global_command
 		//set defaults that may not be defined
 		if(command.cooldown === 0) delete command.cooldown;
 		if(command.active === true) delete command.active;
-		if(typeof command.tired !== 'undefined' &&
-			typeof command.tired.active !== 'undefined') delete command.tired.active;
-		if(typeof command.tired !== 'undefined') delete command.tired;
 		if(typeof command.timestamp !== 'undefined') delete command.timestamp;
 
 		//!this might be done elsewhere, idk
@@ -189,19 +183,6 @@ async function processVariables(user, query_string, task_string) {
 	return task_string;
 }
 
-function tired(command, setting, message, command_array = global_command_array) {
-	if(message.indexOf(command) !== -1) {
-		const query = getQuery(message, `${command} `);
-
-		for(const this_command of command_array) {
-			if(typeof this_command.altkey !== 'undefined' && this_command.altkey[0].indexOf(query) !== -1) {
-				this_command.tired.active = setting;
-				return true;
-			}
-		}
-	}
-	return false;
-}
 const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const replyBag = new ShuffleBag(attacks);
 let user_array = [];
@@ -392,18 +373,6 @@ async function processMessage(user, message, flags, self, extra) {
 		if(message_lower.indexOf('!commands') !== -1 || message_lower.indexOf('!sounds') !== -1) {
 			server.sayWrapper('https://sypherce.github.io/stream/sounds.html');
 		}
-		if(user === "sypherce" ||
-			user === "missliss15")
-			if(tired("!untired", false, message_lower)) return;
-
-		if(user === "sypherce" ||
-			user === "missliss15" ||
-			user === "residentemil_" ||
-			user === "muten_pizza" ||
-			user === "subtlewookie" ||
-			user === "xjrigsx") {
-			if(tired("!tired", true, message_lower)) return;
-		}
 
 		if(message_lower.indexOf('!srinfo') !== -1) {
 			server.sayWrapper('https://sypherce.github.io/stream/sr.html');
@@ -511,7 +480,6 @@ async function processMessage(user, message, flags, self, extra) {
 								cooldown: 0,
 								timestamp: 0,
 								active: true,
-								tired: { active: false },
 								keyword: [keyword],
 								task: [{ customaudio: custom_audio_command }]
 							};
@@ -645,29 +613,8 @@ async function processMessage(user, message, flags, self, extra) {
 					server.sendMessage('Song', task.song);
 				}
 				if(task.videonow) {
-					if(typeof command.tired.active !== 'undefined' && command.tired.active === true) {
-						server.sendMessage('SongSprite', task.videonow);
-					}
-					else {
-						command.lasttimestamp ??= command.timestamp;
-						command.tired.max_count ??= 3;
-						command.tired.counter ??= 0;
-						command.tired.active_delay ??= 1;
-
-						//console.log(this_command.timestamp);
-						if(command.timestamp > command.lasttimestamp + command.tired.active_delay) {
-							//console.log(`${this_command.timestamp} > ${this_command.lasttimestamp} + ${this_command.tired.active_delay}`);
-							command.lasttimestamp = command.timestamp;
-							//temporarily disabled until we work on the client side
-							//this_command.tired.counter++;
-							//console.log(`${this_command.tired.counter}`);
-							if(command.tired.counter > command.tired.max_count) {
-								command.tired.active = true;
-							}
-						}
-
-						server.sendMessage('VideoNow', task.videonow);
-					}
+					command.lasttimestamp ??= command.timestamp;
+					server.sendMessage('VideoNow', task.videonow);
 				}
 				if(task.lips) {
 					const string = message.substring(message.indexOf('!lips ') + 6).trim();
