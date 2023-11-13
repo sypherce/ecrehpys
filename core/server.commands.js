@@ -138,6 +138,7 @@ function getQuery(string, prefix) {
 	const start = string.indexOf(prefix) + prefix.length;
 	return string.substring(start);
 }
+//this needs implemented fully
 async function processVariables(user, query_string, task_string) {
 	task_string = task_string.replace(/\$\(\s*query\s*\)/, query_string);
 	console.log('T:', `new task_string: ${task_string}`);
@@ -186,6 +187,7 @@ async function processVariables(user, query_string, task_string) {
 const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const replyBag = new ShuffleBag(attacks);
 let user_array = [];
+
 async function processMessage(user, message, flags, self, extra) {
 	async function loadUserArray() {
 		try {
