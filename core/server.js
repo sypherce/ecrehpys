@@ -3,7 +3,6 @@ require('dotenv').config();
 const twurple = require('../lib/twurple.js');
 const ws = require('websocket');
 const http = require('http');
-const commands = require('./server.commands.js');
 
 async function init() {
 	twurple.init(process.env.STREAMER_ID, process.env.STREAMER_OAUTH, process.env.BOT_USER, process.env.BOT_OAUTH);
