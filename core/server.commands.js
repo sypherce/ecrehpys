@@ -187,7 +187,6 @@ async function processVariables(user, query_string, task_string) {
 const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const replyBag = new ShuffleBag(attacks);
 let user_array = [];
-
 async function processMessage(user, message, flags, self, extra) {
 	async function loadUserArray() {
 		try {
@@ -237,7 +236,7 @@ async function processMessage(user, message, flags, self, extra) {
 		return undefined;
 	}
 	async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
-		message_lower = message;
+		let message_lower = message.toLowerCase();
 		if(flags.broadcaster) {
 			//reload commands list, loadCommands()
 			if(message_lower.indexOf('!reload') !== -1) {
@@ -435,13 +434,15 @@ async function processMessage(user, message, flags, self, extra) {
 			}
 			return false;
 		}
-		async function taskIterator9000(user, command, query) {
-			for(const task_index in command.task) {
-				const task = command.task[task_index];
-
+		async function processTasks(user, command, query) {
+			for(const task of command.task) {
+				// this blocks all commands from being triggered
+				// example !nc water
 				if(task.nocommand) {//this needs to be 1st to override other commands
 					return true;
 				}
+				// this plays audio commands spliced together
+				// example !ca witw 21000 2650 !xjrigsx 400 800
 				if(task.customaudio) {//this needs to be 2nd to override other commands
 					let args = getQuery(message_lower, '!ca ').split(' ');
 					if(task.customaudio !== 'ca')//reset args if this is a stored audio command
@@ -467,6 +468,8 @@ async function processMessage(user, message, flags, self, extra) {
 					if(task.customaudio === 'ca')//return only if this isn't a stored audio command
 						return true;
 				}
+				// this adds a custom audio command
+				// example !caa witwrigs witw 21000 2650 !xjrigsx 400 800
 				if(task.customaudioadd) {//this needs to be 3rd to override other commands
 					query = getQuery(message_lower, '!caa ');
 					const firstWord = query.split(" ")[0];
@@ -476,24 +479,26 @@ async function processMessage(user, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Command "${firstWord}" already exists. Try using !cae to edit.`);
 					}
 					else {
-						const addCustomAudio = function (author=user, keyword=firstWord, custom_audio_command=query) {
+						const addCustomAudio = function (author, keyword, customaudio) {
 							const new_command = {
-								author: author,
+								author: user,
 								cooldown: 0,
 								timestamp: 0,
 								active: true,
-								keyword: [keyword],
-								task: [{ customaudio: custom_audio_command }]
+								keyword: [firstWord],
+								task: [{ customaudio: query }]
 							};
 
 							global_command_array.push(new_command);
 							global_command_array = saveCommands();
-						}; addCustomAudio();
+						}(user, firstWord, query);
 						server.sayWrapper(`@${user} Command "${firstWord}" added.`);
 					}
 
 					return true;
 				}
+				// this edits a custom audio command
+				// example !cae witwrigs witw 21000 2650 !xjrigsx 400 800
 				if(task.customaudioedit) {//this needs to be 4th to override other commands
 					query = getQuery(message_lower, '!cae ');
 					const firstWord = query.split(" ")[0];
@@ -522,6 +527,8 @@ async function processMessage(user, message, flags, self, extra) {
 
 					return true;
 				}
+				// this lists an already saved custom audio command
+				// example !cal witwrigs
 				if(task.customaudiolist) {//this needs to be 5th to override other commands
 					query = getQuery(message_lower, '!cal ');
 					const firstWord = query.split(" ")[0];
@@ -587,6 +594,7 @@ async function processMessage(user, message, flags, self, extra) {
 
 					return true;
 				}
+				//this may or may not work.
 				if(task.delay) {
 					await new Promise(resolve => setTimeout(resolve, task.delay));
 					console.log('V:', `!delay ${parseInt(task.delay)}`);
@@ -679,7 +687,7 @@ async function processMessage(user, message, flags, self, extra) {
 					}
 					command.timestamp = extra.timestamp;
 					//iterate through each task, returns commands_triggered if ending early
-					if(await taskIterator9000(user, command, query))
+					if(await processTasks(user, command, query))
 						return commands_triggered;
 				}
 			}
@@ -687,6 +695,8 @@ async function processMessage(user, message, flags, self, extra) {
 
 		return commands_triggered;
 	}
+
+	/* MAIN_FUNCTION() */
 
 	if(user_array.length === 0) {
 		user_array = await loadUserArray();
@@ -706,8 +716,7 @@ async function processMessage(user, message, flags, self, extra) {
 
 	if(user === process.env.BOT_USER) return;
 
-	let message_lower = message.toLowerCase();
-	proccessBuiltInCommands(user, message_lower, flags, self, extra);
+	proccessBuiltInCommands(user, message, flags, self, extra);
 
 	const number = await processCustomCommands(user, message, flags, self, extra);
 	console.log('D:', `${user}(${number}): ${message}`);
