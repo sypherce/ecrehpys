@@ -662,7 +662,7 @@
 	},
 	{
 		"altkey": ["crabs"],
-		"keyword": ["crab(|s)"],
+		"keyword": ["(c|k)rab(b|)(|s)"],
 		"task": [{"videonow": "/home/user/root/stream/music/0 - Other/Crabs- MrWeebl.mp4"}],
 		"author": "residentemil_"
 	},
@@ -1845,7 +1845,8 @@
 		"author": "shahirbear"
 	},
 	{
-		"keyword": ["heman"],
+		"altkey": ["heman"],
+		"keyword": ["heman", "grayskullheyyeayea"],
 		"task": [
 			{"media": ["/home/user/root/stream/alerts/ultra_heman_1.mp3", "/home/user/root/stream/alerts/ultra_heman_2.mp3", "/home/user/root/stream/alerts/ultra_heman_3.mp3", "/home/user/root/stream/alerts/ultra_heman_4.mp3", "/home/user/root/stream/alerts/ultra_heman_5.mp3", "/home/user/root/stream/alerts/ultra_heman_6.mp3"]}
 		],
@@ -2407,5 +2408,79 @@
 		"author": "sypherce",
 		"keyword": ["witwrigs"],
 		"task": [{"customaudio": "witw 21000 2650 !xjrigsx 400 800"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["!re"],
+		"task": [{"media": "/home/user/root/stream/alerts/emil_resident_e.mp3"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["eabeef"],
+		"task": [{"media": "/home/user/root/stream/alerts/emil_eabeef.mp3"}]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["johnson"],
+		"keyword": [".*jo(h|)n(son|).*", ".*olj"],
+		"task": [
+			{"media": [ 				"/home/user/root/stream/alerts/emil_johnson1.mp3", 				"/home/user/root/stream/alerts/emil_johnson2.mp3", 				"/home/user/root/stream/alerts/emil_johnson3.mp3", 				"/home/user/root/stream/alerts/emil_johnson4.mp3", 				"/home/user/root/stream/alerts/emil_johnson5.mp3", 				"/home/user/root/stream/alerts/emil_johnson6.mp3", 				"/home/user/root/stream/alerts/emil_johnson7.mp3", 				"/home/user/root/stream/alerts/emil_shortskirtlongjohnson.mp3" 				]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["johnson1"],
+		"keyword": ["johnson2", "al(l|)\\s*together"],
+		"task": [
+			{"media": ["/home/user/root/stream/alerts/emil_johnson1.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["johnson2"],
+		"keyword": ["johnson2", "al(l|)\\s*together"],
+		"task": [
+			{"media": ["/home/user/root/stream/alerts/emil_johnson2.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["johnson3"],
+		"keyword": ["johnson3", "al(l|)\\s*together"],
+		"task": [
+			{"media": ["/home/user/root/stream/alerts/emil_johnson3.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["johnson4"],
+		"keyword": ["johnson4", "al(l|)\\s*together"],
+		"task": [
+			{"media": ["/home/user/root/stream/alerts/emil_johnson4.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["johnson5"],
+		"keyword": ["johnson5", "al(l|)\\s*together"],
+		"task": [
+			{"media": ["/home/user/root/stream/alerts/emil_johnson5.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["johnson6"],
+		"keyword": ["johnson6", "al(l|)\\s*together"],
+		"task": [
+			{"media": ["/home/user/root/stream/alerts/emil_johnson6.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["johnson7"],
+		"keyword": ["johnson7", "al(l|)\\s*together"],
+		"task": [
+			{"media": ["/home/user/root/stream/alerts/emil_johnson7.mp3"]}
+		]
 	}
 ]
