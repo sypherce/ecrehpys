@@ -277,6 +277,7 @@ async function processMessage(user, message, flags, self, extra) {
 				user_array = [];
 				deleteFile("chatters.json");
 				clearDirectory('../../stream/assets/users/icon');
+				twurple.token.resetFirst();
 			//	/var/www/html/stream/assets/users/icon/
 			}
 			if(message_lower.indexOf('!debug') !== -1)
@@ -340,7 +341,7 @@ async function processMessage(user, message, flags, self, extra) {
 			switch(replyBag.next()) {
 				case 0:
 					server.sayWrapper(`Meow @${user}`);
-					server.sendMessage('Audio', `emil_mgow.mp3`);
+					server.sendMessage('Audio', `assets/alerts/emil_mgow.mp3`);
 					break;
 				case 1:
 					server.sayWrapper(`@${user} sypher18Awkward`);
@@ -349,7 +350,7 @@ async function processMessage(user, message, flags, self, extra) {
 					server.sayWrapper(`@${user} sypher18OMG`);
 					break;
 				case 3:
-					server.sendMessage('Audio', `muten_whaat.mp3`);
+					server.sendMessage('Audio', `assets/alerts/muten_whaat.mp3`);
 					server.sayWrapper(`WHAT @${user.toUpperCase()}!?!??!!?!?`);
 					break;
 				case 4:
@@ -360,14 +361,14 @@ async function processMessage(user, message, flags, self, extra) {
 					break;
 				case 6:
 					server.sayWrapper(`FIGHT ME @${user.toUpperCase()}!`);
-					server.sendMessage('Audio', `muten_whip.mp3`);
+					server.sendMessage('Audio', `assets/alerts/muten_whip.mp3`);
 					break;
 				case 7:
 					server.sayWrapper(`@${user} └(°□°└）`);
 					break;
 				case 8:
 					server.sayWrapper(`You know what? SHUT UP! D:`);
-					server.sendMessage('Audio', `office_shut_up.mp3`);
+					server.sendMessage('Audio', `assets/alerts/office_shut_up.mp3`);
 					break;
 			}
 		}
@@ -607,17 +608,18 @@ async function processMessage(user, message, flags, self, extra) {
 					server.sendMessage('Alert', task.alert);
 				}
 				if(task.media) {
+					let filename = task.media;
 					if(typeof task.media === 'object') {
 						if(task.media_counter >= task.media.length)
 							task.media_counter = 0;
-						task.media = task.media[task.media_counter];
+						filename = task.media[task.media_counter];
 						task.media_counter++;
 					}
 
-					if(task.media.endsWith('.mp4'))
-						server.sendMessage('Video', task.media);
+					if(filename.endsWith('.mp4'))
+						server.sendMessage('Video', filename);
 					else
-						server.sendMessage('Audio', task.media);
+						server.sendMessage('Audio', filename);
 				}
 				if(task.song) {
 					server.sendMessage('Song', task.song);
