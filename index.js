@@ -35,7 +35,7 @@ switch(myArgs[0]) {
 	}
 	await server.init();
 
-	console.log('http://derrick-desktop/nodejs/main/alerts/');
+	console.log('http://derrick-server/nodejs/main/alerts/');
 	if(enable_livesplit)
 		console.log('Don\'t forget to actually start the livesplit server NotLikeThis');
 })();
