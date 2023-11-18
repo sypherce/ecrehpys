@@ -256,7 +256,9 @@ async function processMessage(user, message, flags, self, extra) {
 			}
 			//clear users enabling intros again
 			//also clears user avatars for chat
-			if(message_lower.indexOf('!clear_users') !== -1) {
+			if(	message_lower.indexOf('!clear_users') !== -1 ||
+				message_lower.indexOf('!refresh_users') !== -1 ||
+				message_lower.indexOf('!reload_users') !== -1) {
 				function deleteFile(filename) {
 					fs.unlink(filename, (err => {
 						if(err)
@@ -297,6 +299,43 @@ async function processMessage(user, message, flags, self, extra) {
 				server.sendMessage('Disable', query);
 				console.log('Disable', query);
 			}
+		}
+		if(message_lower.startsWith('!timeout')) {
+			const query = getQuery(message_lower, '!timeout').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ');
+			let user = query[0];
+			let seconds = typeof query[1] !== 'undefined' ? query[1] : 69;
+			const multiplier = typeof seconds === 'string' ? seconds.match(/[a-zA-Z]+/g)[0] : 's';//extract the multiplier first
+			seconds = typeof seconds === 'string' ? seconds.match(/\d+/g)[0] : seconds;//extract time last
+			switch (multiplier) {
+				case 'm':
+					seconds = seconds * 60;
+					break;
+				case 'h':
+					seconds = seconds * 60 * 60;
+					break;
+				case 'd':
+					seconds = seconds * 60 * 60 * 24;
+					break;
+				case 'w':
+					seconds = seconds * 60 * 60 * 24 * 7;
+					break;
+			}
+			if(user.length === 0)
+				user = 'wally4000';
+
+			const channel_info = await twurple.getChannelInfoByUsername(user);
+			server.sayWrapper(`GET OUT ${channel_info.displayName} sypher18OMG`);
+			/*don't await, it's faster */twurple.timeoutUser({user: channel_info.id, duration: seconds, reason: 'Is a butt'});
+			const tts_filename = `../${(await tts.ttsToMP3(`GET OUT ${channel_info.displayName.replaceAll('_', ' ')}`, `alerts/assets/alerts/tts/timeout_${channel_info.displayName}`, tts.voices[27]))}.mp3`;
+			console.log(tts_filename);
+			server.sendMessage('TTS', tts_filename);
+
+			server.sendMessage('Audio', 'assets/alerts/muten_dungeon.mp3');
+			const is_mod = await twurple.checkUserMod(user);
+			if(is_mod)
+				setTimeout(function() {
+					twurple.setModerator(user)
+				}, (seconds + 5) * 1000);
 		}
 		if(message_lower.startsWith('!so ')) {
 			let query = getQuery(message_lower, '!so').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ')[0];
