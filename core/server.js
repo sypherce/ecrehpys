@@ -12,6 +12,10 @@ function sayWrapper(message) {
 	console.log('D:', message);
 	twurple.sayWrapper(message);//bot.Say(message);
 }
+function actionWrapper(message) {
+	console.log('D:', message);
+	twurple.actionWrapper(message);//bot.Say(message);
+}
 function streamerSayWrapper(message) {
 	console.log('D:', message);
 	twurple.streamerSayWrapper(message);//streamer.Say(message);
@@ -59,5 +63,6 @@ socket.on('request', (request) => {
 
 module.exports.sendMessage = sendMessage;
 module.exports.init = init;
+module.exports.actionWrapper = actionWrapper;
 module.exports.sayWrapper = sayWrapper;
 module.exports.streamerSayWrapper = streamerSayWrapper;
