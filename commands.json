@@ -36,6 +36,16 @@
 		"author": ""
 	},
 	{
+		"keyword": ["!(z1|)wrap"],
+		"task": [{"chat": "Now THIS is how you wrap: https://clips.twitch.tv/FlirtySolidScorpionNomNom-RYXRvomyMELBQy6I"}],
+		"author": "muten_pizza"
+	},
+	{
+		"keyword": ["!wurk"],
+		"task": [{"media": "/home/user/root/stream/alerts/muten_meetings.mp3"},{"chat": "Work is the worst! NotLikeThis But thank you for the wurk lurk! We're happy you're still here!!!!"}],
+		"author": "muten_pizza"
+	},
+	{
 		"altkey": ["!ttsing"],
 		"keyword": ["!ttsing", "!ttsing(|[0-9]|[1-9][0-9])", "!ttssing([0-9]|[1-9][0-9])", "!tssing([0-9]|[1-9][0-9])"],
 		"task": [{"ttsing": "ttsing"}],
@@ -1551,7 +1561,7 @@
 		"author": "subtlewookie"
 	},
 	{
-		"keyword": ["!_disabled_1"],
+		"keyword": ["!1"],
 		"task": [{"media": "/home/user/root/stream/alerts/ducktales_remastered_no1.mp3"}],
 		"author": "muten_pizza"
 	},
