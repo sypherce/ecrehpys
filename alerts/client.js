@@ -262,8 +262,8 @@ function initWebSocket() {
 				for(let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
 					const max_duration = 10000;
 					let cmd = value[i].split(',')[0];
-						cmd = cmd.replace('/home/user/root/stream/alerts/', 'assets/alerts/');
-						cmd = cmd.replace('/home/user/root/stream/music/', 'assets/music/');
+						cmd = cmd.replace('/home/user/stream/alerts/', 'assets/alerts/');
+						cmd = cmd.replace('/home/user/stream/music/', 'assets/music/');
 					const start = parseInt(value[i + 1]);
 					let duration = parseInt(value[i + 2]);
 					if(position + duration > max_duration)
@@ -285,7 +285,7 @@ function initWebSocket() {
 				return;
 			}
 			case 'Audio': {
-				value = value.replace('/home/user/root/stream/alerts/', 'assets/alerts/');
+				value = value.replace('/home/user/stream/alerts/', 'assets/alerts/');
 				playSound(value);
 				break;
 			}
@@ -359,7 +359,7 @@ function initWebSocket() {
 					start_animation,
 					mid_animation,
 					end_animation] = value;
-				video_file = video_file.replace('/home/user/root/stream/alerts/', 'assets/alerts/');
+				video_file = video_file.replace('/home/user/stream/alerts/', 'assets/alerts/');
 				let audio_file = replaceExtension(video_file, '.gif', '.mp3');
 
 				async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
@@ -440,8 +440,8 @@ function initWebSocket() {
 			}
 
 			case 'VideoNow': {
-				let beefweb_value = value.replace('/home/user/root/stream/music/', '');
-				let video_value = value.replace('/home/user/root/stream/music/', 'assets/music/');
+				let beefweb_value = value.replace('/home/user/stream/music/', '');
+				let video_value = value.replace('/home/user/stream/music/', 'assets/music/');
 				if(await beefwebPlaySongNow(beefweb_value) === false) {
 					break;
 				}
@@ -492,12 +492,12 @@ function initWebSocket() {
 				break;
 			}
 			case 'Song': {
-				value = value.replace('/home/user/root/stream/music/', '');
+				value = value.replace('/home/user/stream/music/', '');
 				beefwebPlaySongNow(value);
 				break;
 			}
 			case 'Sr': {
-				value.filename = value.filename.replace('/home/user/root/stream/music/', '');
+				value.filename = value.filename.replace('/home/user/stream/music/', '');
 				beefwebQueueSong(value.filename);
 				break;
 			}

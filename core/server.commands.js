@@ -40,7 +40,7 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 		//altkey takes priority
 		let keyword = (typeof command.altkey === 'undefined') ?
 			command.keyword.at(0) :
-			command.altkey;
+			command.altkey.at(0);
 
 		//remove regexps for simplicity
 		if(keyword !== command.altkey) {
@@ -67,8 +67,13 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 			case '!caa':
 			case '!cae':
 			case '!cal':
-			case '!tts':
-			case '!ttsing':
+			case '!wrap':
+			case '!suso':
+			case '!stickers':
+			case '!notfine':
+			case '!sprites':
+			case 'flippers':
+			case 'focker':
 			case '!nc':
 				break;
 			//everything else gets added to the html page
@@ -79,7 +84,6 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 	}
 	//add mixitup commands. remove tabs from formatting
 	html = html.concat(`!chomp<br>
-						hydrate<br>
 						!inu [resident_emil_]<br>
 						laugh<br>`).replace(/\t/g,'');
 
@@ -150,7 +154,7 @@ async function processVariables(user, query_string, task_string) {
 		task_string.search(/\$\(\s*url\s*\)/) !== -1 |
 		task_string.search(/\$\(\s*game\s*\)/) !== -1 |
 		task_string.search(/\$\(\s*title\s*\)/) !== -1) {
-		channel_info = await twurple.getChannelInfoByUsername(`${query}`);
+		channel_info = await twurple.getChannelInfoByUsername(user);
 
 		channel_info.game_and_title = channel_info.gameName;
 		if(channel_info.gameName === 'Retro') {
@@ -165,7 +169,7 @@ async function processVariables(user, query_string, task_string) {
 
 	task_string = task_string.replace(/\$\(\s*user\s*\)/, user);
 	if(channel_info !== null) {
-		task_string = task_string.replace(/\$\(\s*touser\s*\)/, channel_info.game_and_title);
+		task_string = task_string.replace(/\$\(\s*touser\s*\)/, query_string.split(' ')[1]);
 		task_string = task_string.replace(/\$\(\s*game_and_title\s*\)/, channel_info.game_and_title);
 		task_string = task_string.replace(/\$\(\s*game\s*\)/, channel_info.game_name);
 		task_string = task_string.replace(/\$\(\s*title\s*\)/, channel_info.title);
@@ -256,6 +260,7 @@ async function processMessage(user, message, flags, self, extra) {
 			}
 			//clear users enabling intros again
 			//also clears user avatars for chat
+			//and resets "first"
 			if(	message_lower.indexOf('!clear_users') !== -1 ||
 				message_lower.indexOf('!refresh_users') !== -1 ||
 				message_lower.indexOf('!reload_users') !== -1) {
@@ -604,14 +609,18 @@ async function processMessage(user, message, flags, self, extra) {
 							return false;
 						return !isNaN(number)
 					}
-					const type = (task.tts + task.ttsing).replace('undefined', '');
+					let type = (task.tts + task.ttsing).replace('undefined', '');
+					if(type.split(' ').length > 1) {//if it's a set command like "jim"
+						message_lower = `!${type}`;
+						type = type.split(' ')[0].match(/[a-zA-Z]+/g)[0];
+					}
 					let sub_message = getQuery(message_lower, `!${type}`);
 					let voice = type;
 					let tts_number = sub_message.substring(0, sub_message.indexOf(' '));
-					if(tts_number === '') {
-						tts_number = sub_message;
-						sub_message = '';
-					}
+					//if(tts_number === '') {
+					//	tts_number = sub_message;
+					//	sub_message = '';
+					//}
 					console.log('tts_number', tts_number, isNumber(tts_number));
 					if(isNumber(tts_number)) {
 						console.log(1, tts_number, isNumber(tts_number), type);
