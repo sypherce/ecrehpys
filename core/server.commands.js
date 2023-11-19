@@ -69,11 +69,11 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 			case '!cal':
 			case '!wrap':
 			case '!suso':
+			case '!sso':
 			case '!stickers':
 			case '!notfine':
 			case '!sprites':
 			case 'flippers':
-			case 'focker':
 			case '!nc':
 				break;
 			//everything else gets added to the html page

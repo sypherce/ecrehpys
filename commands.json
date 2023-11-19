@@ -265,11 +265,6 @@
 		"author": "skizzle_the_wicked"
 	},
 	{
-		"keyword": ["!sus"],
-		"task": [{"media": "/home/user/stream/alerts/muten_sus.mp3"}],
-		"author": "muten_pizza"
-	},
-	{
 		"keyword": ["!try"],
 		"task": [{"media": "/home/user/stream/alerts/muten_try.mp3"}],
 		"author": "muten_pizza"
