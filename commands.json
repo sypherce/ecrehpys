@@ -47,28 +47,28 @@
 	},
 	{
 		"keyword": ["!wurk"],
-		"task": [{"media": "/home/user/stream/alerts/muten_meetings.mp3"},{"chat": "Work is the worst! NotLikeThis But thank you for the wurk lurk! We're happy you're still here!!!!"}],
+		"task": [{"media": "/home/user/stream/alerts/muten_meetings.mp3"}, {"chat": "Work is the worst! NotLikeThis But thank you for the wurk lurk! We're happy you're still here!!!!"}],
 		"author": ""
 	},
 	{
 		"keyword": ["!lurk"],
-		"task": [{"media": "/home/user/stream/alerts/muten_zoidberg.mp3"},{"chat": "Thank you for the lurk! We're happy you're still here!!!!"}],
+		"task": [{"media": "/home/user/stream/alerts/muten_zoidberg.mp3"}, {"chat": "Thank you for the lurk! We're happy you're still here!!!!"}],
 		"author": ""
 	},
 	{
 		"altkey": ["sus"],
 		"keyword": [".*sus", ".*suspicious"],
-		"task": [{"media": "/home/user/stream/alerts/muten_sus.mp3"},{"chat": "FOCKER sypher18OGod"}],
+		"task": [{"media": "/home/user/stream/alerts/muten_sus.mp3"}, {"chat": "FOCKER sypher18OGod"}],
 		"author": "muten_pizza"
 	},
 	{
 		"keyword": ["!unlurk"],
-		"task": [{"media": "/home/user/stream/alerts/office_shut_up.mp3"},{"chat": "Shut Up $(user)!"}],
+		"task": [{"media": "/home/user/stream/alerts/office_shut_up.mp3"}, {"chat": "Shut Up $(user)!"}],
 		"author": ""
 	},
 	{
 		"keyword": ["!sso"],
-		"task": [{"media": "/home/user/stream/alerts/muten_throat.mp3"},{"chat": "ᵖˢˢˢˢᵗ... ᵍᵒ ᶠᵒˡˡᵒʷ ᵗʰᶦˢ ˢᵗʳᵉᵃᵐᵉʳ, ᵇᵘᵗ ᵏᵉᵉᵖ ᶦᵗ ᵒⁿ ᵗʰᵉ ᴰᴸ. twitch.tv/$(touser)"}],
+		"task": [{"media": "/home/user/stream/alerts/muten_throat.mp3"}, {"chat": "ᵖˢˢˢˢᵗ... ᵍᵒ ᶠᵒˡˡᵒʷ ᵗʰᶦˢ ˢᵗʳᵉᵃᵐᵉʳ, ᵇᵘᵗ ᵏᵉᵉᵖ ᶦᵗ ᵒⁿ ᵗʰᵉ ᴰᴸ. twitch.tv/$(touser)"}],
 		"author": "muten_pizza"
 	},
 	{
@@ -2350,16 +2350,11 @@
 		"task": [{"customaudio": "ohbark 0 2000 fart 500 500"}]
 	},
 	{
-		"altkey": ["!vaiencea"],
-		"keyword": ["!vaiencea|!valencea|!val|chicken\\s*attack"],
+		"altkey": ["!chickenattack"],
+		"keyword": ["chicken\\s*attack"],
 		"task": [
 			{"alert": ["/home/user/stream/alerts/vaiencea.mp3", "bounceIn", "pulse", "hinge"]}
 		],
-		"author": "vaiencea"
-	},
-	{
-		"keyword": ["chickenattack"],
-		"task": [{"customaudio": "!vaiencea 100 3500"}],
 		"author": "vaiencea"
 	},
 	{
@@ -2444,7 +2439,7 @@
 		"altkey": ["ghostieboys"],
 		"keyword": ["ghostieboys", "intergalactic"],
 		"task": [{"videonow": "/home/user/stream/music/0 - Other/Beastie Boys - Intergalactic But It's Ghostbusters.mp4"}],
-	"author": "subtlewookie"
+		"author": "subtlewookie"
 	},
 	{
 		"author": "sypherce",
@@ -2547,5 +2542,15 @@
 		"task": [
 			{"media": ["/home/user/stream/alerts/emil_johnson7.mp3"]}
 		]
+	},
+	{
+		"author": "itteramatv",
+		"keyword": ["jonsonsnortofshame"],
+		"task": [{"customaudio": "johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600"}]
+	},
+	{
+		"author": "itteramatv",
+		"keyword": ["snortofshame"],
+		"task": [{"customaudio": "johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600"}]
 	}
 ]
