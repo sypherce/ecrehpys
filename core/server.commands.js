@@ -12,12 +12,10 @@ const tts = require('../lib/tts.js');
 let global_command_array;
 
 /**
+ * Loads and returns all commands from 'commands.json' in a JSON.parse() object.
  *
- * Loads 'commands object' from a JSON file
- * Generates and Saves sounds.html
- *
- * @param {string} filename JSON containing commands
- * @return {object} The results of JSON.parse()
+ * @param {string} [filename='commands.json'] - The filename of the commands JSON file.
+ * @returns {Array} - An array containing all the loaded commands.
  */
 function loadCommands(filename = 'commands.json') {//loads and returns all commands from 'commands.json' in an JSON.parse() object
 	let html = '';
@@ -103,11 +101,10 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 	return command_array;
 }
 /**
- *
- * Formats and saves 'commands object' to a JSON file
- *
- * @param {string} filename JSON containing commands
- * @return {object} The results of JSON.parse()
+ * Saves the commands to a JSON file.
+ * @param {string} [filename='commands.json'] - The name of the file to save the commands to.
+ * @param {Array} [command_array=global_command_array] - The array of commands to save.
+ * @returns {Array} - The updated array of commands.
  */
 function saveCommands(filename = 'commands.json', command_array = global_command_array) {
 	for(const command of command_array) {
@@ -130,13 +127,13 @@ function saveCommands(filename = 'commands.json', command_array = global_command
 
 global_command_array = loadCommands();
 /**
- * Returns sub-string after 'command' in 'message'
+ * Retrieves the query from a string by removing the prefix.
  *
  * Example: getQuery(message_lower, '!joe ');
  *
- * @param {string} string String being parsed
- * @param {string} prefix Prefix or "command" we're searching for
- * @return {string} searches for a command and returns the text following it
+ * @param {string} string - The input string.
+ * @param {string} prefix - The prefix to remove from the string.
+ * @returns {string} The query extracted from the string.
  */
 function getQuery(string, prefix) {
 	const start = string.indexOf(prefix) + prefix.length;
@@ -283,9 +280,8 @@ async function processMessage(user, message, flags, self, extra) {
 				}
 				user_array = [];
 				deleteFile("chatters.json");
-				clearDirectory('../../stream/assets/users/icon');
+				clearDirectory('../../users/icon');
 				twurple.token.resetFirst();
-			//	/var/www/html/stream/assets/users/icon/
 			}
 			if(message_lower.indexOf('!debug') !== -1)
 				debug = !debug;
@@ -331,10 +327,8 @@ async function processMessage(user, message, flags, self, extra) {
 			const channel_info = await twurple.getChannelInfoByUsername(user);
 			server.sayWrapper(`GET OUT ${channel_info.displayName} sypher18OMG`);
 			/*don't await, it's faster */twurple.timeoutUser({user: channel_info.id, duration: seconds, reason: 'Is a butt'});
-			const tts_filename = `../${(await tts.ttsToMP3(`GET OUT ${channel_info.displayName.replaceAll('_', ' ')}`, `alerts/assets/alerts/tts/timeout_${channel_info.displayName}`, tts.voices[27]))}.mp3`;
-			console.log(tts_filename);
-			server.sendMessage('TTS', tts_filename);
-
+			const tts_filename = `../${(await tts.ttsToMP3(`GET OUT ${channel_info.displayName.replaceAll('_', ' ')}`, `alerts/assets/alerts/tts`, tts.voices[27]))}`.replace('../alerts/', '');
+			server.sendMessage('TTS', `${tts_filename}`);
 			server.sendMessage('Audio', 'assets/alerts/muten_dungeon.mp3');
 			const is_mod = await twurple.checkUserMod(user);
 			if(is_mod)
@@ -621,7 +615,6 @@ async function processMessage(user, message, flags, self, extra) {
 					//	tts_number = sub_message;
 					//	sub_message = '';
 					//}
-					console.log('tts_number', tts_number, isNumber(tts_number));
 					if(isNumber(tts_number)) {
 						console.log(1, tts_number, isNumber(tts_number), type);
 						if(type === 'ttsing')
@@ -629,16 +622,13 @@ async function processMessage(user, message, flags, self, extra) {
 						else
 							voice = tts.voices[tts_number];
 					}
-					console.log(2, tts_number);
 					if(tts_number === 'anta')
 						voice = tts.voices[28];
 
 					sub_message = sub_message.substring(sub_message.indexOf(' '));
 
 					const processed_message = await processVariables(user, query, sub_message);
-					const timestamp = `${command.timestamp}`.replace(/[/\\?% *:|"<>]/g, '');
-					const tts_filename = `../${(await tts.ttsToMP3(processed_message, `alerts/assets/alerts/tts/${timestamp}`, voice))}.mp3`;
-					console.log(tts_filename);
+					const tts_filename = `${(await tts.ttsToMP3(processed_message, `alerts/assets/alerts/tts`, voice))}`.replace('alerts/', '');
 					server.sendMessage('TTS', tts_filename);
 
 					return true;
