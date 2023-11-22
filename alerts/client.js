@@ -247,6 +247,13 @@ function initWebSocket() {
 		if(typeof handleMessage.content === 'undefined')
 			handleMessage.content = document.getElementById('content');
 
+		function convertPath(path) {
+			if(path.match(`^(alerts|music)\/`) !== null);
+				path = `assets/${path}`
+
+			return path;
+		}
+
 		switch(key) {
 			case 'Message': {
 				console.log(`${key}: ${value}`);
@@ -262,8 +269,7 @@ function initWebSocket() {
 				for(let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
 					const max_duration = 10000;
 					let cmd = value[i].split(',')[0];
-						cmd = cmd.replace('/home/user/stream/alerts/', 'assets/alerts/');
-						cmd = cmd.replace('/home/user/stream/music/', 'assets/music/');
+					cmd = convertPath(cmd);
 					const start = parseInt(value[i + 1]);
 					let duration = parseInt(value[i + 2]);
 					if(position + duration > max_duration)
@@ -285,7 +291,7 @@ function initWebSocket() {
 				return;
 			}
 			case 'Audio': {
-				value = value.replace('/home/user/stream/alerts/', 'assets/alerts/');
+				value = convertPath(value);
 				playSound(value);
 				break;
 			}
@@ -359,7 +365,7 @@ function initWebSocket() {
 					start_animation,
 					mid_animation,
 					end_animation] = value;
-				video_file = video_file.replace('/home/user/stream/alerts/', 'assets/alerts/');
+				video_file = convertPath(video_file);
 				let audio_file = replaceExtension(video_file, '.gif', '.mp3');
 
 				async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
@@ -440,8 +446,8 @@ function initWebSocket() {
 			}
 
 			case 'VideoNow': {
-				let beefweb_value = value.replace('/home/user/stream/music/', '');
-				let video_value = value.replace('/home/user/stream/music/', 'assets/music/');
+				let beefweb_value = value.replace('music/', '');
+				let video_value = convertPath(value);
 				if(await beefwebPlaySongNow(beefweb_value) === false) {
 					break;
 				}
@@ -492,12 +498,12 @@ function initWebSocket() {
 				break;
 			}
 			case 'Song': {
-				value = value.replace('/home/user/stream/music/', '');
+				value = value.replace('music/', '');
 				beefwebPlaySongNow(value);
 				break;
 			}
 			case 'Sr': {
-				value.filename = value.filename.replace('/home/user/stream/music/', '');
+				value.filename = value.filename.replace('music/', '');
 				beefwebQueueSong(value.filename);
 				break;
 			}
