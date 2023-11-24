@@ -2468,6 +2468,7 @@
 	},
 	{
 		"author": "residentemil_",
+		"altkey": ["!re"],
 		"keyword": ["!re(\\s{1,}|$)|reside53whye"],
 		"task": [{"media": "alerts/emil_resident_e.mp3"}]
 	},
