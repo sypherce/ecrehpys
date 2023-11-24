@@ -240,7 +240,7 @@ async function processMessage(user, message, flags, self, extra) {
 		let message_lower = message.toLowerCase();
 		if(flags.broadcaster) {
 			//reload commands list, loadCommands()
-			if(message_lower.indexOf('!reload') !== -1) {
+			if(message_lower.includes('!reload')) {
 				const saved_command_array = global_command_array;
 				try {
 					global_command_array = loadCommands();
@@ -252,15 +252,14 @@ async function processMessage(user, message, flags, self, extra) {
 				}
 			}
 			//stop bot (restart if running in a loop)
-			if(message_lower.indexOf('!halt') !== -1) {
+			if(message_lower.includes('!halt')) {
 				process.exit();
 			}
 			//clear users enabling intros again
 			//also clears user avatars for chat
 			//and resets "first"
-			if(	message_lower.indexOf('!clear_users') !== -1 ||
-				message_lower.indexOf('!refresh_users') !== -1 ||
-				message_lower.indexOf('!reload_users') !== -1) {
+
+			if(['!clear_users', '!refresh_users', '!reload_users'].some(command => message_lower.includes(command))) {
 				function deleteFile(filename) {
 					fs.unlink(filename, (err => {
 						if(err)
@@ -283,19 +282,19 @@ async function processMessage(user, message, flags, self, extra) {
 				clearDirectory('../../users/icon');
 				twurple.token.resetFirst();
 			}
-			if(message_lower.indexOf('!debug') !== -1)
+			if(message_lower.includes('!debug'))
 				debug = !debug;
-			if(message_lower.indexOf('!test') !== -1) {
+			if(message_lower.includes('!test')) {
 				server.sayWrapper(message);
 			}
 			//play full length songs if enabled
-			if(message_lower.indexOf('!enable') !== -1) {
+			if(message_lower.includes('!enable')) {
 				const query = getQuery(message_lower, '!enable');
 				server.sendMessage('Enable', query);
 				console.log('Enable', query);
 			}
 			//play songsprites if disabled
-			if(message_lower.indexOf('!disable') !== -1) {
+			if(message_lower.includes('!disable')) {
 				const query = getQuery(message_lower, '!disable');
 				server.sendMessage('Disable', query);
 				console.log('Disable', query);
@@ -355,7 +354,7 @@ async function processMessage(user, message, flags, self, extra) {
 			}
 			server.sayWrapper(`Hey, you should check out twitch.tv/${channel_info.displayName} ! They were last playing ${channel_info.game_and_title}.`);
 		}
-		if(message_lower.indexOf('!library') !== -1) {
+		if(message_lower.includes('!library')) {
 			const item_list = ["The Fighter's Sword", "The Master Sword", "The Master Sword", "The Butter Sword", "The Fighter's Shield",
 				"The Red Shield", "The Mirror Shield", "The Green Clothes", "The Blue Mail", "The Red Mail", "The Pegasus Shoes", "The Power Glove",
 				"The Titan's Mitt", "Zora's Flippers", "The Moon Pearl", "The Bow", "The Silver Arrows", "The Boomerang", "The Magical Boomerang",
@@ -375,7 +374,7 @@ async function processMessage(user, message, flags, self, extra) {
 
 			server.sayWrapper(`I take it back, don't follow ${channel_info.displayName}`);
 		}
-		if(message_lower.indexOf('@ecrehpys') !== -1) {
+		if(message_lower.includes('@ecrehpys')) {
 			switch(replyBag.next()) {
 				case 0:
 					server.sayWrapper(`Meow @${user}`);
@@ -410,14 +409,14 @@ async function processMessage(user, message, flags, self, extra) {
 					break;
 			}
 		}
-		if(message_lower.indexOf('!commands') !== -1 || message_lower.indexOf('!sounds') !== -1) {
+		if(['!commands', '!sounds'].some(command => message_lower.includes(command))) {
 			server.sayWrapper('https://sypherce.github.io/stream/sounds.html');
 		}
 
-		if(message_lower.indexOf('!srinfo') !== -1) {
+		if(message_lower.includes('!srinfo')) {
 			server.sayWrapper('https://sypherce.github.io/stream/sr.html');
 		}
-		else if(message_lower.indexOf('!sr') !== -1) {
+		else if(message_lower.includes('!sr')) {
 			const query = getQuery(message_lower, '!sr');
 			const object = mp3Library.find(query);
 			if(typeof object.filename !== 'undefined' && object.filename !== '') {
@@ -714,7 +713,7 @@ async function processMessage(user, message, flags, self, extra) {
 
 				//console.log('V:', `keywordIsIndexOf: ${comparison}`);
 				let prefix = '';
-				if(comparison.indexOf('!') === 0) {
+				if(!comparison.includes('!')) {
 					prefix = '!';
 					comparison = comparison.substring(1);
 				}
