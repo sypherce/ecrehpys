@@ -2468,7 +2468,7 @@
 	},
 	{
 		"author": "residentemil_",
-		"keyword": ["!re"],
+		"keyword": ["!re(\\s{1,}|$)|reside53whye"],
 		"task": [{"media": "alerts/emil_resident_e.mp3"}]
 	},
 	{
@@ -2546,6 +2546,13 @@
 		"keyword": ["johnson7", "al(l|)\\s*together"],
 		"task": [
 			{"media": ["alerts/emil_johnson7.mp3"]}
+		]
+	},
+	{
+		"author": "subtlewookie",
+		"keyword": ["old"],
+		"task": [
+			{"media": ["alerts/wookie_old.mp3"]}
 		]
 	},
 	{
