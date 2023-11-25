@@ -698,7 +698,7 @@ async function processMessage(user, message, flags, self, extra) {
 			return false;
 		}
 
-		let message_lower = message.toLowerCase().replace(/\s+/g, ' ').trim();
+		let message_lower = message.toLowerCase().replace(/\s+/g, ' ').trim();//lowercase, trim, and remove repeated spaces
 
 		//iterate through each command
 		for(const command of command_array) {
@@ -713,7 +713,7 @@ async function processMessage(user, message, flags, self, extra) {
 
 				//console.log('V:', `keywordIsIndexOf: ${comparison}`);
 				let prefix = '';
-				if(!comparison.includes('!')) {
+				if(comparison.indexOf('!') === 0) {
 					prefix = '!';
 					comparison = comparison.substring(1);
 				}
