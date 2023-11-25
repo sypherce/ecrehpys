@@ -37,8 +37,8 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 
 		//altkey takes priority
 		let keyword = (typeof command.altkey === 'undefined') ?
-			command.keyword.at(0) :
-			command.altkey.at(0);
+			command.keyword[0] :
+			command.altkey[0];
 
 		//remove regexps for simplicity
 		if(keyword !== command.altkey) {
@@ -232,7 +232,7 @@ async function processMessage(user, message, flags, self, extra) {
 				command.altkey.toString();
 
 			if(keyword === string)
-				return command.task.at(0).alert;
+				return command.task[0].alert;
 		}
 		return undefined;
 	}
@@ -443,14 +443,14 @@ async function processMessage(user, message, flags, self, extra) {
 					keyword = command.altkey.toString();
 
 				if(keyword === string) {
-					if(typeof command.task.at(0).videonow !== 'undefined')
-						return command.task.at(0).videonow.toString();
-					else if(typeof command.task.at(0).alert !== 'undefined')
-						return command.task.at(0).alert.toString();
-					else if(typeof command.task.at(0).media !== 'undefined')
-						return command.task.at(0).media.toString();
-					else if(typeof command.task.at(0).song !== 'undefined')
-						return command.task.at(0).song.toString();
+					if(typeof command.task[0].videonow !== 'undefined')
+						return command.task[0].videonow.toString();
+					else if(typeof command.task[0].alert !== 'undefined')
+						return command.task[0].alert.toString();
+					else if(typeof command.task[0].media !== 'undefined')
+						return command.task[0].media.toString();
+					else if(typeof command.task[0].song !== 'undefined')
+						return command.task[0].song.toString();
 
 					return "";
 				}
@@ -464,7 +464,7 @@ async function processMessage(user, message, flags, self, extra) {
 					keyword = command.altkey.toString();
 
 				if(keyword === string) {
-					if(typeof command.task.at(0).customaudio !== 'undefined')
+					if(typeof command.task[0].customaudio !== 'undefined')
 						return true;
 
 					return false;
@@ -490,14 +490,14 @@ async function processMessage(user, message, flags, self, extra) {
 						return true;
 					}
 					for(let index = 0; index < args.length; index += 3) {
-						args[index] = findCommandByString(args.at(index));
-						if(typeof args.at(index) === 'undefined') {
+						args[index] = findCommandByString(args[index]);
+						if(typeof args[index] === 'undefined') {
 							server.sayWrapper(`@${user} Syntax Error: ${args[index]} is invalid`);
 							commands_triggered = 0;
 							return true;
 						}
-						if(typeof args.at(index) === 'object')
-							args[index] = args.at(index).at(0);
+						if(typeof args[index] === 'object')
+							args[index] = args[index][0];
 						replaceExtension(args[index], '.gif', '.mp3');
 						commands_triggered++;
 					}
@@ -708,7 +708,7 @@ async function processMessage(user, message, flags, self, extra) {
 			//console.log('V:', `this_command.task: ${this_command.task}`);
 			//iterate through multiple keywords
 			for(const keyword_index in command.keyword) {
-				let comparison = command.keyword.at(keyword_index);
+				let comparison = command.keyword[keyword_index];
 				const query = message.substring(message_lower.indexOf(comparison) + comparison.length);
 
 				//console.log('V:', `keywordIsIndexOf: ${comparison}`);

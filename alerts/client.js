@@ -55,7 +55,7 @@ function basefilename(filename) {
 }
 
 let queue_pos = 0;
-let last_playlist = undefined;
+//let last_playlist = undefined;
 let enable_song = true;
 /*	todo
 	need to check if song is in queue and skip if it is
@@ -179,26 +179,27 @@ function playSound(file) {
 
 const sound_queue = [];
 function playSoundQueued(file) {
-	if(sound_queue.length > 4 )
+	const MAX_QUEUE_LENGTH = 4;
+	if(sound_queue.length > MAX_QUEUE_LENGTH4 )
 		return;
 	let sound = new Howl({
 		src: [file],
 		html5: true,
 		onloaderror: function() {
 			if(sound_queue.length > 1)
-				sound_queue.at(1).play();
+				sound_queue[1].play();
 			sound_queue.shift();
 		},
 		onend: function() {
 			if(sound_queue.length > 1)
-				sound_queue.at(1).play();
+				sound_queue[1].play();
 			sound.unload();
 			sound_queue.shift();
 		},
 	});
 	sound_queue.push(sound)
 	if(sound_queue.length === 1)
-		sound_queue.at(0).play();
+		sound_queue[0].play();
 }
 
 //todo: gif needs handled elsewhere, proper console.log
