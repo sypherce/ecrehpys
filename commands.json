@@ -742,7 +742,7 @@
 		"altkey": ["fart"],
 		"keyword": ["d(ookie|)\\s*c(ough|)", "fart(s|)|test"],
 		"task": [
-			{"media": ["alerts/dookiecough.mp3", "alerts/emil_fart00.mp3", "alerts/emil_fart01.mp3", "alerts/emil_fart02.mp3", "alerts/emil_fart03.mp3", "alerts/emil_fart04.mp3", "alerts/emil_fart05.mp3", "alerts/emil_fart06.mp3", "alerts/emil_fart07.mp3", "alerts/emil_fart08.mp3", "alerts/emil_fart09.mp3", "alerts/emil_fart10.mp3", "alerts/emil_fart11.mp3", "alerts/emil_fart12.mp3", "alerts/emil_fart13.mp3", "alerts/emil_fart14.mp3", "alerts/emil_fart15.mp3", "alerts/emil_fart16.mp3"]}
+			{"media": ["alerts/dookiecough.mp3", "alerts/emil_fart01.mp3", "alerts/emil_fart02.mp3", "alerts/emil_fart03.mp3", "alerts/emil_fart04.mp3", "alerts/emil_fart05.mp3", "alerts/emil_fart06.mp3", "alerts/emil_fart07.mp3", "alerts/emil_fart08.mp3", "alerts/emil_fart09.mp3", "alerts/emil_fart10.mp3", "alerts/emil_fart11.mp3", "alerts/emil_fart12.mp3", "alerts/emil_fart13.mp3", "alerts/emil_fart14.mp3", "alerts/emil_fart15.mp3", "alerts/emil_fart16.mp3"]}
 		],
 		"author": ""
 	},
@@ -2382,7 +2382,8 @@
 		"task": [{"customaudio": "chunkybooty 300 300 chunkybooty 300 300 chunkybooty 300 300 chunkybooty 300 300 chunkybooty 300 300 chunkybooty 0 1000"}]
 	},
 	{
-		"keyword": ["banshee"],
+		"altkey": ["banshee"],
+		"keyword": ["banshee", "!skiptts"],
 		"task": [{"media": "alerts/xjrigsx_banshee.mp3"}],
 		"author": "xjrigsx"
 	},
@@ -2482,7 +2483,7 @@
 	{
 		"author": "residentemil_",
 		"altkey": ["johnson"],
-		"keyword": ["jo(h|)n(son|)(\\s{1,}|$)", ".*olj"],
+		"keyword": [".*(?<!win)(jon|john|johnson|jonson)([^0-9]*)", ".*olj"],
 		"task": [
 			{"media": ["alerts/emil_johnson1.mp3", "alerts/emil_johnson2.mp3", "alerts/emil_johnson3.mp3", "alerts/emil_johnson4.mp3", "alerts/emil_johnson5.mp3", "alerts/emil_johnson6.mp3", "alerts/emil_johnson7.mp3", "alerts/emil_shortskirtlongjohnson.mp3"]}
 		]
@@ -2567,6 +2568,7 @@
 	},
 	{
 		"author": "itteramatv",
+		"altkey": ["snortofshame"],
 		"keyword": ["snortofshame", "jonsonsnortofshame"],
 		"task": [{"customaudio": "johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600 johnson4 2300 600"}]
 	},
@@ -2574,5 +2576,30 @@
 		"author": "sypherce",
 		"keyword": ["winjohnson"],
 		"task": [{"customaudio": "winamp 0 3700 johnson4 300 4000"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["ultimatewookie"],
+		"task": [{"customaudio": "wookiedeath 400 500 wookiedeath 400 500 wookiedeath 400 500 wookiedeath 400 500 wookiedeath 400 500 wookiedeath 400 500 wookiedeath 400 500 wookiedeath 400 500 wookiedeath 400 500"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["wookieofshame"],
+		"task": [{"customaudio": "wookiedeath 400 800 wookiedeath 400 800 wookiedeath 400 800 wookiedeath 400 800 wookiedeath 400 800 wookiedeath 400 800 wookiedeath 400 800 wookiedeath 400 800"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["wine"],
+		"task": [{"customaudio": "winamp 0 3500 !re 1343 4000"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["e"],
+		"task": [{"customaudio": "!re 1343 4000"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["victore"],
+		"task": [{"customaudio": "victory 0 3000 !re 1343 4000"}]
 	}
 ]
