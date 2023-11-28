@@ -180,7 +180,7 @@ function playSound(file) {
 const sound_queue = [];
 function playSoundQueued(file) {
 	const MAX_QUEUE_LENGTH = 4;
-	if(sound_queue.length > MAX_QUEUE_LENGTH4 )
+	if(sound_queue.length > MAX_QUEUE_LENGTH )
 		return;
 	let sound = new Howl({
 		src: [file],
