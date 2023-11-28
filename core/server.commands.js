@@ -11,8 +11,7 @@ const tts = require('../lib/tts.js');
 
 let global_command_array;
 
-/**
- * Loads and returns all commands from 'commands.json' in a JSON.parse() object.
+/**Loads and returns all commands from 'commands.json' in a JSON.parse() object.
  *
  * @param {string} [filename='commands.json'] - The filename of the commands JSON file.
  * @returns {Array} - An array containing all the loaded commands.
@@ -100,8 +99,7 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 
 	return command_array;
 }
-/**
- * Saves the commands to a JSON file.
+/**Saves the commands to a JSON file.
  * @param {string} [filename='commands.json'] - The name of the file to save the commands to.
  * @param {Array} [command_array=global_command_array] - The array of commands to save.
  * @returns {Array} - The updated array of commands.
@@ -126,8 +124,7 @@ function saveCommands(filename = 'commands.json', command_array = global_command
 }
 
 global_command_array = loadCommands();
-/**
- * Retrieves the query from a string by removing the prefix.
+/**Retrieves the query from a string by removing the prefix.
  *
  * Example: getQuery(message_lower, '!joe ');
  *
@@ -140,6 +137,13 @@ function getQuery(string, prefix) {
 	return string.substring(start);
 }
 //this needs implemented fully
+/**Processes variables in the task string by replacing placeholders with actual values.
+ *
+ * @param {string} user - The username.
+ * @param {string} query_string - The query string.
+ * @param {string} task_string - The task string with placeholders.
+ * @returns {string} - The task string with replaced variables.
+ */
 async function processVariables(user, query_string, task_string) {
 	task_string = task_string.replace(/\$\(\s*query\s*\)/, query_string);
 	console.log('T:', `new task_string: ${task_string}`);
@@ -168,10 +172,11 @@ async function processVariables(user, query_string, task_string) {
 	if(channel_info !== null) {
 		task_string = task_string.replace(/\$\(\s*touser\s*\)/, query_string.split(' ')[1]);
 		task_string = task_string.replace(/\$\(\s*game_and_title\s*\)/, channel_info.game_and_title);
-		task_string = task_string.replace(/\$\(\s*game\s*\)/, channel_info.game_name);
+		task_string = task_string.replace(/\$\(\s*game\s*\)/, channel_info.gameName);
 		task_string = task_string.replace(/\$\(\s*title\s*\)/, channel_info.title);
 		task_string = task_string.replace(/\$\(\s*url\s*\)/, `twitch.tv/${channel_info.broadcaster_name}`);
 	}
+	//todo: change this into a loop?
 	task_string = task_string.replace(/\$\(\s*1\s*\)/, query_string.split(' ')[1]);
 	task_string = task_string.replace(/\$\(\s*2\s*\)/, query_string.split(' ')[2]);
 	task_string = task_string.replace(/\$\(\s*3\s*\)/, query_string.split(' ')[3]);
@@ -188,7 +193,19 @@ async function processVariables(user, query_string, task_string) {
 const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const replyBag = new ShuffleBag(attacks);
 let user_array = [];
-async function processMessage(user, message, flags, self, extra) {
+/**Processes the user's message and executes the corresponding commands.
+ *
+ * @param {string} username - The username of the user who triggered the command.
+ * @param {string} message - The message containing the command.
+ * @param {object} flags - The flags associated with the command.
+ * @param {boolean} self - Indicates if the message was sent by the bot itself.
+ * @param {object} extra - Additional parameters for the command.
+ * @returns {Promise<void>} - A promise that resolves when the command processing is complete.
+ */
+async function processMessage(username, message, flags, self, extra) {
+	/**Loads the user array from the 'chatters.json' file.
+	 * @returns {Array} The loaded user array.
+	 */
 	async function loadUserArray() {
 		try {
 			return JSON.parse(fs.readFileSync('chatters.json'));
@@ -197,12 +214,21 @@ async function processMessage(user, message, flags, self, extra) {
 			return [];
 		}
 	}
+	/**Saves an array of users to the 'chatters.json' file.
+	 *
+	 * @param {Array} array - The array of users to be saved.
+	 * @returns {void}
+	 */
 	async function saveUserArray(array) {
 		fs.writeFileSync('chatters.json', prettyStringify(array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
 	}
-	async function checkProfileImage(user) {
+	/**Checks the profile image of a user and writes it to a PHP file.
+	 * @param {string} username - The username of the user.
+	 * @returns {Promise<void>} - A promise that resolves when the profile image is written successfully.
+	 */
+	async function checkProfileImage(username) {
 		async function writeProfileImage(filename) {
-			const profile_image_url = (await twurple.getUserByName(user)).profilePictureUrl;
+			const profile_image_url = (await twurple.getUserByName(username)).profilePictureUrl;
 			const content = `<?php $name='${profile_image_url}';$fp=fopen($name,'rb');header("Content-Type:image/png");header("Content-Length:".filesize($name));fpassthru($fp);exit;?>`;
 			fs.writeFile(filename, content, err => {
 				if(err) {
@@ -211,9 +237,9 @@ async function processMessage(user, message, flags, self, extra) {
 				// file written successfully
 			});
 		}
-		user = user.toLowerCase();
+		username = username.toLowerCase();
 		console.log('fired');
-		const filename = `/var/www/html/stream/assets/users/icon/${user}.php`;
+		const filename = `/var/www/html/stream/assets/users/icon/${username}.php`;
 
 		await writeProfileImage(filename);
 
@@ -225,7 +251,12 @@ async function processMessage(user, message, flags, self, extra) {
 			console.log('exists');
 		});
 	}
-	function findAlertByString(string, command_array = global_command_array) {
+	/**Finds a command by matching a string with the keyword or altkey of a command.
+	 * @param {string} string - The string to match with the keyword or altkey of a command.
+	 * @param {Array} command_array - The array of commands to search in. Defaults to global_command_array.
+	 * @returns {string|undefined} - The alert message of the matched command, or undefined if no match is found.
+	 */
+	function findIntroCommandByString(string, command_array = global_command_array) {
 		for(const command of command_array) {
 			const keyword = (typeof command.altkey === 'undefined') ?
 				command.keyword.toString() :
@@ -236,6 +267,15 @@ async function processMessage(user, message, flags, self, extra) {
 		}
 		return undefined;
 	}
+	/**Processes the built-in commands.
+	 *
+	 * @param {string} user - The user who triggered the command.
+	 * @param {string} message - The message containing the command.
+	 * @param {object} flags - The flags associated with the command.
+	 * @param {object} _self - The reference to the current instance.
+	 * @param {object} _extra - Additional parameters for the command.
+	 * @returns {Promise<void>} - A promise that resolves when the command processing is complete.
+	 */
 	async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		let message_lower = message.toLowerCase();
 		if(flags.broadcaster) {
@@ -428,6 +468,16 @@ async function processMessage(user, message, flags, self, extra) {
 			}
 		}
 	}
+	/**Processes custom commands based on user input.
+	 *
+	 * @param {string} user - The username of the user who triggered the command.
+	 * @param {string} message - The message containing the command.
+	 * @param {boolean} _flags - Reserved parameter.
+	 * @param {boolean} _self - Reserved parameter.
+	 * @param {Object} extra - Additional information related to the command.
+	 * @param {Array} command_array - An array of custom commands to process.
+	 * @returns {Promise<boolean>} - A promise that resolves to a boolean indicating whether the command was processed successfully.
+	 */
 	async function processCustomCommands(user, message, _flags, _self, extra, command_array = global_command_array) {
 		let commands_triggered = 0;
 		function replaceExtension(filename, original, replacement) {
@@ -472,6 +522,12 @@ async function processMessage(user, message, flags, self, extra) {
 			}
 			return false;
 		}
+		/**Processes tasks for a user command.
+		 * @param {string} user - The username.
+		 * @param {object} command - The command object.
+		 * @param {string} query - The query string.
+		 * @returns {boolean} - Returns true if a command is triggered, false otherwise.
+		 */
 		async function processTasks(user, command, query) {
 			for(const task of command.task) {
 				// this blocks all commands from being triggered
@@ -595,6 +651,23 @@ async function processMessage(user, message, flags, self, extra) {
 					return true;
 				}
 				if(task.tts || task.ttsing) {
+
+					function parseCommand(input) {
+						const regex = new RegExp('!(tts|ttsing)(\d*)\s+(.+)');
+						const match = input.match(regex);
+
+						if (match) {
+							const commandType = match[1];
+							const voiceNumber = match[2] ? parseInt(match[2], 10) : null;
+							const spokenText = match[3];
+
+							return { commandType, voiceNumber, spokenText };
+						} else {
+							console.log(input);
+							throw new Error('Invalid command');
+						}
+					}
+
 					function isNumber(number) {
 						if(number === false ||
 							number === true ||
@@ -653,6 +726,7 @@ async function processMessage(user, message, flags, self, extra) {
 						task.media_counter++;
 					}
 
+					//there's a bug here on line 713
 					if(filename.endsWith('.mp4'))
 						server.sendMessage('Video', filename);
 					else
@@ -705,13 +779,11 @@ async function processMessage(user, message, flags, self, extra) {
 			if(command.active === false)
 				continue;//skips command, continues iterating
 
-			//console.log('V:', `this_command.task: ${this_command.task}`);
 			//iterate through multiple keywords
 			for(const keyword_index in command.keyword) {
 				let comparison = command.keyword[keyword_index];
 				const query = message.substring(message_lower.indexOf(comparison) + comparison.length);
 
-				//console.log('V:', `keywordIsIndexOf: ${comparison}`);
 				let prefix = '';
 				if(comparison.indexOf('!') === 0) {
 					prefix = '!';
@@ -740,25 +812,26 @@ async function processMessage(user, message, flags, self, extra) {
 	if(user_array.length === 0) {
 		user_array = await loadUserArray();
 	}
-	const isNewUser = !user_array.includes(user);
+	const isNewUser = !user_array.includes(username);
 	if(isNewUser) {
-		user_array.push(user);
+		user_array.push(username);
 		await saveUserArray(user_array);
 
 		//handle intro
-		const alert = findAlertByString(`!${user.toLowerCase()}`);//user commands all have !prefix
+		const alert = findIntroCommandByString(`!${username.toLowerCase()}`);//user commands all have !prefix
 		if(alert)
 			server.sendMessage('Alert', alert);
 		//setup profile image for chat overlay
-		await checkProfileImage(user);
+		await checkProfileImage(username);
 	}
 
-	if(user === process.env.BOT_USER) return;
+	if(username === process.env.BOT_USER) return;
 
-	proccessBuiltInCommands(user, message, flags, self, extra);
+	proccessBuiltInCommands(username, message, flags, self, extra);
 
-	const number = await processCustomCommands(user, message, flags, self, extra);
-	console.log('D:', `${user}(${number}): ${message}`);
+//Process Custom Commands
+	const number = await processCustomCommands(username, message, flags, self, extra);
+	console.log('D:', `${username}(${number}): ${message}`);
 }
 
 module.exports.process = processMessage;
