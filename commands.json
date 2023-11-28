@@ -77,6 +77,22 @@
 		"author": "muten_pizza"
 	},
 	{
+		"keyword": ["!unso"],
+		"task": [{"chat": "I take it back, don't follow $(touser)"}],
+		"author": "muten_pizza"
+	},
+	{
+		"keyword": ["!srinfo"],
+		"task": [{"chat": "https://sypherce.github.io/stream/sr.html"}],
+		"author": ""
+	},
+	{
+		"keyword": ["(!commands|!sounds)"],
+		"task": [{"chat": "https://sypherce.github.io/stream/sounds.html"}],
+		"author": ""
+	},
+
+	{
 		"keyword": ["!stickers"],
 		"task": [{"chat": "Now with Stickers! https://clips.twitch.tv/BreakableAlluringFriseeTTours-FcY9jBfQD2jFsv7F"}],
 		"author": "muten_pizza"

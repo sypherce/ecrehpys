@@ -342,7 +342,7 @@ async function processMessage(username, message, flags, self, extra) {
 		}
 		if(message_lower.startsWith('!timeout')) {
 			const query = getQuery(message_lower, '!timeout').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ');
-			let user = query[0];
+			let target_user = query[0];
 			let seconds = typeof query[1] !== 'undefined' ? query[1] : 69;
 			const multiplier = typeof seconds === 'string' ? seconds.match(/[a-zA-Z]+/g)[0] : 's';//extract the multiplier first
 			seconds = typeof seconds === 'string' ? seconds.match(/\d+/g)[0] : seconds;//extract time last
@@ -360,19 +360,19 @@ async function processMessage(username, message, flags, self, extra) {
 					seconds = seconds * 60 * 60 * 24 * 7;
 					break;
 			}
-			if(user.length === 0)
-				user = 'wally4000';
+			if(target_user.length === 0)
+				target_user = user;
 
-			const channel_info = await twurple.getChannelInfoByUsername(user);
+			const channel_info = await twurple.getChannelInfoByUsername(target_user);
 			server.sayWrapper(`GET OUT ${channel_info.displayName} sypher18OMG`);
 			/*don't await, it's faster */twurple.timeoutUser({user: channel_info.id, duration: seconds, reason: 'Is a butt'});
 			const tts_filename = `../${(await tts.ttsToMP3(`GET OUT ${channel_info.displayName.replaceAll('_', ' ')}`, `alerts/assets/alerts/tts`, tts.voices[27]))}`.replace('../alerts/', '');
 			server.sendMessage('TTS', `${tts_filename}`);
 			server.sendMessage('Audio', 'alerts/muten_dungeon.mp3');
-			const is_mod = await twurple.checkUserMod(user);
+			const is_mod = await twurple.checkUserMod(target_user);
 			if(is_mod)
 				setTimeout(function() {
-					twurple.setModerator(user)
+					twurple.setModerator(target_user)
 				}, (seconds + 5) * 1000);
 		}
 		if(message_lower.startsWith('!so ')) {
@@ -405,14 +405,6 @@ async function processMessage(username, message, flags, self, extra) {
 				"a Super Bomb", "an Arrow", "some Rupee.... I mean Garbage"];
 			const item = item_list[Math.floor(Math.random() * item_list.length)];
 			server.sayWrapper(`${user} says that ${item} is in the Library!`);
-		}
-		if(message_lower.startsWith('!unso ')) {
-			let query = getQuery(message_lower, '!unso').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ')[0];
-			if(query.length === 0)
-				query = 'sypherce';
-			const channel_info = await twurple.getChannelInfoByUsername(`${query}`);
-
-			server.sayWrapper(`I take it back, don't follow ${channel_info.displayName}`);
 		}
 		if(message_lower.includes('@ecrehpys')) {
 			switch(replyBag.next()) {
@@ -449,14 +441,8 @@ async function processMessage(username, message, flags, self, extra) {
 					break;
 			}
 		}
-		if(['!commands', '!sounds'].some(command => message_lower.includes(command))) {
-			server.sayWrapper('https://sypherce.github.io/stream/sounds.html');
-		}
 
-		if(message_lower.includes('!srinfo')) {
-			server.sayWrapper('https://sypherce.github.io/stream/sr.html');
-		}
-		else if(message_lower.includes('!sr')) {
+		if(message_lower.includes('!sr ')) {
 			const query = getQuery(message_lower, '!sr');
 			const object = mp3Library.find(query);
 			if(typeof object.filename !== 'undefined' && object.filename !== '') {
