@@ -368,7 +368,7 @@ async function processMessage(username, message, flags, self, extra) {
 			/*don't await, it's faster */twurple.timeoutUser({user: channel_info.id, duration: seconds, reason: 'Is a butt'});
 			const tts_filename = `../${(await tts.ttsToMP3(`GET OUT ${channel_info.displayName.replaceAll('_', ' ')}`, `alerts/assets/alerts/tts`, tts.voices[27]))}`.replace('../alerts/', '');
 			server.sendMessage('TTS', `${tts_filename}`);
-			server.sendMessage('Audio', 'assets/alerts/muten_dungeon.mp3');
+			server.sendMessage('Audio', 'alerts/muten_dungeon.mp3');
 			const is_mod = await twurple.checkUserMod(user);
 			if(is_mod)
 				setTimeout(function() {
