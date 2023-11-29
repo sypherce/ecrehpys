@@ -637,56 +637,40 @@ async function processMessage(username, message, flags, self, extra) {
 					return true;
 				}
 				if(task.tts || task.ttsing) {
+					/* Attempt to match the message to a regular expression.
+					If it fails, try to match task.tts or task.ttsing to the regular expression.*/
+					const [_, type, tts_number, spokenText] =(() => {
+						const regex = /!?(ttsing|ttsanta|tts)(\d*)\s*(.*)/;
+						let match = message.match(regex);
+						if(!match)
+							match = (task.tts || task.ttsing).match(regex);
+						return match;
+					})();
 
-					function parseCommand(input) {
-						const regex = new RegExp('!(tts|ttsing)(\d*)\s+(.+)');
-						const match = input.match(regex);
-
-						if (match) {
-							const commandType = match[1];
-							const voiceNumber = match[2] ? parseInt(match[2], 10) : null;
-							const spokenText = match[3];
-
-							return { commandType, voiceNumber, spokenText };
-						} else {
-							console.log(input);
-							throw new Error('Invalid command');
+					const voice = (() => {
+						function isNumber(number) {
+							if(number === false ||
+								number === true ||
+								number === '')
+								return false;
+							return !isNaN(number)
 						}
-					}
+						switch(type) {
+						case 'ttsing':
+							if(isNumber(tts_number))
+								return tts.all_singing_voices[tts_number];
+							break;
+						case 'tts':
+							if(isNumber(tts_number))
+								return tts.voices[tts_number];
+							break;
+						case 'ttsanta':
+							return tts.voices[28];
+						}
+						return type;
+					})();
 
-					function isNumber(number) {
-						if(number === false ||
-							number === true ||
-							number === '')
-							return false;
-						return !isNaN(number)
-					}
-					let type = (task.tts + task.ttsing).replace('undefined', '');
-					if(type.split(' ').length > 1) {//if it's a set command like "jim"
-						message_lower = `!${type}`;
-						type = type.split(' ')[0].match(/[a-zA-Z]+/g)[0];
-					}
-					let sub_message = getQuery(message_lower, `!${type}`);
-					let voice = type;
-					let tts_number = sub_message.substring(0, sub_message.indexOf(' '));
-					//if(tts_number === '') {
-					//	tts_number = sub_message;
-					//	sub_message = '';
-					//}
-					if(isNumber(tts_number)) {
-						console.log(1, tts_number, isNumber(tts_number), type);
-						if(type === 'ttsing')
-							voice = tts.all_singing_voices[tts_number];
-						else
-							voice = tts.voices[tts_number];
-					}
-					if(tts_number === 'anta')
-						voice = tts.voices[28];
-
-					sub_message = sub_message.substring(sub_message.indexOf(' '));
-
-					const processed_message = await processVariables(user, query, sub_message);
-					const tts_filename = `${(await tts.ttsToMP3(processed_message, `alerts/assets/alerts/tts`, voice))}`.replace('alerts/', '');
+					const tts_filename = `${(await tts.ttsToMP3(spokenText, `alerts/assets/alerts/tts`, voice))}`.replace('alerts/', '');
 					server.sendMessage('TTS', tts_filename);
 
 					return true;
