@@ -35,9 +35,7 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 		}
 
 		//altkey takes priority
-		let keyword = (typeof command.altkey === 'undefined') ?
-			command.keyword[0] :
-			command.altkey[0];
+		let keyword = command.altkey?.[0] || command.keyword[0];
 
 		//remove regexps for simplicity
 		if(keyword !== command.altkey) {
@@ -53,33 +51,13 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 		if(typeof command.description !== 'undefined') task_string = command.description;
 		if(typeof task_string === 'undefined') task_string = "";
 
-		const formatted_author_string = (command.author === '') ?
-			'' :
-			` [${command.author}]`;
-		switch(keyword) {
-			//ignore commands that aren't media related
-			case '!lips':
-			case 'joe':
-			case '!ca':
-			case '!caa':
-			case '!cae':
-			case '!cal':
-			case '!wrap':
-			case '!suso':
-			case '!sso':
-			case '!stickers':
-			case '!notfine':
-			case '!sprites':
-			case 'flippers':
-			case '!nc':
-			case '!sounds':
-			case '!srinfo':
-			case '!unso':
-				break;
-			//everything else gets added to the html page
-			default:
-				html = html.concat(`${keyword}${formatted_author_string}<br>\n`);
-				break;
+		const formatted_author_string = (command.author === '') ? '' : ` [${command.author}]`;
+
+		const ignoredCommands = ['!lips', 'joe', '!ca', '!caa', '!cae', '!cal', '!wrap',
+			'!suso', '!sso', '!stickers', '!notfine', '!sprites', 'flippers', '!nc',
+			'!sounds', '!srinfo', '!unso'];
+		if(!ignoredCommands.includes(keyword)) {
+			html = html.concat(`${keyword}${formatted_author_string}<br>\n`);
 		}
 	}
 	//add mixitup commands. remove tabs from formatting
@@ -148,49 +126,39 @@ function getQuery(string, prefix) {
  * @returns {string} - The task string with replaced variables.
  */
 async function processVariables(user, query_string, task_string) {
-	task_string = task_string.replace(/\$\(\s*query\s*\)/, query_string);
-	console.log('T:', `new task_string: ${task_string}`);
-	let channel_info = null;
+    const replacements = {
+        'query': query_string,
+        'user': user,
+        'touser': query_string.split(' ')[1],
+        'game_and_title': '',
+        'game': '',
+        'title': '',
+        'url': ''
+    };
 
-	if(task_string.search(/\$\(\s*user\s*\)/) !== -1 |
-		task_string.search(/\$\(\s*touser\s*\)/) !== -1 |
-		task_string.search(/\$\(\s*game_and_title\s*\)/) !== -1 |
-		task_string.search(/\$\(\s*url\s*\)/) !== -1 |
-		task_string.search(/\$\(\s*game\s*\)/) !== -1 |
-		task_string.search(/\$\(\s*title\s*\)/) !== -1) {
-		channel_info = await twurple.getChannelInfoByUsername(user);
+    const patterns = Object.keys(replacements);
+    if (patterns.some(pattern => task_string.includes(`$(${pattern})`))) {
+        const channel_info = await twurple.getChannelInfoByUsername(user);
+        let title = channel_info.title;
+        if (channel_info.gameName === 'Retro' && title.length > 45) {
+            title = `${title.substring(0, 45)}...`;
+        }
+        replacements.game_and_title = `${channel_info.gameName} (${title})`;
+        replacements.game = channel_info.gameName;
+        replacements.title = channel_info.title;
+        replacements.url = `twitch.tv/${channel_info.broadcaster_name}`;
+    }
 
-		channel_info.game_and_title = channel_info.gameName;
-		if(channel_info.gameName === 'Retro') {
-			const max_title_length = 45;
-			let title = channel_info.title;
-			if(title.length > max_title_length)
-				title = `${title.substring(0, max_title_length)}...`;
+    patterns.forEach(pattern => {
+        task_string = task_string.replace(new RegExp(`\\$\\(\\s*${pattern}\\s*\\)`), replacements[pattern]);
+    });
 
-			channel_info.game_and_title = `${channel_info.gameName} (${title})`;
-		}
-	}
+    const query_parts = query_string.split(' ');
+    for (let i = 1; i <= 9; i++) {
+        task_string = task_string.replace(new RegExp(`\\$\\(\\s*${i}\\s*\\)`), query_parts[i] || '');
+    }
 
-	task_string = task_string.replace(/\$\(\s*user\s*\)/, user);
-	if(channel_info !== null) {
-		task_string = task_string.replace(/\$\(\s*touser\s*\)/, query_string.split(' ')[1]);
-		task_string = task_string.replace(/\$\(\s*game_and_title\s*\)/, channel_info.game_and_title);
-		task_string = task_string.replace(/\$\(\s*game\s*\)/, channel_info.gameName);
-		task_string = task_string.replace(/\$\(\s*title\s*\)/, channel_info.title);
-		task_string = task_string.replace(/\$\(\s*url\s*\)/, `twitch.tv/${channel_info.broadcaster_name}`);
-	}
-	//todo: change this into a loop?
-	task_string = task_string.replace(/\$\(\s*1\s*\)/, query_string.split(' ')[1]);
-	task_string = task_string.replace(/\$\(\s*2\s*\)/, query_string.split(' ')[2]);
-	task_string = task_string.replace(/\$\(\s*3\s*\)/, query_string.split(' ')[3]);
-	task_string = task_string.replace(/\$\(\s*4\s*\)/, query_string.split(' ')[4]);
-	task_string = task_string.replace(/\$\(\s*5\s*\)/, query_string.split(' ')[5]);
-	task_string = task_string.replace(/\$\(\s*6\s*\)/, query_string.split(' ')[6]);
-	task_string = task_string.replace(/\$\(\s*7\s*\)/, query_string.split(' ')[7]);
-	task_string = task_string.replace(/\$\(\s*8\s*\)/, query_string.split(' ')[8]);
-	task_string = task_string.replace(/\$\(\s*9\s*\)/, query_string.split(' ')[9]);
-
-	return task_string;
+    return task_string;
 }
 
 const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -368,33 +336,27 @@ async function processMessage(username, message, flags, self, extra) {
 
 			const channel_info = await twurple.getChannelInfoByUsername(target_user);
 			server.sayWrapper(`GET OUT ${channel_info.displayName} sypher18OMG`);
-			/*don't await, it's faster */twurple.timeoutUser({user: channel_info.id, duration: seconds, reason: 'Is a butt'});
+			const is_mod = await twurple.checkUserMod(target_user);
+			await twurple.timeoutUser({user: channel_info.id, duration: seconds, reason: 'Is a butt'});
 			const tts_filename = `../${(await tts.ttsToMP3(`GET OUT ${channel_info.displayName.replaceAll('_', ' ')}`, `alerts/assets/alerts/tts`, tts.voices[27]))}`.replace('../alerts/', '');
 			server.sendMessage('TTS', `${tts_filename}`);
 			server.sendMessage('Audio', 'alerts/muten_dungeon.mp3');
-			const is_mod = await twurple.checkUserMod(target_user);
 			if(is_mod)
 				setTimeout(function() {
 					twurple.setModerator(target_user)
 				}, (seconds + 5) * 1000);
 		}
-		if(message_lower.startsWith('!so ')) {
-			let query = getQuery(message_lower, '!so').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ')[0];
-			if(query.length === 0)
-				query = 'sypherce';
-			const channel_info = await twurple.getChannelInfoByUsername(`${query}`);
-			console.log(`${query}`);
-			console.log(query);
-
+		if (message_lower.match(/^!so\s+(\S+)?/)) {//!so muten_pizza
+			let query = message_lower.match(/^!so\s+(\S+)?/)[1] || 'sypherce';
+			const channel_info = (await twurple.getChannelInfoByUsername(`${query}`))
 			channel_info.game_and_title = channel_info.gameName;
 			if(channel_info.gameName === 'Retro') {
 				const max_title_length = 45;
-				let title = channel_info.title;
-				if(title.length > max_title_length)
-					title = `${title.substring(0, max_title_length)}...`;
+				const title = (title.length > max_title_length) ? `${title.substring(0, max_title_length)}...` : channel_info.title;
 
 				channel_info.game_and_title = `${channel_info.gameName} (${title})`;
 			}
+
 			server.sayWrapper(`Hey, you should check out twitch.tv/${channel_info.displayName} ! They were last playing ${channel_info.game_and_title}.`);
 		}
 		if(message_lower.includes('!library')) {
@@ -413,7 +375,7 @@ async function processMessage(username, message, flags, self, extra) {
 			switch(replyBag.next()) {
 				case 0:
 					server.sayWrapper(`Meow @${user}`);
-					server.sendMessage('Audio', `assets/alerts/emil_mgow.mp3`);
+					server.sendMessage('Audio', `alerts/emil_mgow.mp3`);
 					break;
 				case 1:
 					server.sayWrapper(`@${user} sypher18Awkward`);
@@ -422,25 +384,27 @@ async function processMessage(username, message, flags, self, extra) {
 					server.sayWrapper(`@${user} sypher18OMG`);
 					break;
 				case 3:
-					server.sendMessage('Audio', `assets/alerts/muten_whaat.mp3`);
+					server.sendMessage('Audio', `alerts/muten_whaat.mp3`);
 					server.sayWrapper(`WHAT @${user.toUpperCase()}!?!??!!?!?`);
 					break;
 				case 4:
 					server.sayWrapper(`@${user} sypher18Cry`);
 					break;
 				case 5:
+					server.sendMessage('Audio', `alerts/generic_nice.mp3`);
 					server.sayWrapper(`NiCe @${user}`);
 					break;
 				case 6:
 					server.sayWrapper(`FIGHT ME @${user.toUpperCase()}!`);
-					server.sendMessage('Audio', `assets/alerts/muten_whip.mp3`);
+					server.sendMessage('Audio', `alerts/muten_whip.mp3`);
 					break;
 				case 7:
 					server.sayWrapper(`@${user} └(°□°└）`);
+					server.sendMessage('Audio', `alerts/xjrigsx_banshee.mp3`);
 					break;
 				case 8:
 					server.sayWrapper(`You know what? SHUT UP! D:`);
-					server.sendMessage('Audio', `assets/alerts/office_shut_up.mp3`);
+					server.sendMessage('Audio', `alerts/office_shut_up.mp3`);
 					break;
 			}
 		}
