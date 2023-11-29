@@ -87,6 +87,7 @@
 		"author": ""
 	},
 	{
+		"altkey": ["!sounds"],
 		"keyword": ["(!commands|!sounds)"],
 		"task": [{"chat": "https://sypherce.github.io/stream/sounds.html"}],
 		"author": ""
