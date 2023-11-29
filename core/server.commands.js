@@ -72,6 +72,9 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 			case '!sprites':
 			case 'flippers':
 			case '!nc':
+			case '!sounds':
+			case '!srinfo':
+			case '!unso':
 				break;
 			//everything else gets added to the html page
 			default:
