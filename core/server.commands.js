@@ -9,8 +9,6 @@ const mp3Library = require('../lib/mp3Library.js');
 const prettyStringify = require("@aitodotai/json-stringify-pretty-compact");
 const tts = require('../lib/tts.js');
 
-let global_command_array;
-
 /**Loads and returns all commands from 'commands.json' in a JSON.parse() object.
  *
  * @param {string} [filename='commands.json'] - The filename of the commands JSON file.
@@ -30,7 +28,7 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 		//!this might be done elsewhere, idk
 		//set media_count to 0 if it's needed
 		for(const task of command.task) {
-			if(typeof task.media === 'object')
+			if(typeof task.media === 'object' && task.media_counter !== null)
 				task.media_counter = 0;
 		}
 
@@ -56,9 +54,9 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 		const ignoredCommands = ['!lips', 'joe', '!ca', '!caa', '!cae', '!cal', '!wrap',
 			'!suso', '!sso', '!stickers', '!notfine', '!sprites', 'flippers', '!nc',
 			'!sounds', '!srinfo', '!unso'];
-		if(!ignoredCommands.includes(keyword)) {
+
+		if(command.exclude !== true)
 			html = html.concat(`${keyword}${formatted_author_string}<br>\n`);
-		}
 	}
 	//add mixitup commands. remove tabs from formatting
 	html = html.concat(`!chomp<br>
@@ -104,7 +102,7 @@ function saveCommands(filename = 'commands.json', command_array = global_command
 	return command_array;
 }
 
-global_command_array = loadCommands();
+let global_command_array = loadCommands();
 /**Retrieves the query from a string by removing the prefix.
  *
  * Example: getQuery(message_lower, '!joe ');
@@ -312,25 +310,30 @@ async function processMessage(username, message, flags, self, extra) {
 			}
 		}
 		if(message_lower.startsWith('!timeout')) {
-			const query = getQuery(message_lower, '!timeout').replace(/[^a-zA-Z0-9_]/g, " ").trim().split(' ');
-			let target_user = query[0];
-			let seconds = typeof query[1] !== 'undefined' ? query[1] : 69;
-			const multiplier = typeof seconds === 'string' ? seconds.match(/[a-zA-Z]+/g)[0] : 's';//extract the multiplier first
-			seconds = typeof seconds === 'string' ? seconds.match(/\d+/g)[0] : seconds;//extract time last
+			let [_prefix, _command, target_user, seconds, multiplier] =(() => {
+				const regex = /(!timeout)\s*(\w*)\s*(\d*)([mhdwMHDW])*/;
+				let match = message.match(regex);
+				if(!match)
+					match = [message, 'sypherce', 69, 's'];
+				return match;
+			})();
+
 			switch (multiplier) {
 				case 'm':
-					seconds = seconds * 60;
+					seconds *= 60;
 					break;
 				case 'h':
-					seconds = seconds * 60 * 60;
+					seconds *= 60 * 60;
 					break;
 				case 'd':
-					seconds = seconds * 60 * 60 * 24;
+					seconds *= 60 * 60 * 24;
 					break;
 				case 'w':
-					seconds = seconds * 60 * 60 * 24 * 7;
+					seconds *= 60 * 60 * 24 * 7;
 					break;
 			}
+			//max timeout of 14 days
+			seconds = seconds > 1209600 ? 1209600 : seconds;
 			if(target_user.length === 0)
 				target_user = user;
 
@@ -352,10 +355,15 @@ async function processMessage(username, message, flags, self, extra) {
 			channel_info.game_and_title = channel_info.gameName;
 			if(channel_info.gameName === 'Retro') {
 				const max_title_length = 45;
-				const title = (title.length > max_title_length) ? `${title.substring(0, max_title_length)}...` : channel_info.title;
+				let title = `${channel_info.title.substring(0, max_title_length)}...`;
+				if (!(title.length > max_title_length))
+				 title= channel_info.title;
 
 				channel_info.game_and_title = `${channel_info.gameName} (${title})`;
 			}
+			else if(channel_info.gameName === '')
+				channel_info.game_and_title = 'FartNite';
+
 
 			server.sayWrapper(`Hey, you should check out twitch.tv/${channel_info.displayName} ! They were last playing ${channel_info.game_and_title}.`);
 		}
@@ -625,11 +633,11 @@ async function processMessage(username, message, flags, self, extra) {
 						switch(type) {
 						case 'ttsing':
 							if(isNumber(tts_number))
-								return tts.all_singing_voices[tts_number];
+								return tts.all_singing_voices[tts_number] ?? type;
 							break;
 						case 'tts':
 							if(isNumber(tts_number))
-								return tts.voices[tts_number];
+								return tts.voices[tts_number] ?? type;;
 							break;
 						case 'ttsanta':
 							return tts.voices[28];

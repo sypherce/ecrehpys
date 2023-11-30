@@ -2,26 +2,31 @@
 	{
 		"keyword": ["!nc"],
 		"task": [{"nocommand": "nc"}],
+		"exclude": true,
 		"author": "sypherce"
 	},
 	{
 		"keyword": ["!ca"],
 		"task": [{"customaudio": "ca"}],
+		"exclude": true,
 		"author": "sypherce"
 	},
 	{
 		"keyword": ["!caa"],
 		"task": [{"customaudioadd": "caa"}],
+		"exclude": true,
 		"author": "sypherce"
 	},
 	{
 		"keyword": ["!cae"],
 		"task": [{"customaudioedit": "cae"}],
+		"exclude": true,
 		"author": ""
 	},
 	{
 		"keyword": ["!cal"],
 		"task": [{"customaudiolist": "cal"}],
+		"exclude": true,
 		"author": ""
 	},
 	{
@@ -41,6 +46,7 @@
 		"author": ""
 	},
 	{
+		"altkey": "!wrap",
 		"keyword": ["!(z1|)wrap"],
 		"task": [{"chat": "Now THIS is how you wrap: https://clips.twitch.tv/FlirtySolidScorpionNomNom-RYXRvomyMELBQy6I"}],
 		"author": "muten_pizza"
@@ -69,56 +75,64 @@
 	{
 		"keyword": ["!sso"],
 		"task": [{"media": "alerts/muten_throat.mp3"}, {"chat": "ᵖˢˢˢˢᵗ... ᵍᵒ ᶠᵒˡˡᵒʷ ᵗʰᶦˢ ˢᵗʳᵉᵃᵐᵉʳ, ᵇᵘᵗ ᵏᵉᵉᵖ ᶦᵗ ᵒⁿ ᵗʰᵉ ᴰᴸ. twitch.tv/$(touser)"}],
+		"exclude": true,
 		"author": "muten_pizza"
 	},
 	{
 		"keyword": ["!suso"],
 		"task": [{"chat": "How are you not following $(touser) yet? PikaThump!"}],
+		"exclude": true,
 		"author": "muten_pizza"
 	},
 	{
 		"keyword": ["!unso"],
 		"task": [{"chat": "I take it back, don't follow $(touser)"}],
+		"exclude": true,
 		"author": "muten_pizza"
 	},
 	{
 		"keyword": ["!srinfo"],
 		"task": [{"chat": "https://sypherce.github.io/stream/sr.html"}],
+		"exclude": true,
 		"author": ""
 	},
 	{
 		"altkey": ["!sounds"],
 		"keyword": ["(!commands|!sounds)"],
 		"task": [{"chat": "https://sypherce.github.io/stream/sounds.html"}],
+		"exclude": true,
 		"author": ""
 	},
-
 	{
 		"keyword": ["!stickers"],
 		"task": [{"chat": "Now with Stickers! https://clips.twitch.tv/BreakableAlluringFriseeTTours-FcY9jBfQD2jFsv7F"}],
+		"exclude": true,
 		"author": "muten_pizza"
 	},
 	{
 		"keyword": ["!notfine"],
 		"task": [{"chat": "*in Morgan Freeman's voice* Sypherce said it was fine, but in fact it was NOT fine. Not fine at all...."}],
+		"exclude": true,
 		"author": "muten_pizza"
 	},
 	{
 		"keyword": ["flippers"],
 		"task": [{"chat": "The flippers are in the Library"}],
+		"exclude": true,
 		"author": "muten_pizza"
 	},
 	{
 		"altkey": ["!sprites"],
 		"keyword": ["!sprite(s|)"],
 		"task": [{"chat": "https://alttpr.com/en/sprite_preview"}],
-		"author": ""
+		"exclude": true,
+		"author": "muten_pizza"
 	},
 	{
 		"altkey": ["!ttsing"],
 		"keyword": ["!ttsing", "!ttsing(|[0-9]|[1-9][0-9])", "!ttssing([0-9]|[1-9][0-9])", "!tssing([0-9]|[1-9][0-9])"],
 		"task": [{"ttsing": "ttsing"}],
-		"author": ""
+		"author": "sypherce"
 	},
 	{
 		"keyword": ["dream"],
@@ -128,21 +142,23 @@
 	{
 		"keyword": ["rigsmgow"],
 		"task": [{"customaudio": "!xjrigsx 0 2500 mgow 200 1500"}],
-		"author": ""
+		"author": "sypherce"
 	},
 	{
 		"keyword": ["rigshee"],
 		"task": [{"customaudio": "!xjrigsx 0 2500 banshee 200 1500"}],
-		"author": ""
+		"author": "sypherce"
 	},
 	{
 		"keyword": ["joe"],
 		"task": [{"joe": "joe"}],
+		"exclude": true,
 		"author": "sypherce"
 	},
 	{
 		"keyword": ["!lips"],
 		"task": [{"lips": "!lips"}],
+		"exclude": true,
 		"author": "sypherce"
 	},
 	{
@@ -155,13 +171,13 @@
 		"keyword": ["!cowboy"],
 		"task": [{"media": "alerts/cowboy_bebop.mp3"}],
 		"description": "🔊Clip of <a href=\"https://www.youtube.com/watch?v=UFFa0QoHWvE\">https://www.youtube.com/watch?v=UFFa0QoHWvE</a>",
-		"author": ""
+		"author": "sypherce"
 	},
 	{
 		"keyword": ["!cut"],
 		"task": [{"media": "alerts/octopath_olberic_124.mp3"}],
 		"description": "🔊Olberic from Octopath Traveler",
-		"author": ""
+		"author": "sypherce"
 	},
 	{
 		"keyword": ["!do"],
@@ -187,6 +203,13 @@
 		"task": [{"videonow": "music/0 - Other/DuckTales Theme Song.mp4"}],
 		"description": "🎥 <a href=\"https://www.youtube.com/watch?v=nqZ_Cb2slBw\">https://www.youtube.com/watch?v=nqZ_Cb2slBw</a>",
 		"author": ""
+	},
+	{
+		"keyword": ["cawfee"],
+		"task": [{"videonow": "music/0 - Other/bog_cawfee.mp4"}],
+		"description": "🎥 <a href=\"https://www.youtube.com/watch?v=wjTZfbfr3QI\">https://www.youtube.com/watch?v=wjTZfbfr3QI</a>",
+		"author": "bogmired",
+		"lasttimestamp": 1701275033685
 	},
 	{
 		"keyword": ["!duck"],
@@ -511,7 +534,8 @@
 		"altkey": ["badgers"],
 		"keyword": ["badger(s|)"],
 		"task": [{"videonow": "music/0 - Other/missliss_badgers.mp3"}],
-		"author": "missliss15"
+		"author": "missliss15",
+		"lasttimestamp": 1701278023986
 	},
 	{
 		"altkey": ["barkofshame"],
@@ -1015,7 +1039,8 @@
 		"altkey": ["hotdrinks"],
 		"keyword": ["hot\\s*drinks"],
 		"task": [{"videonow": "music/0 - Other/Wendy's Training Video Hot Drinks.mp4"}],
-		"author": "residentemil_"
+		"author": "residentemil_",
+		"lasttimestamp": 1701280901273
 	},
 	{
 		"keyword": ["hoy1"],
@@ -1829,7 +1854,8 @@
 		"altkey": ["left"],
 		"keyword": ["left"],
 		"task": [{"videonow": "music/0 - Other/emil_left.mp4"}],
-		"author": "residentemil_"
+		"author": "residentemil_",
+		"lasttimestamp": 1701278242595
 	},
 	{
 		"altkey": ["heywater"],
@@ -2618,5 +2644,34 @@
 		"author": "residentemil_",
 		"keyword": ["victore"],
 		"task": [{"customaudio": "victory 0 3000 !re 1343 4000"}]
+	},
+	{
+		"author": "residentemil_",
+		"keyword": ["!a"],
+		"task": [
+			{"media": ["alerts/tts/957c752f97fcdf243cb98734c9d68d5f.mp3"]}
+		]
+	},
+	{
+		"altkey": ["hotchocolate"],
+		"author": "itteramatv",
+		"keyword": ["hot\\s*chocolate"],
+		"task": [{"customaudio": "cawfee 25750 400 hotdrinks 12600 1400 cawfee 34050 600 hotdrinks 12600 1400"}]
+	},
+	{
+		"author": "itteramatv",
+		"keyword": ["!tbag"],
+		"task": [{"customaudio": "hotdrinks 98200 2000"}]
+	},
+	{
+		"author": "sypherce",
+		"altkey": ["hahashee"],
+		"keyword": ["(hahashee|hahashe)"],
+		"task": [{"customaudio": "haha 0 8000 banshee 500 2000"}]
+	},
+	{
+		"author": "sypherce",
+		"keyword": ["123"],
+		"task": [{"customaudio": "kickit 0 7000 cawfee 27900 1000"}]
 	}
 ]
