@@ -449,7 +449,7 @@ function initWebSocket() {
 			case 'VideoNow': {
 				let beefweb_value = value.replace('music/', '');
 				let video_value = convertPath(value);
-				if(await beefwebPlaySongNow(beefweb_value) === false) {
+				if((await beefwebPlaySongNow(beefweb_value)) === false) {
 					break;
 				}
 
@@ -511,11 +511,8 @@ function initWebSocket() {
 			case 'Enable':
 			case 'Disable': {
 				const setting = key === 'Enable';
-				value = value.toLowerCase();
-
-				if(value.indexOf('song') !== -1) {
 					enable_song = setting;
-				}
+					console.log(enable_song,setting)
 				break;
 			}
 			default: {
