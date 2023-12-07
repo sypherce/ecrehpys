@@ -61,7 +61,7 @@ function loadCommands(filename = 'commands.json') {//loads and returns all comma
 	//add mixitup commands. remove tabs from formatting
 	html = html.concat(`!chomp<br>
 						!inu [resident_emil_]<br>
-						laugh<br>`).replace(/\t/g,'');
+						laugh<br>`).replace(/\t/g, '');
 
 	//sort commands alphabetically, ignoring '!', numbers are first
 	const html_split = html.split(/\r?\n/);
@@ -124,39 +124,39 @@ function getQuery(string, prefix) {
  * @returns {string} - The task string with replaced variables.
  */
 async function processVariables(user, query_string, task_string) {
-    const replacements = {
-        'query': query_string,
-        'user': user,
-        'touser': query_string.split(' ')[1],
-        'game_and_title': '',
-        'game': '',
-        'title': '',
-        'url': ''
-    };
+	const replacements = {
+		'query': query_string,
+		'user': user,
+		'touser': query_string.split(' ')[1],
+		'game_and_title': '',
+		'game': '',
+		'title': '',
+		'url': ''
+	};
 
-    const patterns = Object.keys(replacements);
-    if (patterns.some(pattern => task_string.includes(`$(${pattern})`))) {
-        const channel_info = await twurple.getChannelInfoByUsername(user);
-        let title = channel_info.title;
-        if (channel_info.gameName === 'Retro' && title.length > 45) {
-            title = `${title.substring(0, 45)}...`;
-        }
-        replacements.game_and_title = `${channel_info.gameName} (${title})`;
-        replacements.game = channel_info.gameName;
-        replacements.title = channel_info.title;
-        replacements.url = `twitch.tv/${channel_info.broadcaster_name}`;
-    }
+	const patterns = Object.keys(replacements);
+	if(patterns.some(pattern => task_string.includes(`$(${pattern})`))) {
+		const channel_info = await twurple.getChannelInfoByUsername(user);
+		let title = channel_info.title;
+		if(channel_info.gameName === 'Retro' && title.length > 45) {
+			title = `${title.substring(0, 45)}...`;
+		}
+		replacements.game_and_title = `${channel_info.gameName} (${title})`;
+		replacements.game = channel_info.gameName;
+		replacements.title = channel_info.title;
+		replacements.url = `twitch.tv/${channel_info.broadcaster_name}`;
+	}
 
-    patterns.forEach(pattern => {
-        task_string = task_string.replace(new RegExp(`\\$\\(\\s*${pattern}\\s*\\)`), replacements[pattern]);
-    });
+	patterns.forEach(pattern => {
+		task_string = task_string.replace(new RegExp(`\\$\\(\\s*${pattern}\\s*\\)`), replacements[pattern]);
+	});
 
-    const query_parts = query_string.split(' ');
-    for (let i = 1; i <= 9; i++) {
-        task_string = task_string.replace(new RegExp(`\\$\\(\\s*${i}\\s*\\)`), query_parts[i] || '');
-    }
+	const query_parts = query_string.split(' ');
+	for(let i = 1; i <= 9; i++) {
+		task_string = task_string.replace(new RegExp(`\\$\\(\\s*${i}\\s*\\)`), query_parts[i] || '');
+	}
 
-    return task_string;
+	return task_string;
 }
 
 const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -178,7 +178,7 @@ async function processMessage(username, message, flags, self, extra) {
 	async function loadUserArray() {
 		try {
 			return JSON.parse(fs.readFileSync('chatters.json'));
-		} catch (e) {
+		} catch(e) {
 			console.error(e); // error in the above string (in this case, yes)!
 			return [];
 		}
@@ -254,7 +254,7 @@ async function processMessage(username, message, flags, self, extra) {
 				try {
 					global_command_array = loadCommands();
 					console.log('Commands Reloaded.');
-				} catch (e) {
+				} catch(e) {
 					global_command_array = saved_command_array;
 					console.error(e); // error in the above string (in this case, yes)!
 					console.log('Commands failed to reload.');
@@ -279,12 +279,12 @@ async function processMessage(username, message, flags, self, extra) {
 				}
 				function clearDirectory(directory) {
 					fs.readdir(directory, (err, files) => {
-						if (err) throw err;
+						if(err) throw err;
 
-						for (const file of files) {
+						for(const file of files) {
 							deleteFile(path.join(directory, file));
 						}
-					  });
+					});
 				}
 				user_array = [];
 				deleteFile("chatters.json");
@@ -310,7 +310,7 @@ async function processMessage(username, message, flags, self, extra) {
 			}
 		}
 		if(message_lower.startsWith('!timeout')) {
-			let [_prefix, _command, target_user, seconds, multiplier] =(() => {
+			let [_prefix, _command, target_user, seconds, multiplier] = (() => {
 				const regex = /(!timeout)\s*(\w*)\s*(\d*)([mhdwMHDW])*/;
 				let match = message.match(regex);
 				if(!match)
@@ -318,8 +318,8 @@ async function processMessage(username, message, flags, self, extra) {
 				return match;
 			})();
 			seconds == 0 ? (seconds = 69) : (seconds = parseInt(seconds));
-			
-			switch (multiplier) {
+
+			switch(multiplier) {
 				case 'm':
 					seconds *= 60;
 					break;
@@ -341,24 +341,24 @@ async function processMessage(username, message, flags, self, extra) {
 			const channel_info = await twurple.getChannelInfoByUsername(target_user);
 			server.sayWrapper(`GET OUT ${channel_info.displayName} sypher18OMG`);
 			const is_mod = await twurple.checkUserMod(target_user);
-			await twurple.timeoutUser({user: channel_info.id, duration: seconds, reason: 'Is a butt'});
+			await twurple.timeoutUser({ user: channel_info.id, duration: seconds, reason: 'Is a butt' });
 			const tts_filename = `../${(await tts.ttsToMP3(`GET OUT ${channel_info.displayName.replaceAll('_', ' ')}`, `alerts/assets/alerts/tts`, tts.voices[27]))}`.replace('../alerts/', '');
 			server.sendMessage('TTS', `${tts_filename}`);
 			server.sendMessage('Audio', 'alerts/muten_dungeon.mp3');
 			if(is_mod)
 				setTimeout(function() {
-					twurple.setModerator(target_user)
+					twurple.setModerator(target_user);
 				}, (seconds + 5) * 1000);
 		}
-		if (message_lower.match(/^!so\s+(\S+)?/)) {//!so muten_pizza
+		if(message_lower.match(/^!so\s+(\S+)?/)) {//!so muten_pizza
 			let query = message_lower.match(/^!so\s+(\S+)?/)[1] || 'sypherce';
-			const channel_info = (await twurple.getChannelInfoByUsername(`${query}`))
+			const channel_info = (await twurple.getChannelInfoByUsername(`${query}`));
 			channel_info.game_and_title = channel_info.gameName;
 			if(channel_info.gameName === 'Retro') {
 				const max_title_length = 45;
 				let title = `${channel_info.title.substring(0, max_title_length)}...`;
-				if (!(title.length > max_title_length))
-				 title= channel_info.title;
+				if(!(title.length > max_title_length))
+					title = channel_info.title;
 
 				channel_info.game_and_title = `${channel_info.gameName} (${title})`;
 			}
@@ -535,7 +535,7 @@ async function processMessage(username, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Command "${firstWord}" already exists. Try using !cae to edit.`);
 					}
 					else {
-						const addCustomAudio = function (author, keyword, customaudio) {
+						const addCustomAudio = function(author, keyword, customaudio) {
 							const new_command = {
 								author: user,
 								cooldown: 0,
@@ -594,11 +594,11 @@ async function processMessage(username, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command.`);
 					}
 					else {
-						const listCustomAudio = function () {
+						const listCustomAudio = function() {
 							for(let command of global_command_array) {
 								const keyword_or_altkey = (typeof command.altkey !== 'undefined') ?
-								command.altkey.toString() :
-								command.keyword.toString();
+									command.altkey.toString() :
+									command.keyword.toString();
 
 								if(keyword_or_altkey === firstWord &&
 									(typeof command.task[0].customaudio !== 'undefined'))
@@ -615,7 +615,7 @@ async function processMessage(username, message, flags, self, extra) {
 				if(task.tts || task.ttsing) {
 					/* Attempt to match the message to a regular expression.
 					If it fails, try to match task.tts or task.ttsing to the regular expression.*/
-					const [_, type, tts_number, spokenText] =(() => {
+					const [_, type, tts_number, spokenText] = (() => {
 						const regex = /!?(ttsing|ttsanta|tts)(\d*)\s*(.*)/;
 						let match = message.match(regex);
 						if(!match)
@@ -629,19 +629,19 @@ async function processMessage(username, message, flags, self, extra) {
 								number === true ||
 								number === '')
 								return false;
-							return !isNaN(number)
+							return !isNaN(number);
 						}
 						switch(type) {
-						case 'ttsing':
-							if(isNumber(tts_number))
-								return tts.all_singing_voices[tts_number] ?? type;
-							break;
-						case 'tts':
-							if(isNumber(tts_number))
-								return tts.voices[tts_number] ?? type;;
-							break;
-						case 'ttsanta':
-							return tts.voices[28];
+							case 'ttsing':
+								if(isNumber(tts_number))
+									return tts.all_singing_voices[tts_number] ?? type;
+								break;
+							case 'tts':
+								if(isNumber(tts_number))
+									return tts.voices[tts_number] ?? type;;
+								break;
+							case 'ttsanta':
+								return tts.voices[28];
 						}
 						return type;
 					})();
@@ -775,7 +775,7 @@ async function processMessage(username, message, flags, self, extra) {
 
 	proccessBuiltInCommands(username, message, flags, self, extra);
 
-//Process Custom Commands
+	//Process Custom Commands
 	const number = await processCustomCommands(username, message, flags, self, extra);
 	console.log('D:', `${username}(${number}): ${message}`);
 }

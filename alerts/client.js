@@ -180,7 +180,7 @@ function playSound(file) {
 const sound_queue = [];
 function playSoundQueued(file) {
 	const MAX_QUEUE_LENGTH = 4;
-	if(sound_queue.length > MAX_QUEUE_LENGTH )
+	if(sound_queue.length > MAX_QUEUE_LENGTH)
 		return;
 	let sound = new Howl({
 		src: [file],
@@ -197,7 +197,7 @@ function playSoundQueued(file) {
 			sound_queue.shift();
 		},
 	});
-	sound_queue.push(sound)
+	sound_queue.push(sound);
 	if(sound_queue.length === 1)
 		sound_queue[0].play();
 }
@@ -250,7 +250,7 @@ function initWebSocket() {
 
 		function convertPath(path) {
 			if(path.match(`^(alerts|music)\/`) !== null);
-				path = `assets/${path}`
+			path = `assets/${path}`;
 
 			return path;
 		}
@@ -511,8 +511,8 @@ function initWebSocket() {
 			case 'Enable':
 			case 'Disable': {
 				const setting = key === 'Enable';
-					enable_song = setting;
-					console.log(enable_song,setting)
+				enable_song = setting;
+				console.log(enable_song, setting);
 				break;
 			}
 			default: {
