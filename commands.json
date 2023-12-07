@@ -98,7 +98,7 @@
 	},
 	{
 		"altkey": ["!sounds"],
-		"keyword": ["(!commands|!sounds)"],
+		"keyword": ["!commands", "!sounds"],
 		"task": [{"chat": "https://sypherce.github.io/stream/sounds.html"}],
 		"exclude": true,
 		"author": ""
@@ -2142,7 +2142,8 @@
 		"author": "nefael_yunalesca"
 	},
 	{
-		"keyword": ["haha"],
+		"altkey": ["haha"],
+		"keyword": ["haha(she|shee|)"],
 		"task": [
 			{"alert": ["alerts/nefael_yunalesca.gif", "slideInDown", "pulse", "slideOutUp"]}
 		],
@@ -2388,6 +2389,11 @@
 		"author": "sypherce",
 		"keyword": ["weiner"],
 		"task": [{"customaudio": "water 0 450 !adamj93 1100 650 water 750 300 !adamj93 1100 650 water 1300 300 !adamj93 1100 650 beep 0 200 !adamj93 1100 650 water 1300 300 !adamj93 1100 650"}]
+	},
+	{
+		"author": "sypherce",
+		"keyword": ["cawfeeand"],
+		"task": [{"customaudio": "water 0 450 cawfee 1373 657 water 850 190 cawfee 3068 572 water 1365 210 cawfee 6221 673 water 264 193 cawfee 10019 623 water 3200 200 cawfee 12308 692"}]
 	},
 	{
 		"author": "sypherce",
@@ -2653,6 +2659,13 @@
 		]
 	},
 	{
+		"author": "residentemil_",
+		"keyword": ["ears"],
+		"task": [
+			{"media": ["alerts/emil_ears.mp3"]}
+		]
+	},
+	{
 		"altkey": ["hotchocolate"],
 		"author": "itteramatv",
 		"keyword": ["hot\\s*chocolate"],
@@ -2667,7 +2680,7 @@
 		"author": "sypherce",
 		"altkey": ["hahashee"],
 		"keyword": ["(hahashee|hahashe)"],
-		"task": [{"customaudio": "haha 0 8000 banshee 500 2000"}]
+		"task": [{"customaudio": "null 0 8000 banshee 500 2000"}]
 	},
 	{
 		"author": "sypherce",
