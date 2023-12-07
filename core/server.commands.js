@@ -317,7 +317,8 @@ async function processMessage(username, message, flags, self, extra) {
 					match = [message, 'sypherce', 69, 's'];
 				return match;
 			})();
-
+			seconds == 0 ? (seconds = 69) : (seconds = parseInt(seconds));
+			
 			switch (multiplier) {
 				case 'm':
 					seconds *= 60;
