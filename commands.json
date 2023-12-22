@@ -136,7 +136,7 @@
 	},
 	{
 		"keyword": ["dream"],
-		"task": [{"customaudio": "!popcyclopsicle 0 2500 !popcyclopsicle 16500 2000"}],
+		"task": [{"customaudio": "!popcyclopsicle 0 2500 !popcyclopsicle 16300 1200"}],
 		"author": ""
 	},
 	{
@@ -208,8 +208,7 @@
 		"keyword": ["cawfee"],
 		"task": [{"videonow": "music/0 - Other/bog_cawfee.mp4"}],
 		"description": "🎥 <a href=\"https://www.youtube.com/watch?v=wjTZfbfr3QI\">https://www.youtube.com/watch?v=wjTZfbfr3QI</a>",
-		"author": "bogmired",
-		"lasttimestamp": 1701275033685
+		"author": "bogmired"
 	},
 	{
 		"keyword": ["!duck"],
@@ -534,8 +533,7 @@
 		"altkey": ["badgers"],
 		"keyword": ["badger(s|)"],
 		"task": [{"videonow": "music/0 - Other/missliss_badgers.mp3"}],
-		"author": "missliss15",
-		"lasttimestamp": 1701278023986
+		"author": "missliss15"
 	},
 	{
 		"altkey": ["barkofshame"],
@@ -1039,8 +1037,7 @@
 		"altkey": ["hotdrinks"],
 		"keyword": ["hot\\s*drinks"],
 		"task": [{"videonow": "music/0 - Other/Wendy's Training Video Hot Drinks.mp4"}],
-		"author": "residentemil_",
-		"lasttimestamp": 1701280901273
+		"author": "residentemil_"
 	},
 	{
 		"keyword": ["hoy1"],
@@ -1854,8 +1851,7 @@
 		"altkey": ["left"],
 		"keyword": ["left"],
 		"task": [{"videonow": "music/0 - Other/emil_left.mp4"}],
-		"author": "residentemil_",
-		"lasttimestamp": 1701278242595
+		"author": "residentemil_"
 	},
 	{
 		"altkey": ["heywater"],
@@ -1968,11 +1964,33 @@
 		"author": "muten_pizza"
 	},
 	{
+		"altkey": ["victory"],
 		"keyword": ["victory"],
 		"task": [
-			{"media": ["alerts/victory1.mp3", "alerts/victory2.mp3"]}
+			{"media": ["alerts/victory1.mp3", "alerts/victory2.mp3", "alerts/victory3.mp3"]}
 		],
 		"author": ""
+	},
+	{
+		"keyword": ["victory1"],
+		"task": [
+			{"media": ["alerts/victory1.mp3"]}
+		],
+		"author": ""
+	},
+	{
+		"keyword": ["victory2"],
+		"task": [
+			{"media": ["alerts/victory2.mp3"]}
+		],
+		"author": ""
+	},
+	{
+		"keyword": ["victory3"],
+		"task": [
+			{"media": ["alerts/victory3.mp3"]}
+		],
+		"author": "residentemil_"
 	},
 	{
 		"altkey": ["hoy"],
@@ -2047,6 +2065,14 @@
 			{"alert": ["alerts/xjrigsx.mp4", "bounceIn", "pulse", "hinge"]}
 		],
 		"author": "xjrigsx"
+	},
+	{
+		"altkey": ["!tri_the_force_215"],
+		"keyword": ["!tri"],
+		"task": [
+			{"alert": ["alerts/tri_the_force_215.mp4", "fadeIn", "pulse", "fadeOut"]}
+		],
+		"author": "tri_the_force_215"
 	},
 	{
 		"altkey": ["!blacksquall"],
@@ -2547,6 +2573,70 @@
 	},
 	{
 		"author": "residentemil_",
+		"altkey": ["hnb2"],
+		"keyword": ["hnb2", "hnb\\s*together", "popcor74hnb"],
+		"task": [
+			{"media": ["alerts/hnb2.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["hnb3"],
+		"keyword": ["hnb3", "hnb\\s*together", "popcor74hnb"],
+		"task": [
+			{"media": ["alerts/hnb3.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["hnb4"],
+		"keyword": ["hnb4", "hnb\\s*together", "popcor74hnb"],
+		"task": [
+			{"media": ["alerts/hnb4.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["hnb5"],
+		"keyword": ["hnb5", "hnb\\s*together", "popcor74hnb"],
+		"task": [
+			{"media": ["alerts/hnb5.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["hnb6"],
+		"keyword": ["hnb6", "hnb\\s*together", "popcor74hnb"],
+		"task": [
+			{"media": ["alerts/hnb6.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["hnb7"],
+		"keyword": ["hnb7", "hnb\\s*together", "popcor74hnb"],
+		"task": [
+			{"media": ["alerts/hnb7.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["hnb8"],
+		"keyword": ["hnb8", "hnb\\s*together", "popcor74hnb"],
+		"task": [
+			{"media": ["alerts/hnb8.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
+		"altkey": ["hnb9"],
+		"keyword": ["hnb9", "hnb|\\s*together"],
+		"task": [
+			{"media": ["alerts/hnb9.mp3"]}
+		]
+	},
+	{
+		"author": "residentemil_",
 		"altkey": ["johnson1"],
 		"keyword": ["johnson1", "al(l|)\\s*together"],
 		"task": [
@@ -2686,5 +2776,10 @@
 		"author": "sypherce",
 		"keyword": ["123"],
 		"task": [{"customaudio": "kickit 0 7000 cawfee 27900 1000"}]
+	},
+	{
+		"author": "sypherce",
+		"keyword": ["rupeefart"],
+		"task": [{"customaudio": "rupeegame 0 2250 fart 500 500 rupeegame 2750 2000 fart 500 500 rupeegame 5250 2000 fart 500 500 rupeegame 7750 2000 fart 500 500"}]
 	}
 ]
