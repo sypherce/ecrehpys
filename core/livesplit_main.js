@@ -9,16 +9,15 @@ const path = require('path');
 const tracklist = {
 	directory: './',
 	list: [],
-	get: function(i) {
-		if(tracklist.list[i] === undefined)
-			return path.join(tracklist.directory, `${i}.mp3`);
+	get: function (i) {
+		if (tracklist.list[i] === undefined) return path.join(tracklist.directory, `${i}.mp3`);
 
 		return path.join(tracklist.directory, tracklist.list[i]);
 	},
-	load: function(filename) {
+	load: function (filename) {
 		const basedir = 'assets/livesplit';
-		fs.access(`${basedir}/${filename}`, fs.F_OK, function(doesnt_exist) {
-			if(doesnt_exist) {
+		fs.access(`${basedir}/${filename}`, fs.F_OK, function (doesnt_exist) {
+			if (doesnt_exist) {
 				console.error(doesnt_exist);
 				return;
 			}
@@ -39,7 +38,7 @@ console.log(tracklist.get(40));
 let splitIndex = null;
 async function index_updater() {
 	splitIndex = await livesplit.getSplitIndex();
-	if(typeof index_updater.last === 'undefined' || index_updater.last !== splitIndex) {
+	if (typeof index_updater.last === 'undefined' || index_updater.last !== splitIndex) {
 		index_updater.last = splitIndex;
 		console.log(splitIndex, tracklist.get(splitIndex));
 	}

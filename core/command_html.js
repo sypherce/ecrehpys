@@ -1,6 +1,7 @@
 const fs = require('fs');
 
-const html = [`
+const html = [
+	`
 <html>
 	<head>
 	<meta charset="UTF-8">
@@ -36,7 +37,8 @@ const html = [`
 	' ',
 	`
 	</body>
-</html>`];
+</html>`,
+];
 
 //inserts command_list into html[1] and writes it out to the file
 async function writeHTMLFile(filename, command_list) {

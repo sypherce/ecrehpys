@@ -1,52 +1,43 @@
 /*global  */
 'use strict';
 //lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
-const isLinux = false;	//win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
-let base_url = `http://${(isLinux ? 'steamdeck.local' : 'derrick-desktop')}:8880/api`;
+const isLinux = false; //win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
+let base_url = `http://${isLinux ? 'steamdeck.local' : 'derrick-desktop'}:8880/api`;
 //curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
 
 let music_path = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
 
 async function getJSON(url) {
 	try {
-		const response = await fetch(
-			`${base_url}/${url}`,
-			{
-				method: 'GET',
-				headers: {
-					accept: 'application/json',
-				},
-			}
-		);
-		if(!response.ok)
-			throw new Error(`HTTP error! status: ${response.status}`);
+		const response = await fetch(`${base_url}/${url}`, {
+			method: 'GET',
+			headers: {
+				accept: 'application/json',
+			},
+		});
+		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
 		return await response.json();
-
-	} catch(err) {
+	} catch (err) {
 		console.log(err);
 		return '';
 	}
 }
 async function postJSON(url, data) {
 	try {
-		const response = await fetch(
-			`${base_url}/${url}`,
-			{
-				method: 'POST',
-				headers: {
-					'accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				body: //JSON.stringify(data)
-					JSON.stringify(data)
-			}
-		);
+		const response = await fetch(`${base_url}/${url}`, {
+			method: 'POST',
+			headers: {
+				accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			//JSON.stringify(data)
+			body: JSON.stringify(data),
+		});
 
 		//not sure if this should just return false. throw new error is a mystery to me
-		if(!response.ok)
-			throw new Error(`HTTP error! status: ${response.status}`);
-	} catch(err) {
+		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+	} catch (err) {
 		console.log(err);
 		return false;
 	}
@@ -55,17 +46,13 @@ async function postJSON(url, data) {
 }
 async function postSimple(url) {
 	try {
-		const response = await fetch(
-			`${base_url}/${url}`,
-			{
-				method: 'POST'
-			}
-		);
+		const response = await fetch(`${base_url}/${url}`, {
+			method: 'POST',
+		});
 
 		//not sure if this should just return false. throw new error is a mystery to me
-		if(!response.ok)
-			throw new Error(`HTTP error! status: ${response.status}`);
-	} catch(err) {
+		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+	} catch (err) {
 		console.log(err);
 		return false;
 	}
@@ -76,7 +63,7 @@ async function postSimple(url) {
 //curl -X POST "http://derrick-desktop.local:8880/api/player?position=30" -H "accept: application/json"
 async function setPosition(position, absolute = false) {
 	let command = '';
-	if(absolute) {
+	if (absolute) {
 		command = `player?position=${position}`;
 	} else {
 		command = `player?relativePosition=${position}`;
@@ -96,8 +83,7 @@ async function getPlaybackState() {
 	const json = await getJSON('player');
 	const this_state = json.player.playbackState;
 
-	if(getPlaybackState.state === this_state)
-		return false;
+	if (getPlaybackState.state === this_state) return false;
 
 	getPlaybackState.state = this_state;
 	return getPlaybackState.state;
@@ -130,26 +116,24 @@ async function getPlaylists() {
 //currently broken if no playlists available
 async function getCurrentPlaylist() {
 	const playlists = await getPlaylists();
-	return playlists.filter(element => element.isCurrent === true)[0];
+	return playlists.filter((element) => element.isCurrent === true)[0];
 }
 
 async function getActivePlaylistIndex() {
 	const json = await getJSON('player');
 	const index = json.player.activeItem.playlistIndex;
-	if(index === -1)
-		return (await getCurrentPlaylist()).index;
+	if (index === -1) return (await getCurrentPlaylist()).index;
 
 	return index;
 }
 async function addItems(playlist_id, index, play, items) {
-	return postJSON(`playlists/${playlist_id}/items/add`,
-		{
-			'index': index,
-			'async': false,
-			'replace': false,
-			'play': play,
-			'items': items
-		});
+	return postJSON(`playlists/${playlist_id}/items/add`, {
+		index: index,
+		async: false,
+		replace: false,
+		play: play,
+		items: items,
+	});
 
 	/* working vvvvv
 		fetch('http://derrick-desktop.local:8880/api/playlists/p1/items/add', {
@@ -176,13 +160,13 @@ async function addItems(playlist_id, index, play, items) {
 async function getItems(playlist, range) {
 	const json = await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`);
 	console.log(json);
-	json.playlistItems.items.forEach((element) =>  {
+	json.playlistItems.items.forEach((element) => {
 		let temporary = element.columns;
 		element.columns = {
-				album:	temporary[0],
-				title:	temporary[1],
-				path:	temporary[2]
-		}
+			album: temporary[0],
+			title: temporary[1],
+			path: temporary[2],
+		};
 	});
 	console.log(json);
 	return json;
@@ -213,17 +197,16 @@ async function _test() {
 		console.log(element.columns);
 	});
 
-	await new Promise(r => setTimeout(r, 1000));
+	await new Promise((r) => setTimeout(r, 1000));
 	const test_mp3_filename = music_path + '/0 - Other/Crabs- MrWeebl.mp3';
 	console.log({
-		postJSON: await postJSON(`playlists/${active_playlist}/items/add`,
-			{
-				'index': 0,
-				'async': false,
-				'replace': false,
-				'play': true,
-				'items': [test_mp3_filename]
-			})
+		postJSON: await postJSON(`playlists/${active_playlist}/items/add`, {
+			index: 0,
+			async: false,
+			replace: false,
+			play: true,
+			items: [test_mp3_filename],
+		}),
 	});
 	console.log(`${active_playlist} -- ${test_mp3_filename}`);
 
@@ -231,4 +214,17 @@ async function _test() {
 }
 //_test();
 
-export { setPosition, getActiveItemIndex, getPosition, getPositionRelative, getCoverartURL, getActiveItemFilename, getPlaybackState, isPlaying, getActivePlaylistIndex, addItems, getItems, music_path };
+export {
+	setPosition,
+	getActiveItemIndex,
+	getPosition,
+	getPositionRelative,
+	getCoverartURL,
+	getActiveItemFilename,
+	getPlaybackState,
+	isPlaying,
+	getActivePlaylistIndex,
+	addItems,
+	getItems,
+	music_path,
+};

@@ -10,25 +10,23 @@ async function init() {
 
 function sayWrapper(message) {
 	console.log('D:', message);
-	twurple.sayWrapper(message);//bot.Say(message);
+	twurple.sayWrapper(message); //bot.Say(message);
 }
 function actionWrapper(message) {
 	console.log('D:', message);
-	twurple.actionWrapper(message);//bot.Say(message);
+	twurple.actionWrapper(message); //bot.Say(message);
 }
 function streamerSayWrapper(message) {
 	console.log('D:', message);
-	twurple.streamerSayWrapper(message);//streamer.Say(message);
+	twurple.streamerSayWrapper(message); //streamer.Say(message);
 }
 
 let connection = null;
 function sendMessage(id, contents) {
-	if(connection === null) return;
+	if (connection === null) return;
 
-	if(typeof contents === 'object')
-		contents = JSON.stringify(contents);
-	else
-		contents = `"${contents}"`;
+	if (typeof contents === 'object') contents = JSON.stringify(contents);
+	else contents = `"${contents}"`;
 
 	const message = `{"${id}" : ${contents}}`;
 
@@ -37,7 +35,7 @@ function sendMessage(id, contents) {
 }
 
 const socket = new ws.server({
-	httpServer: http.createServer().listen(1338)
+	httpServer: http.createServer().listen(1338),
 });
 socket.on('request', (request) => {
 	connection = request.accept(null, request.origin);
@@ -46,7 +44,7 @@ socket.on('request', (request) => {
 	connection.on('message', (message) => {
 		const object = JSON.parse(message.utf8Data);
 		console.log(message.utf8Data);
-		switch(object.Message) {
+		switch (object.Message) {
 			case 'Client':
 				sendMessage('Message', 'Server');
 				break;

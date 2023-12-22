@@ -8,10 +8,8 @@ function setFilterDisplay(entry, index) {
 	entry.style.display = '';
 
 	//0 is playing, 1-3 are up for voting, 4-7 are coming up
-	if(index > 0)
-		entry.style.filter = `grayscale(${100 - ((7 - index) * 10)}%)`;
-	if(index > 6)
-		entry.style.display = 'none';
+	if (index > 0) entry.style.filter = `grayscale(${100 - (7 - index) * 10}%)`;
+	if (index > 6) entry.style.display = 'none';
 }
 
 export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 'Invalid', index = undefined) {
@@ -24,21 +22,18 @@ export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 
 
 		return http.status !== 404;
 	}
-	if(!urlExists(filename))
-		return;
+	if (!urlExists(filename)) return;
 
 	//if entry exists, return
 	const entry_exists = document.querySelector(`div[data-filename="${filename}"]`);
-	if(entry_exists !== null) {
+	if (entry_exists !== null) {
 		return;
 	}
 
 	//start building the entry
 	const base_classes = 'base-entry';
 	const container = document.querySelector('#container');
-	const id = (typeof index === 'undefined') ?
-		container.childNodes.length :
-		index;
+	const id = typeof index === 'undefined' ? container.childNodes.length : index;
 	const entry = document.createElement('div');
 	entry.setAttribute('data-filename', filename);
 	entry.className = `${base_classes} fade-in`;
@@ -47,7 +42,7 @@ export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 
 
 	let show_album_text = `<div class="ticker-item">${album}</div><br>`;
 
-	let img_src = await beefweb.getCoverartURL(id + (await (beefweb.getActiveItemIndex())));
+	let img_src = await beefweb.getCoverartURL(id + (await beefweb.getActiveItemIndex()));
 
 	entry.innerHTML = `
 		<div class="progress-bar"></div>
@@ -72,11 +67,11 @@ export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 
 		//	sendMessage('Message', 'Request Queue');
 		//}
 		const this_index = Array.from(children).indexOf(this);
-		if(e.animationName === 'fade-in') {
+		if (e.animationName === 'fade-in') {
 			this.classList.remove(e.animationName);
 		}
-		if(e.animationName === 'scroll-left-fade-out') {
-			for(let i = this_index; i < children.length; i++) {
+		if (e.animationName === 'scroll-left-fade-out') {
+			for (let i = this_index; i < children.length; i++) {
 				setFilterDisplay(children[i], i);
 			}
 			this.parentNode.removeChild(this);
@@ -84,7 +79,7 @@ export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 
 	}
 	entry.addEventListener('animationend', temp_name_anim_end);
 
-	if(typeof index === 'undefined') {
+	if (typeof index === 'undefined') {
 		container.appendChild(entry);
 	} else {
 		container.insertBefore(entry, container.children[index]);
@@ -101,16 +96,16 @@ export async function addEntry(album = 'Invalid', title = 'Invalid', filename = 
 
 function lowerEntry(index = 0) {
 	let parent = document.getElementById('container');
-	if(parent.children.length < index) {
-		console.log('Entry doesn\'t  exist');
+	if (parent.children.length < index) {
+		console.log("Entry doesn't  exist");
 		return;
 	}
-	if(parent.children.length === index) {
+	if (parent.children.length === index) {
 		console.log('Entry is at the bottom');
 		return;
 	}
 
-	for(let i = index + 1; i < parent.children.length; i++) {
+	for (let i = index + 1; i < parent.children.length; i++) {
 		parent.children[i].classList.add('scroll-left');
 	}
 
@@ -119,8 +114,8 @@ function lowerEntry(index = 0) {
 
 export function rmEntry(index = 0) {
 	let parent = document.getElementById('container');
-	if(parent.children.length <= index) {
-		console.log('Entry doesn\'t  exist');
+	if (parent.children.length <= index) {
+		console.log("Entry doesn't  exist");
 		return;
 	}
 
@@ -134,44 +129,42 @@ async function updateEntries() {
 	let index = await beefweb.getActiveItemIndex();
 	let playlist = await beefweb.getActivePlaylistIndex();
 	let entries = '';
-	if(index !== -1) {
+	if (index !== -1) {
 		entries = await beefweb.getItems(playlist, `${index}:${count}`);
 	}
 
 	const container = document.querySelector('#container');
 	let playback_state = await beefweb.getPlaybackState();
-	if(playback_state && playback_state === 'stopped'
-		|| typeof entries.playlistItems === 'undefined') {
-		for(let i = 0; i < container.children.length; i++) {
+	if ((playback_state && playback_state === 'stopped') || typeof entries.playlistItems === 'undefined') {
+		for (let i = 0; i < container.children.length; i++) {
 			rmEntry(i);
 		}
-		if(typeof entries.playlistItems === 'undefined') {
+		if (typeof entries.playlistItems === 'undefined') {
 			return;
 		}
 	}
 
 	count = entries.playlistItems.items.length;
 
-	for(let i = 0; i < count; i++) {
+	for (let i = 0; i < count; i++) {
 		let filename = entries.playlistItems.items[i].columns.path;
 		filename = filename.replace(/G:/g, '/mnt/g');
 		filename = filename.replace(/\\/g, '/');
 
 		//this next block is broken
 		const entry_exists = document.querySelector(`div[data-filename="${filename}"]`);
-		if(entry_exists) {
-			for(let y = 0; y < entry_exists.childNodes.length; y++) {
-				if(entry_exists.childNodes[y].className === 'progress-bar') {
+		if (entry_exists) {
+			for (let y = 0; y < entry_exists.childNodes.length; y++) {
+				if (entry_exists.childNodes[y].className === 'progress-bar') {
 					let pos = 0;
-					if(i === 0)
-						pos = await beefweb.getPositionRelative();
+					if (i === 0) pos = await beefweb.getPositionRelative();
 
 					entry_exists.childNodes[y].style.width = `calc(var(--image_width) * ${pos})`;
 					break;
 				}
 			}
 			let this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);
-			while(this_index > i) {
+			while (this_index > i) {
 				rmEntry(this_index - 1);
 				//
 				//console.log(0, entry_exists.parentNode);
@@ -180,16 +173,17 @@ async function updateEntries() {
 				//
 				this_index = Array.from(entry_exists.parentNode.children).indexOf(entry_exists);
 			}
-		}
-		else {
-			addEntry(entries.playlistItems.items[i].columns.album,
+		} else {
+			addEntry(
+				entries.playlistItems.items[i].columns.album,
 				entries.playlistItems.items[i].columns.title,
 				filename,
-				i);
+				i
+			);
 		}
 	}
-	for(let i = container.children.length - 1; i >= 0; i--) {
-		if(i >= count) {
+	for (let i = container.children.length - 1; i >= 0; i--) {
+		if (i >= count) {
 			rmEntry(i);
 		} else {
 			setFilterDisplay(container.children[i], i);
