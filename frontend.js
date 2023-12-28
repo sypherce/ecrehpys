@@ -5,11 +5,12 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
-app.listen(3000, () => {
+app.listen(3003, () => {
 	console.log('Application started and Listening on port 3000');
 });
 
 app.use('/', express.static(path.join(__dirname, '/alerts')));
+app.use('/media/', express.static(path.join(__dirname, '/../mediaPlayer/')));
 
 app.use('/peaks/', express.static(path.join(__dirname, '/../stream')));
 app.use('/mistates/', express.static(path.join(__dirname, '/../../../projects/mistates/')));
