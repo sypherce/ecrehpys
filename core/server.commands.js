@@ -434,7 +434,7 @@ async function processMessage(username, message, flags, self, extra) {
 				'a Bee in a jar',
 				'a Golden Bee in a jar',
 				'a Super Bomb',
-				'an Arrow',
+				'a single Arrow',
 				'some Rupee.... I mean Garbage',
 			];
 			const item = item_list[Math.floor(Math.random() * item_list.length)];
