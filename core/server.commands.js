@@ -307,7 +307,7 @@ async function processMessage(username, message, flags, self, extra) {
 				user_array = [];
 				deleteFile('chatters.json');
 				clearDirectory('../../users/icon');
-				twurple.token.resetFirst();
+				twurple.eventsub.resetFirst();
 			}
 			if (message_lower.includes('!debug')) debug = !debug;
 			if (message_lower.includes('!test')) {
