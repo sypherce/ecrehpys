@@ -5,7 +5,14 @@ module.exports = {
 			script: '/home/user/stream/bot/main/index.js',
 			watch: ['/home/user/stream/bot/main/'],
 			watch_delay: 1000,
-			ignore_watch: ['./node_modules', './first.json', './jokes.json', './chatters.json', './alerts'],
+			ignore_watch: [
+				'./node_modules',
+				'./first.json',
+				'./jokes.json',
+				'./chatters.json',
+				'./alerts',
+				'./commands.json',
+			],
 			args: '--use_strict --inspect=9229',
 			env: {
 				NODE_ENV: 'development',
