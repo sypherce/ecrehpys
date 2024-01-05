@@ -2,17 +2,10 @@ module.exports = {
 	apps: [
 		{
 			name: 'backend - console',
-			script: '/home/user/stream/bot/main/index.js',
-			watch: ['/home/user/stream/bot/main/'],
+			script: './index.js',
+			watch: ['./'],
 			watch_delay: 1000,
-			ignore_watch: [
-				'./node_modules',
-				'./first.json',
-				'./jokes.json',
-				'./chatters.json',
-				'./alerts',
-				'./commands.json',
-			],
+			ignore_watch: ['./node_modules', './alerts', './config'],
 			args: '--use_strict --inspect=9229',
 			env: {
 				NODE_ENV: 'development',
@@ -23,9 +16,9 @@ module.exports = {
 		},
 		{
 			name: 'frontend - alerts',
-			script: '/home/user/stream/bot/main/frontend.js',
+			script: './frontend.js',
 			args: '--use_strict --inspect=9228',
-			watch: ['/home/user/stream/bot/main/frontend.js'],
+			watch: ['./frontend.js'],
 		},
 	],
 };

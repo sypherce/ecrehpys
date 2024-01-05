@@ -5,6 +5,4 @@ server.twurple.js
 server.unused.js
 commands.json.*
 peaks.js-master
-jokes.json
-chatters.json
-first.json
+config/

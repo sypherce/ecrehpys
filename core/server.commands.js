@@ -9,13 +9,13 @@ const mp3Library = require('../lib/mp3Library.js');
 const prettyStringify = require('@aitodotai/json-stringify-pretty-compact');
 const tts = require('../lib/tts.js');
 
-/**Loads and returns all commands from 'commands.json' in a JSON.parse() object.
+/**Loads and returns all commands from 'config/commands.json' in a JSON.parse() object.
  *
- * @param {string} [filename='commands.json'] - The filename of the commands JSON file.
+ * @param {string} [filename='config/commands.json'] - The filename of the commands JSON file.
  * @returns {Array} - An array containing all the loaded commands.
  */
-function loadCommands(filename = 'commands.json') {
-	//loads and returns all commands from 'commands.json' in an JSON.parse() object
+function loadCommands(filename = 'config/commands.json') {
+	//loads and returns all commands from 'config/commands.json' in an JSON.parse() object
 	let html = '';
 	const command_array = JSON.parse(fs.readFileSync(filename));
 
@@ -98,11 +98,11 @@ function loadCommands(filename = 'commands.json') {
 	return command_array;
 }
 /**Saves the commands to a JSON file.
- * @param {string} [filename='commands.json'] - The name of the file to save the commands to.
+ * @param {string} [filename='config/commands.json'] - The name of the file to save the commands to.
  * @param {Array} [command_array=global_command_array] - The array of commands to save.
  * @returns {Array} - The updated array of commands.
  */
-function saveCommands(filename = 'commands.json', command_array = global_command_array) {
+function saveCommands(filename = 'config/commands.json', command_array = global_command_array) {
 	for (const command of command_array) {
 		//set defaults that may not be defined
 		if (command.cooldown === 0) delete command.cooldown;
@@ -191,24 +191,27 @@ let user_array = [];
  * @returns {Promise<void>} - A promise that resolves when the command processing is complete.
  */
 async function processMessage(username, message, flags, self, extra) {
-	/**Loads the user array from the 'chatters.json' file.
+	/**Loads the user array from the 'config/chatters.json' file.
 	 * @returns {Array} The loaded user array.
 	 */
 	async function loadUserArray() {
 		try {
-			return JSON.parse(fs.readFileSync('chatters.json'));
+			return JSON.parse(fs.readFileSync('config/chatters.json'));
 		} catch (e) {
 			console.error(e); // error in the above string (in this case, yes)!
 			return [];
 		}
 	}
-	/**Saves an array of users to the 'chatters.json' file.
+	/**Saves an array of users to the 'config/chatters.json' file.
 	 *
 	 * @param {Array} array - The array of users to be saved.
 	 * @returns {void}
 	 */
 	async function saveUserArray(array) {
-		fs.writeFileSync('chatters.json', prettyStringify(array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
+		fs.writeFileSync(
+			'config/chatters.json',
+			prettyStringify(array, { indent: '\t', maxLength: 1000, maxNesting: 2 })
+		);
 	}
 	/**Checks the profile image of a user and writes it to a PHP file.
 	 * @param {string} username - The username of the user.
@@ -305,7 +308,7 @@ async function processMessage(username, message, flags, self, extra) {
 					});
 				}
 				user_array = [];
-				deleteFile('chatters.json');
+				deleteFile('config/chatters.json');
 				clearDirectory('../../users/icon');
 				twurple.eventsub.resetFirst();
 			}
