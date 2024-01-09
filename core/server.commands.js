@@ -33,21 +33,14 @@ function loadCommands(filename = 'config/commands.json') {
 		}
 
 		//altkey takes priority
-		let keyword = command.altkey?.[0] || command.keyword[0];
-
 		//remove regexps for simplicity
-		if (keyword !== command.altkey) {
-			keyword = keyword.replaceAll("')", '');
-			keyword = keyword.replaceAll('.*', '');
-			keyword = keyword.replaceAll('\\s*', ' ');
-			keyword = keyword.replaceAll('[s]', ' ');
-		}
+		const keyword = command.altkey?.[0] || command.keyword[0].replaceAll("')", '').replaceAll('.*', '').replaceAll('\\s*', ' ').replaceAll('[s]', ' ');
 
 		//!this currently isn't used
 		//setup the description
-		let task_string = command.task[0].song || command.task[0].videonow;
-		if (typeof command.description !== 'undefined') task_string = command.description;
-		if (typeof task_string === 'undefined') task_string = '';
+		//let task_string = command.task[0].song || command.task[0].videonow;
+		//if (typeof command.description !== 'undefined') task_string = command.description;
+		//if (typeof task_string === 'undefined') task_string = '';
 
 		const formatted_author_string = command.author === '' ? '' : ` [${command.author}]`;
 
@@ -112,8 +105,7 @@ function saveCommands(filename = 'config/commands.json', command_array = global_
 		//!this might be done elsewhere, idk
 		//set media_count to 0 if it's needed
 		for (const task of command.task) {
-			if (typeof task.media !== 'undefined' && typeof task.media_counter !== 'undefined')
-				delete task.media_counter;
+			if (typeof task.media !== 'undefined' && typeof task.media_counter !== 'undefined') delete task.media_counter;
 		}
 	}
 	fs.writeFileSync(`${filename}`, prettyStringify(command_array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
@@ -171,7 +163,7 @@ async function processVariables(user, query_string, task_string) {
 	});
 
 	const query_parts = query_string.split(' ');
-	for (let i = 1; i <= 9; i++) {
+	for (const i = 1; i <= 9; i++) {
 		task_string = task_string.replace(new RegExp(`\\$\\(\\s*${i}\\s*\\)`), query_parts[i] || '');
 	}
 
@@ -194,7 +186,7 @@ async function processMessage(username, message, flags, self, extra) {
 	/**Loads the user array from the 'config/chatters.json' file.
 	 * @returns {Array} The loaded user array.
 	 */
-	async function loadUserArray() {
+	function loadUserArray() {
 		try {
 			return JSON.parse(fs.readFileSync('config/chatters.json'));
 		} catch (e) {
@@ -207,11 +199,8 @@ async function processMessage(username, message, flags, self, extra) {
 	 * @param {Array} array - The array of users to be saved.
 	 * @returns {void}
 	 */
-	async function saveUserArray(array) {
-		fs.writeFileSync(
-			'config/chatters.json',
-			prettyStringify(array, { indent: '\t', maxLength: 1000, maxNesting: 2 })
-		);
+	function saveUserArray(array) {
+		fs.writeFileSync('config/chatters.json', prettyStringify(array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
 	}
 	/**Checks the profile image of a user and writes it to a PHP file.
 	 * @param {string} username - The username of the user.
@@ -250,8 +239,7 @@ async function processMessage(username, message, flags, self, extra) {
 	 */
 	function findIntroCommandByString(string, command_array = global_command_array) {
 		for (const command of command_array) {
-			const keyword =
-				typeof command.altkey === 'undefined' ? command.keyword.toString() : command.altkey.toString();
+			const keyword = typeof command.altkey === 'undefined' ? command.keyword.toString() : command.altkey.toString();
 
 			if (keyword === string) return command.task[0].alert;
 		}
@@ -267,7 +255,7 @@ async function processMessage(username, message, flags, self, extra) {
 	 * @returns {Promise<void>} - A promise that resolves when the command processing is complete.
 	 */
 	async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
-		let message_lower = message.toLowerCase();
+		const message_lower = message.toLowerCase();
 		if (flags.broadcaster) {
 			//reload commands list, loadCommands()
 			if (message_lower.includes('!reload')) {
@@ -289,9 +277,7 @@ async function processMessage(username, message, flags, self, extra) {
 			//also clears user avatars for chat
 			//and resets "first"
 
-			if (
-				['!clear_users', '!refresh_users', '!reload_users'].some((command) => message_lower.includes(command))
-			) {
+			if (['!clear_users', '!refresh_users', '!reload_users'].some((command) => message_lower.includes(command))) {
 				function deleteFile(filename) {
 					fs.unlink(filename, (err) => {
 						if (err) console.log(err);
@@ -374,7 +360,7 @@ async function processMessage(username, message, flags, self, extra) {
 		}
 		if (message_lower.match(/^!so\s+(\S+)?/)) {
 			//!so muten_pizza
-			let query = message_lower.match(/^!so\s+(\S+)?/)[1] || 'sypherce';
+			const query = message_lower.match(/^!so\s+(\S+)?/)[1] || 'sypherce';
 			const channel_info = await twurple.getChannelInfoByUsername(`${query}`);
 			channel_info.game_and_title = channel_info.gameName;
 			if (channel_info.gameName === 'Retro') {
@@ -385,9 +371,7 @@ async function processMessage(username, message, flags, self, extra) {
 				channel_info.game_and_title = `${channel_info.gameName} (${title})`;
 			} else if (channel_info.gameName === '') channel_info.game_and_title = 'FartNite';
 
-			server.sayWrapper(
-				`Hey, you should check out twitch.tv/${channel_info.displayName} ! They were last playing ${channel_info.game_and_title}.`
-			);
+			server.sayWrapper(`Hey, you should check out twitch.tv/${channel_info.displayName} ! They were last playing ${channel_info.game_and_title}.`);
 		}
 		if (message_lower.includes('!library')) {
 			const item_list = [
@@ -505,15 +489,13 @@ async function processMessage(username, message, flags, self, extra) {
 	async function processCustomCommands(user, message, _flags, _self, extra, command_array = global_command_array) {
 		let commands_triggered = 0;
 		function replaceExtension(filename, original, replacement) {
-			if (filename.endsWith(original))
-				filename = filename.substring(0, filename.lastIndexOf(original)) + replacement;
+			if (filename.endsWith(original)) filename = filename.substring(0, filename.lastIndexOf(original)) + replacement;
 
 			return filename;
 		}
 		function findCommandByString(string, command_array = global_command_array) {
 			for (const command of command_array) {
-				let keyword = command.keyword.toString();
-				if (typeof command.altkey !== 'undefined') keyword = command.altkey.toString();
+				const keyword = (command.altkey ?? command.keyword).toString();
 
 				if (keyword === string) {
 					if (typeof command.task[0].videonow !== 'undefined') return command.task[0].videonow.toString();
@@ -528,8 +510,7 @@ async function processMessage(username, message, flags, self, extra) {
 		}
 		function isCommandCustomAudio(string, command_array = global_command_array) {
 			for (const command of command_array) {
-				let keyword = command.keyword.toString();
-				if (typeof command.altkey !== 'undefined') keyword = command.altkey.toString();
+				const keyword = (command.altkey ?? command.keyword).toString();
 
 				if (keyword === string) {
 					if (typeof command.task[0].customaudio !== 'undefined') return true;
@@ -565,7 +546,7 @@ async function processMessage(username, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Syntax Error: !ca cmd start duration ...`);
 						return true;
 					}
-					for (let index = 0; index < args.length; index += 3) {
+					for (const index = 0; index < args.length; index += 3) {
 						args[index] = findCommandByString(args[index]);
 						if (typeof args[index] === 'undefined') {
 							server.sayWrapper(`@${user} Syntax Error: ${args[index]} is invalid`);
@@ -588,10 +569,7 @@ async function processMessage(username, message, flags, self, extra) {
 					//this needs to be 3rd to override other commands
 					query = getQuery(message_lower, '!caa ');
 					const firstWord = query.split(' ')[0];
-					query = query.substring(
-						firstWord.length + 1,
-						firstWord.length + 1 + query.length - firstWord.length - 1
-					);
+					query = query.substring(firstWord.length).trim();
 					const commandExists = typeof findCommandByString(firstWord) !== 'undefined';
 					if (commandExists) {
 						server.sayWrapper(`@${user} Command "${firstWord}" already exists. Try using !cae to edit.`);
@@ -620,26 +598,14 @@ async function processMessage(username, message, flags, self, extra) {
 					//this needs to be 4th to override other commands
 					query = getQuery(message_lower, '!cae ');
 					const firstWord = query.split(' ')[0];
-					query = query.substring(
-						firstWord.length + 1,
-						firstWord.length + 1 + query.length - firstWord.length - 1
-					);
+					query = query.substring(firstWord.length).trim();
 					const command_to_edit = isCommandCustomAudio(firstWord);
 					if (!command_to_edit) {
-						server.sayWrapper(
-							`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command. Try using !caa to add it.`
-						);
+						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command. Try using !caa to add it.`);
 					} else {
-						const editCustomAudio = function (
-							author = user,
-							keyword = firstWord,
-							custom_audio_command = query
-						) {
+						const editCustomAudio = function (author = user, keyword = firstWord, custom_audio_command = query) {
 							for (const command of global_command_array) {
-								const keyword_or_altkey =
-									typeof command.altkey !== 'undefined'
-										? command.altkey.toString()
-										: command.keyword.toString();
+								const keyword_or_altkey = typeof command.altkey !== 'undefined' ? command.altkey.toString() : command.keyword.toString();
 
 								if (keyword_or_altkey === keyword) {
 									//global_command_array[index].author = author,
@@ -661,34 +627,23 @@ async function processMessage(username, message, flags, self, extra) {
 					//this needs to be 5th to override other commands
 					query = getQuery(message_lower, '!cal ');
 					const firstWord = query.split(' ')[0];
-					query = query.substring(
-						firstWord.length + 1,
-						firstWord.length + 1 + query.length - firstWord.length - 1
-					);
+					query = query.substring(firstWord.length).trim();
 					const command_to_list = isCommandCustomAudio(firstWord);
 					if (!command_to_list) {
-						server.sayWrapper(
-							`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command.`
-						);
+						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command.`);
 					} else {
-						const listCustomAudio = function () {
-							for (let command of global_command_array) {
-								const keyword_or_altkey =
-									typeof command.altkey !== 'undefined'
-										? command.altkey.toString()
-										: command.keyword.toString();
+						const listCustomAudio = (() => {
+							for (const command of global_command_array) {
+								const keyword_or_altkey = (command.altkey ?? command.keyword).toString();
 
-								if (
-									keyword_or_altkey === firstWord &&
-									typeof command.task[0].customaudio !== 'undefined'
-								)
+								if (keyword_or_altkey === firstWord && command.task[0]?.customaudio) {
 									return `!ca ${command.task[0].customaudio}`;
+								}
 							}
 
 							return '';
-						};
-						let response = listCustomAudio(firstWord);
-						server.sayWrapper(`@${user} "${response}"`);
+						})();
+						server.sayWrapper(`@${user} "${listCustomAudio}"`);
 					}
 
 					return true;
@@ -721,10 +676,7 @@ async function processMessage(username, message, flags, self, extra) {
 						return type;
 					})();
 
-					const tts_filename = `${await tts.ttsToMP3(spokenText, `alerts/assets/alerts/tts`, voice)}`.replace(
-						'alerts/',
-						''
-					);
+					const tts_filename = `${tts.ttsToMP3(spokenText, `alerts/assets/alerts/tts`, voice)}`.replace('alerts/', '');
 					server.sendMessage('TTS', tts_filename);
 
 					return true;
@@ -792,7 +744,7 @@ async function processMessage(username, message, flags, self, extra) {
 			return false;
 		}
 
-		let message_lower = message.toLowerCase().replace(/\s+/g, ' ').trim(); //lowercase, trim, and remove repeated spaces
+		const message_lower = message.toLowerCase().replace(/\s+/g, ' ').trim(); //lowercase, trim, and remove repeated spaces
 
 		//iterate through each command
 		for (const command of command_array) {
@@ -800,24 +752,21 @@ async function processMessage(username, message, flags, self, extra) {
 
 			//iterate through multiple keywords
 			for (const keyword_index in command.keyword) {
-				let comparison = command.keyword[keyword_index];
 				const query = message.substring(message_lower.indexOf(comparison) + comparison.length);
 
-				let prefix = '';
-				if (comparison.indexOf('!') === 0) {
-					prefix = '!';
-					comparison = comparison.substring(1);
-				}
+				const [comparison, prefix] = (() => {
+					const comparison = command.keyword[keyword_index];
+					const prefix = '!';
+					if (comparison.indexOf(prefix) === 0) {
+						return [comparison.substring(1), prefix];
+					}
+					return [comparison, ''];
+				})();
 
 				if (comparison !== '' && message_lower.search(new RegExp(prefix + '\\b' + comparison + '\\b')) !== -1) {
 					if (command.cooldown > extra.timestamp - command.timestamp) {
-						const cooldown_seconds = Math.ceil(
-							(command.cooldown - (extra.timestamp - command.timestamp)) / 1000
-						);
-						whisper_wrapper(
-							`@${user} cooldown for ${cooldown_seconds} more second ${cooldown_seconds > 1 ? 's' : ''}`,
-							user
-						);
+						const cooldown_seconds = Math.ceil((command.cooldown - (extra.timestamp - command.timestamp)) / 1000);
+						whisper_wrapper(`@${user} cooldown for ${cooldown_seconds} more second ${cooldown_seconds > 1 ? 's' : ''}`, user);
 						continue;
 					}
 					command.timestamp = extra.timestamp;
@@ -833,12 +782,12 @@ async function processMessage(username, message, flags, self, extra) {
 	/* MAIN_FUNCTION() */
 
 	if (user_array.length === 0) {
-		user_array = await loadUserArray();
+		user_array = loadUserArray();
 	}
 	const isNewUser = !user_array.includes(username);
 	if (isNewUser) {
 		user_array.push(username);
-		await saveUserArray(user_array);
+		saveUserArray(user_array);
 
 		//handle intro
 		const alert = findIntroCommandByString(`!${username.toLowerCase()}`); //user commands all have !prefix
