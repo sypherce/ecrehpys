@@ -546,7 +546,7 @@ async function processMessage(username, message, flags, self, extra) {
 						server.sayWrapper(`@${user} Syntax Error: !ca cmd start duration ...`);
 						return true;
 					}
-					for (const index = 0; index < args.length; index += 3) {
+					for (let index = 0; index < args.length; index += 3) {
 						args[index] = findCommandByString(args[index]);
 						if (typeof args[index] === 'undefined') {
 							server.sayWrapper(`@${user} Syntax Error: ${args[index]} is invalid`);
@@ -676,7 +676,7 @@ async function processMessage(username, message, flags, self, extra) {
 						return type;
 					})();
 
-					const tts_filename = `${tts.ttsToMP3(spokenText, `alerts/assets/alerts/tts`, voice)}`.replace('alerts/', '');
+					const tts_filename = `${await tts.ttsToMP3(spokenText, `alerts/assets/alerts/tts`, voice)}`.replace('alerts/', '');
 					server.sendMessage('TTS', tts_filename);
 
 					return true;
@@ -752,8 +752,6 @@ async function processMessage(username, message, flags, self, extra) {
 
 			//iterate through multiple keywords
 			for (const keyword_index in command.keyword) {
-				const query = message.substring(message_lower.indexOf(comparison) + comparison.length);
-
 				const [comparison, prefix] = (() => {
 					const comparison = command.keyword[keyword_index];
 					const prefix = '!';
@@ -762,6 +760,7 @@ async function processMessage(username, message, flags, self, extra) {
 					}
 					return [comparison, ''];
 				})();
+				const query = message.substring(message_lower.indexOf(comparison) + comparison.length);
 
 				if (comparison !== '' && message_lower.search(new RegExp(prefix + '\\b' + comparison + '\\b')) !== -1) {
 					if (command.cooldown > extra.timestamp - command.timestamp) {
