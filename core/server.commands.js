@@ -163,7 +163,7 @@ async function processVariables(user, query_string, task_string) {
 	});
 
 	const query_parts = query_string.split(' ');
-	for (const i = 1; i <= 9; i++) {
+	for (let i = 1; i <= 9; i++) {
 		task_string = task_string.replace(new RegExp(`\\$\\(\\s*${i}\\s*\\)`), query_parts[i] || '');
 	}
 
@@ -693,6 +693,8 @@ async function processMessage(username, message, flags, self, extra) {
 				if (task.alert) {
 					server.sendMessage('Alert', task.alert);
 				}
+
+				//fix section vvv
 				if (task.media) {
 					let filename = task.media;
 					if (typeof task.media === 'object') {
@@ -701,10 +703,16 @@ async function processMessage(username, message, flags, self, extra) {
 						task.media_counter++;
 					}
 
-					//there's a bug here on line 713
-					if (filename.endsWith('.mp4')) server.sendMessage('Video', filename);
-					else server.sendMessage('Audio', filename);
+					try {
+						if (filename.endsWith('.mp4')) server.sendMessage('Video', filename);
+						else server.sendMessage('Audio', filename);
+					} catch (e) {
+						console.log(e);
+						console.log(`filename: ${filename}, typeof filename: ${typeof filename}`);
+					}
 				}
+				//fix section ^^^
+
 				if (task.song) {
 					server.sendMessage('Song', task.song);
 				}
