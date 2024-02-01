@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 const command_html = require('./command_html.js');
 const server = require('./server.js');
 const ShuffleBag = require('giffo-shufflebag');
@@ -8,6 +9,8 @@ const twurple = require('../lib/twurple.js');
 const mp3Library = require('../lib/mp3Library.js');
 const prettyStringify = require('@aitodotai/json-stringify-pretty-compact');
 const tts = require('../lib/tts.js');
+
+let isSoundRequestsEnabled = true;
 
 /**Loads and returns all commands from 'config/commands.json' in a JSON.parse() object.
  *
@@ -43,26 +46,6 @@ function loadCommands(filename = 'config/commands.json') {
 		//if (typeof task_string === 'undefined') task_string = '';
 
 		const formatted_author_string = command.author === '' ? '' : ` [${command.author}]`;
-
-		const ignoredCommands = [
-			'!lips',
-			'joe',
-			'!ca',
-			'!caa',
-			'!cae',
-			'!cal',
-			'!wrap',
-			'!suso',
-			'!sso',
-			'!stickers',
-			'!notfine',
-			'!sprites',
-			'flippers',
-			'!nc',
-			'!sounds',
-			'!srinfo',
-			'!unso',
-		];
 
 		if (command.exclude !== true) html = html.concat(`${keyword}${formatted_author_string}<br>\n`);
 	}
@@ -202,35 +185,40 @@ async function processMessage(username, message, flags, self, extra) {
 	function saveUserArray(array) {
 		fs.writeFileSync('config/chatters.json', prettyStringify(array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
 	}
-	/**Checks the profile image of a user and writes it to a PHP file.
+
+	/**
+	 * Downloads and writes the profile image of a user.
 	 * @param {string} username - The username of the user.
-	 * @returns {Promise<void>} - A promise that resolves when the profile image is written successfully.
+	 * @returns {Promise<void>} - A promise that resolves when the image is downloaded and written successfully, or rejects with an error.
 	 */
-	async function checkProfileImage(username) {
-		async function writeProfileImage(filename) {
-			const profile_image_url = (await twurple.getUserByName(username)).profilePictureUrl;
-			const content = `<?php $name='${profile_image_url}';$fp=fopen($name,'rb');header("Content-Type:image/png");header("Content-Length:".filesize($name));fpassthru($fp);exit;?>`;
-			fs.writeFile(filename, content, (err) => {
-				if (err) {
-					console.error(err);
-				}
-				// file written successfully
+	async function downloadAndWriteProfileImage(username) {
+		const profilePictureUrl = (await twurple.getUserByName(username)).profilePictureUrl;
+		const outputFilename = `/var/www/html/stream/assets/users/icon/${username.toLowerCase()}.png`;
+		let isDownloadSuccessful = false;
+
+		try {
+			const file = fs.createWriteStream(outputFilename);
+			isDownloadSuccessful = await new Promise((resolve, reject) => {
+				https
+					.get(profilePictureUrl, (response) => {
+						response.pipe(file);
+						file.on('finish', () => {
+							file.close();
+							resolve();
+						});
+					})
+					.on('error', (err) => {
+						fs.unlink(outputFilename, () => {
+							reject(err);
+						});
+					});
 			});
+			console.log(`"${username.toLowerCase()}.png" downloaded and written successfully.`);
+		} catch (error) {
+			console.error(`Error downloading and writing image "${username.toLowerCase()}.png": `, error);
 		}
-		username = username.toLowerCase();
-		console.log('fired');
-		const filename = `/var/www/html/stream/assets/users/icon/${username}.php`;
 
-		await writeProfileImage(filename);
-
-		fs.access(filename, fs.F_OK, (err) => {
-			if (err) {
-				// doesn't exist
-				console.log("doesn't exist");
-				return;
-			}
-			console.log('exists');
-		});
+		return isDownloadSuccessful;
 	}
 	/**Finds a command by matching a string with the keyword or altkey of a command.
 	 * @param {string} string - The string to match with the keyword or altkey of a command.
@@ -305,12 +293,14 @@ async function processMessage(username, message, flags, self, extra) {
 			//play full length songs if enabled
 			if (message_lower.includes('!enable')) {
 				const query = getQuery(message_lower, '!enable');
+				isSoundRequestsEnabled = true;
 				server.sendMessage('Enable', query);
 				console.log('Enable', query);
 			}
 			//play songsprites if disabled
 			if (message_lower.includes('!disable')) {
 				const query = getQuery(message_lower, '!disable');
+				isSoundRequestsEnabled = false;
 				server.sendMessage('Disable', query);
 				console.log('Disable', query);
 			}
@@ -466,13 +456,18 @@ async function processMessage(username, message, flags, self, extra) {
 		}
 
 		if (message_lower.includes('!sr ')) {
-			const query = getQuery(message_lower, '!sr');
-			const object = mp3Library.find(query);
-			if (typeof object.filename !== 'undefined' && object.filename !== '') {
-				server.sendMessage('Sr', object);
-				server.sayWrapper(`Requested: ${object.album} - ${object.title}`);
+			//disabled
+			if (isSoundRequestsEnabled) {
+				const query = getQuery(message_lower, '!sr');
+				const object = await mp3Library.find(query);
+				if (typeof object.filename !== 'undefined' && object.filename !== '') {
+					server.sendMessage('Sr', object);
+					server.sayWrapper(`Requested: ${object.album} - ${object.title}`);
+				} else {
+					server.sayWrapper(`Not Found: ${query}`);
+				}
 			} else {
-				server.sayWrapper(`Not Found: ${query}`);
+				server.sayWrapper(`Song requests disabled.`);
 			}
 		}
 	}
@@ -648,7 +643,16 @@ async function processMessage(username, message, flags, self, extra) {
 
 					return true;
 				}
+				//this prints twice for ttsing, but not tts. weird.
 				if (task.tts || task.ttsing) {
+					server.sayWrapper(
+						`@${user} ${task.tts ? 'TTS' : 'TTSing'} is now in channel points. Visit https://www.twitch.tv/sypherce/${
+							task.tts ? 'ttspage' : 'singpage'
+						} for a list of voices.`
+					);
+				}
+				if (false) {
+					//disabled if (task.tts || task.ttsing)
 					/* Attempt to match the message to a regular expression.
 					If it fails, try to match task.tts or task.ttsing to the regular expression.*/
 					const [_, type, tts_number, spokenText] = (() => {
@@ -681,11 +685,12 @@ async function processMessage(username, message, flags, self, extra) {
 
 					return true;
 				}
-				//this may or may not work.
+				//#region this may or may not work.
 				if (task.delay) {
 					await new Promise((resolve) => setTimeout(resolve, task.delay));
 					console.log('V:', `!delay ${parseInt(task.delay)}`);
 				}
+				//#endregion this may or may not work.
 				if (task.chat) {
 					const processed_message = await processVariables(user, query, task.chat);
 					server.sayWrapper(processed_message);
@@ -694,7 +699,7 @@ async function processMessage(username, message, flags, self, extra) {
 					server.sendMessage('Alert', task.alert);
 				}
 
-				//fix section vvv
+				//#region fix section
 				if (task.media) {
 					let filename = task.media;
 					if (typeof task.media === 'object') {
@@ -704,14 +709,14 @@ async function processMessage(username, message, flags, self, extra) {
 					}
 
 					try {
-						if (filename.endsWith('.mp4')) server.sendMessage('Video', filename);
+						if (filename?.endsWith('.mp4')) server.sendMessage('Video', filename);
 						else server.sendMessage('Audio', filename);
 					} catch (e) {
 						console.log(e);
 						console.log(`filename: ${filename}, typeof filename: ${typeof filename}`);
 					}
 				}
-				//fix section ^^^
+				//#endregion fix section
 
 				if (task.song) {
 					server.sendMessage('Song', task.song);
@@ -786,7 +791,7 @@ async function processMessage(username, message, flags, self, extra) {
 		return commands_triggered;
 	}
 
-	/* MAIN_FUNCTION() */
+	//#region MAIN_FUNCTION()
 
 	if (user_array.length === 0) {
 		user_array = loadUserArray();
@@ -800,7 +805,7 @@ async function processMessage(username, message, flags, self, extra) {
 		const alert = findIntroCommandByString(`!${username.toLowerCase()}`); //user commands all have !prefix
 		if (alert) server.sendMessage('Alert', alert);
 		//setup profile image for chat overlay
-		await checkProfileImage(username);
+		await downloadAndWriteProfileImage(username);
 	}
 
 	if (username === process.env.BOT_USER) return;
@@ -810,6 +815,8 @@ async function processMessage(username, message, flags, self, extra) {
 	//Process Custom Commands
 	const number = await processCustomCommands(username, message, flags, self, extra);
 	console.log('D:', `${username}(${number}): ${message}`);
+
+	//#endregion MAIN_FUNCTION()
 }
 
 module.exports.process = processMessage;
