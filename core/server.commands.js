@@ -492,13 +492,15 @@ async function processMessage(username, message, flags, self, extra) {
 			for (const command of command_array) {
 				const keyword = (command.altkey ?? command.keyword).toString();
 
-				if (keyword === string) {
-					if (typeof command.task[0].videonow !== 'undefined') return command.task[0].videonow.toString();
-					else if (typeof command.task[0].alert !== 'undefined') return command.task[0].alert.toString();
-					else if (typeof command.task[0].media !== 'undefined') return command.task[0].media.toString();
-					else if (typeof command.task[0].song !== 'undefined') return command.task[0].song.toString();
+				// compare the keyword to the string ignoring the '!' prefix
+				if (keyword.replace(/^!/, '') === string.replace(/^!/, '')) {
+					const firstKey = Object.keys(command.task[0]).find((key) => key !== 'chat');
 
-					return '';
+					if (['videonow', 'alert', 'media', 'song', 'customaudio'].includes(firstKey)) {
+						return command.task[0][firstKey].toString();
+					}
+
+					break;
 				}
 			}
 			return undefined;
@@ -703,7 +705,7 @@ async function processMessage(username, message, flags, self, extra) {
 				if (task.media) {
 					let filename = task.media;
 					if (typeof task.media === 'object') {
-						if (task.media_counter >= task.media.length) task.media_counter = 0;
+						if (task.media_counter === NaN || task.media_counter >= task.media.length) task.media_counter = 0;
 						filename = task.media[task.media_counter];
 						task.media_counter++;
 					}

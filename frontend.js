@@ -3,14 +3,19 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
+
 app.use(cors());
 
-app.listen(3003, () => {
-	console.log('Application started and Listening on port 3000');
+const port = 3003;
+
+app.listen(port, () => {
+	console.log(`Application started and Listening on port ${port}`);
 });
 
 app.use('/', express.static(path.join(__dirname, '/alerts')));
-app.use('/media/', express.static(path.join(__dirname, '/../mediaPlayer/')));
+app.use('/node_modules/', express.static(path.join(__dirname, '../node_modules/')));
+app.use('/alerts/', express.static(path.join(__dirname, '/alerts/')));
+app.use('/mediaPlayer/', express.static(path.join(__dirname, '/../mediaPlayer/')));
 
 app.use('/peaks/', express.static(path.join(__dirname, '/../stream')));
 app.use('/mistates/', express.static(path.join(__dirname, '/../../../projects/mistates/')));
