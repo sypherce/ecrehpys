@@ -512,7 +512,7 @@ async function processMessage(username, message, flags, self, extra) {
 				if (keyword === string) {
 					if (typeof command.task[0].customaudio !== 'undefined') return true;
 
-					return false;
+					break;
 				}
 			}
 			return false;
@@ -648,9 +648,9 @@ async function processMessage(username, message, flags, self, extra) {
 				//this prints twice for ttsing, but not tts. weird.
 				if (task.tts || task.ttsing) {
 					server.sayWrapper(
-						`@${user} ${task.tts ? 'TTS' : 'TTSing'} is now in channel points. Visit https://www.twitch.tv/sypherce/${
-							task.tts ? 'ttspage' : 'singpage'
-						} for a list of voices.`
+						`@${user} ${task.tts ? 'TTS' : 'TTSing'} is now in channel points. Visit https://sypherce.github.io/stream/${
+							task.tts ? 'ttsvoices' : 'ttsingvoices'
+						}.html for a list of voices.`
 					);
 				}
 				if (false) {
