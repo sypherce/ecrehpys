@@ -350,7 +350,7 @@ async function processMessage(username, message, flags, self, extra) {
 		}
 		if (message_lower.match(/^!so\s+(\S+)?/)) {
 			//!so muten_pizza
-			const query = message_lower.match(/^!so\s+(\S+)?/)[1] || 'sypherce';
+			const query = message_lower.match(/^!so\s+(@?\S+)?/)[1]?.replace('@', '') || 'sypherce';
 			const channel_info = await twurple.getChannelInfoByUsername(`${query}`);
 			channel_info.game_and_title = channel_info.gameName;
 			if (channel_info.gameName === 'Retro') {
@@ -703,9 +703,17 @@ async function processMessage(username, message, flags, self, extra) {
 
 				//#region fix section
 				if (task.media) {
+					function typeOfNaN(x) {
+						if (Number.isNaN(x)) {
+							return 'Number NaN';
+						}
+						if (isNaN(x)) {
+							return 'NaN';
+						}
+					}
 					let filename = task.media;
 					if (typeof task.media === 'object') {
-						if (task.media_counter === NaN || task.media_counter >= task.media.length) task.media_counter = 0;
+						if (typeOfNaN(task.media_counter) || task.media_counter >= task.media.length) task.media_counter = 0;
 						filename = task.media[task.media_counter];
 						task.media_counter++;
 					}
