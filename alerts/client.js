@@ -98,7 +98,9 @@ async function beefwebPlaySongNow(file) {
 
 	play_now_active_file = basefilename(file);
 
-	file = `${beefweb.music_path}/${file}`;
+	if (!file.startsWith('https:')) {
+		file = `${beefweb.music_path}/${file}`;
+	}
 
 	let current_playlist = await beefweb.getActivePlaylistIndex();
 	let next_index = (await beefweb.getActiveItemIndex()) + 1;
