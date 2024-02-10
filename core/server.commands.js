@@ -117,7 +117,7 @@ function getQuery(string, prefix) {
  * @param {string} task_string - The task string with placeholders.
  * @returns {string} - The task string with replaced variables.
  */
-async function processVariables(user, query_string, task_string) {
+async function replaceVariablesInTaskString(user, query_string, task_string) {
 	const replacements = {
 		query: query_string,
 		user: user,
@@ -694,7 +694,7 @@ async function processMessage(username, message, flags, self, extra) {
 				}
 				//#endregion this may or may not work.
 				if (task.chat) {
-					const processed_message = await processVariables(user, query, task.chat);
+					const processed_message = await replaceVariablesInTaskString(user, query, task.chat);
 					server.sayWrapper(processed_message);
 				}
 				if (task.alert) {
