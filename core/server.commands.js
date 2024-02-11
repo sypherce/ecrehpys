@@ -344,7 +344,7 @@ async function processMessage(username, message, flags, self, extra) {
 			server.sendMessage('TTS', `${tts_filename}`);
 			server.sendMessage('Audio', 'alerts/muten_dungeon.mp3');
 			if (is_mod)
-				setTimeout(function () {
+				setTimeout(() => {
 					twurple.setModerator(target_user);
 				}, (seconds + 5) * 1000);
 		}
@@ -454,7 +454,6 @@ async function processMessage(username, message, flags, self, extra) {
 					break;
 			}
 		}
-
 		if (message_lower.includes('!sr ')) {
 			//disabled
 			if (isSoundRequestsEnabled) {
@@ -493,7 +492,7 @@ async function processMessage(username, message, flags, self, extra) {
 				const keyword = (command.altkey ?? command.keyword).toString();
 
 				// compare the keyword to the string ignoring the '!' prefix
-				if (keyword.replace(/^!/, '') === string.replace(/^!/, '')) {
+				if (keyword.replace(/^!+/, '') === string.replace(/^!+/, '')) {
 					const firstKey = Object.keys(command.task[0]).find((key) => key !== 'chat');
 
 					if (['videonow', 'alert', 'media', 'song', 'customaudio'].includes(firstKey)) {
@@ -571,7 +570,7 @@ async function processMessage(username, message, flags, self, extra) {
 					if (commandExists) {
 						server.sayWrapper(`@${user} Command "${firstWord}" already exists. Try using !cae to edit.`);
 					} else {
-						const addCustomAudio = (function (author, keyword, customaudio) {
+						const addCustomAudio = ((author, keyword, customaudio) => {
 							const new_command = {
 								author: user,
 								cooldown: 0,
@@ -600,7 +599,7 @@ async function processMessage(username, message, flags, self, extra) {
 					if (!command_to_edit) {
 						server.sayWrapper(`@${user} Command "${firstWord}" doesn't exist, or is wrong type of command. Try using !caa to add it.`);
 					} else {
-						const editCustomAudio = function (author = user, keyword = firstWord, custom_audio_command = query) {
+						const editCustomAudio = (author = user, keyword = firstWord, custom_audio_command = query) => {
 							for (const command of global_command_array) {
 								const keyword_or_altkey = typeof command.altkey !== 'undefined' ? command.altkey.toString() : command.keyword.toString();
 
@@ -739,7 +738,7 @@ async function processMessage(username, message, flags, self, extra) {
 					const string = message.substring(message.indexOf('!lips ') + 6).trim();
 					const array = string.split(' ');
 
-					await (async function () {
+					await (async () => {
 						array[0] = await emote.get(string);
 					})();
 

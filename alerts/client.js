@@ -128,9 +128,9 @@ function playSplitSound(file) {
 	console.log(file);
 	const sound = {
 		list: [],
-		play: function (filename) {
+		play: (filename) => {
 			let playing = false;
-			this.list.forEach(function (item, index) {
+			this.list.forEach((item, index) => {
 				console.log(item, index);
 
 				if (item._src === filename) {
@@ -166,7 +166,7 @@ function playSound(file) {
 	let sound = new Howl({
 		src: [file],
 		html5: true,
-		onend: function () {
+		onend: () => {
 			sound.unload();
 			console.log('Unloaded!');
 		},
@@ -181,11 +181,11 @@ function playSoundQueued(file) {
 	let sound = new Howl({
 		src: [file],
 		html5: true,
-		onloaderror: function () {
+		onloaderror: () => {
 			if (sound_queue.length > 1) sound_queue[1].play();
 			sound_queue.shift();
 		},
-		onend: function () {
+		onend: () => {
 			if (sound_queue.length > 1) sound_queue[1].play();
 			sound.unload();
 			sound_queue.shift();
@@ -207,11 +207,11 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 			key1: [offset, duration],
 		},
 		html5: true,
-		onend: function () {
+		onend: () => {
 			sound.unload();
 			console.log('Unloaded!');
 		},
-		onload: function () {
+		onload: () => {
 			if (duration === -1) {
 				duration = Math.floor(Math.random() * 7000) + 3000;
 			}
@@ -225,14 +225,14 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 }
 function initWebSocket() {
 	connection = new WebSocket('ws://server.local:1338');
-	connection.onopen = function () {
+	connection.onopen = () => {
 		sendMessage('Message', 'Client');
 	};
 
 	connection.onclose = function (e) {
 		console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
 
-		setTimeout(function () {
+		setTimeout(() => {
 			initWebSocket();
 		}, 1000);
 	};
@@ -397,16 +397,16 @@ function initWebSocket() {
 						src: audio_file,
 						html5: true,
 						preload: true,
-						onplay: function () {
+						onplay: () => {
 							const duration = `${parseInt((sound.duration() * 1000) / 3)}ms`;
-							animateCSS(img, start_animation, duration, function () {
-								animateCSS(img, mid_animation, duration, function () {
+							animateCSS(img, start_animation, duration, () => {
+								animateCSS(img, mid_animation, duration, () => {
 									animateCSS(img, end_animation, duration);
 								});
 							});
 							document.getElementById('video_div').appendChild(img);
 						},
-						onend: function () {
+						onend: () => {
 							sound.unload();
 						},
 					});
@@ -418,11 +418,11 @@ function initWebSocket() {
 					video.autoplay = true;
 					video.controls = false;
 					video.muted = false;
-					(video.onplay = function () {
+					(video.onplay = () => {
 						console.log(video.duration);
 						const duration = `${parseInt((video.duration * 1000) / 3)}ms`;
-						animateCSS(video, start_animation, duration, function () {
-							animateCSS(video, mid_animation, duration, function () {
+						animateCSS(video, start_animation, duration, () => {
+							animateCSS(video, mid_animation, duration, () => {
 								animateCSS(video, end_animation, duration);
 							});
 						});
@@ -460,7 +460,7 @@ function initWebSocket() {
 				};
 				video.onplay = () => (video.isplaying = true);
 
-				video.interval = setInterval(async function () {
+				video.interval = setInterval(async () => {
 					const video_file = decodeURI(basefilename(video.src));
 					const beefweb_file = await beefweb.getActiveItemFilename();
 					if (video_file !== beefweb_file) {

@@ -9,14 +9,14 @@ const path = require('path');
 const tracklist = {
 	directory: './',
 	list: [],
-	get: function (i) {
+	get: (i) => {
 		if (tracklist.list[i] === undefined) return path.join(tracklist.directory, `${i}.mp3`);
 
 		return path.join(tracklist.directory, tracklist.list[i]);
 	},
-	load: function (filename) {
+	load: (filename) => {
 		const basedir = 'assets/livesplit';
-		fs.access(`${basedir}/${filename}`, fs.F_OK, function (doesnt_exist) {
+		fs.access(`${basedir}/${filename}`, fs.F_OK, (doesnt_exist) => {
 			if (doesnt_exist) {
 				console.error(doesnt_exist);
 				return;
