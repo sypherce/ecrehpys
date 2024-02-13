@@ -110,17 +110,18 @@ async function beefwebPlaySongNow(file) {
 	return true;
 }
 
-let connection;
-
-export function sendMessage(id, contents) {
-	if (connection === null) return;
+export function sendMessage(address, id, contents) {
+	const connection = connectionArray.find((entry) => entry.address === address).connection;
+	if (connection === undefined) {
+		throw new Error('Connection is undefined');
+	}
 
 	if (typeof contents === 'object') contents = JSON.stringify(contents);
 	else contents = `"${contents}"`;
 
 	const message = `{"${id}" : ${contents}}`;
 
-	console.log('D:', message);
+	console.log('Sending message:', message);
 	connection.send(message);
 }
 
@@ -223,320 +224,323 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 		},
 	});
 }
-function initWebSocket() {
-	connection = new WebSocket('ws://server.local:1338');
+const connectionArray = [];
+
+function initWebSocket(websocketAddress, handleMessage, reconnectDelay = 1000) {
+	const connection = (() => {
+		const newWebSocket = new WebSocket(websocketAddress);
+		connectionArray.push({ address: websocketAddress, connection: newWebSocket });
+
+		return newWebSocket;
+	})();
 	connection.onopen = () => {
-		sendMessage('Message', 'Client');
+		sendMessage(websocketAddress, 'Message', 'Client');
 	};
 
-	connection.onclose = function (e) {
-		console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+	connection.onclose = (event) => {
+		console.log(`Socket is closed. Reconnect will be attempted in ${reconnectDelay / 1000} second(s).`, event.reason);
+
+		const index = connectionArray.findIndex((connection) => connection.address === websocketAddress);
+		if (index !== -1) {
+			connectionArray.splice(index, 1);
+		}
+		connectionArray.slice();
 
 		setTimeout(() => {
-			initWebSocket();
-		}, 1000);
+			initWebSocket(websocketAddress, handleMessage, reconnectDelay);
+		}, reconnectDelay);
 	};
 
-	async function handleMessage(object, key, value) {
-		if (typeof handleMessage.content === 'undefined') handleMessage.content = document.getElementById('content');
-
-		function convertPath(path) {
-			if (path.match(`^(alerts|music)\/`) !== null);
-			path = `assets/${path}`;
-
-			return path;
-		}
-
-		switch (key) {
-			case 'Message': {
-				console.log(`${key}: ${value}`);
-				break;
-			}
-
-			//todo take care of paths properly.
-			//include direct paths for browser, not relative, not direct paths for server
-			case 'CustomAudio': {
-				let delay = 0;
-				const max_sound_cmds = 100;
-				let position = 0;
-				for (let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
-					const max_duration = 10000;
-					let cmd = value[i].split(',')[0];
-					cmd = convertPath(cmd);
-					const start = parseInt(value[i + 1]);
-					let duration = parseInt(value[i + 2]);
-					if (position + duration > max_duration) duration = max_duration - position;
-					else if (duration > max_duration) duration = max_duration;
-
-					if (delay !== 0)
-						//if there's a delay from the last sound
-						await new Promise((r) => setTimeout(r, delay));
-					console.log(`!ca: ${cmd}: ${start}, ${duration}`);
-					playSoundSprite(cmd, start, duration);
-
-					position = position + duration;
-					if (position >= max_duration) break;
-
-					delay = duration;
-				}
-				return;
-			}
-			case 'Audio': {
-				value = convertPath(value);
-				playSound(value);
-				break;
-			}
-			case 'Lips': {
-				function lips(emote_url, scale_x, scale_y, position_x, position_y, rotation) {
-					let div = document.getElementById('Lips_Div');
-					let old_emote_img = document.getElementById('emote_img');
-					if (old_emote_img !== null) div.removeChild(old_emote_img);
-					let old_lips_img = document.getElementById('lips_img');
-					if (old_lips_img !== null) div.removeChild(old_lips_img);
-
-					let img = new Image();
-					img.id = 'emote_img';
-					img.src = 'images/why_tunak.png';
-					img.setAttribute(
-						'style',
-						`
-					position: absolute;
-					width: 1080px;
-					height: 1080px;
-					image-rendering: pixelated;`
-					);
-					div.appendChild(img);
-
-					img = new Image();
-					img.id = 'lips_img';
-					img.src = emote_url;
-					img.setAttribute(
-						'style',
-						`
-					position: absolute;
-					width: 224px;
-					height: 224px;
-					image-rendering: pixelated;
-					transform:
-					translate(${position_x}px, ${position_y}px)
-					scale(${scale_x},${scale_y})
-					rotate(${rotation}turn);"`
-					);
-					div.appendChild(img);
-				}
-				if (typeof value[1] === 'undefined') value[1] = 2.0;
-				if (typeof value[2] === 'undefined') value[2] = 2.0;
-				if (typeof value[3] === 'undefined') value[3] = 210;
-				if (typeof value[4] === 'undefined') value[4] = 270;
-				if (typeof value[5] === 'undefined') value[5] = 0.0;
-				lips(value[0], value[1], value[2], value[3], value[4], value[5]);
-				break;
-			}
-			case 'Video': {
-				const video = document.createElement('video');
-				video.setAttribute('id', 'NewVideo');
-				video.src = value;
-				video.autoplay = true;
-				video.controls = false;
-				video.muted = false;
-				video.onended = function (_event) {
-					const video = document.getElementById('NewVideo');
-					video.pause();
-					video.src = '';
-					video.remove();
-				};
-				document.getElementById('video_div').appendChild(video);
-				break;
-			}
-			case 'SongSprite': {
-				playSongSprite(value);
-				break;
-			}
-			case 'Alert': {
-				if (value.length !== 4) {
-					console.log(`"Alert" Message: Wrong amount of arguments: ${value.length}`);
-					console.log(`value_array: ${value}`);
-					break;
-				}
-				let [video_file, start_animation, mid_animation, end_animation] = value;
-				video_file = convertPath(video_file);
-				let audio_file = replaceExtension(video_file, '.gif', '.mp3');
-
-				async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
-					// We create a Promise and return it
-					return new Promise((resolve, reject) => {
-						const animationName = `${prefix}${animation}`;
-						console.log(JSON.stringify(node));
-
-						node.classList.add(`${prefix}animated`, animationName);
-						node.style.setProperty('--animate-duration', duration);
-
-						// When the animation ends, we clean the classes and resolve the Promise
-						function handleAnimationEnd(event) {
-							event.stopPropagation();
-							if (next_function === false) {
-								//remove img
-								node.parentNode.removeChild(node);
-								resolve('Animation removed');
-							} else {
-								//end animation
-								node.classList.remove(`${prefix}animated`, animationName);
-								next_function();
-								resolve('Animation ended');
-							}
-						}
-						node.addEventListener('animationend', handleAnimationEnd, { once: true });
-					});
-				}
-
-				if (video_file.endsWith('.gif')) {
-					const img = document.createElement('img');
-					img.setAttribute('id', 'NewImage');
-					img.src = video_file;
-					const sound = new Howl({
-						src: audio_file,
-						html5: true,
-						preload: true,
-						onplay: () => {
-							const duration = `${parseInt((sound.duration() * 1000) / 3)}ms`;
-							animateCSS(img, start_animation, duration, () => {
-								animateCSS(img, mid_animation, duration, () => {
-									animateCSS(img, end_animation, duration);
-								});
-							});
-							document.getElementById('video_div').appendChild(img);
-						},
-						onend: () => {
-							sound.unload();
-						},
-					});
-					sound.play();
-				} else {
-					const video = document.createElement('video');
-					video.setAttribute('id', 'NewImage');
-					video.src = video_file;
-					video.autoplay = true;
-					video.controls = false;
-					video.muted = false;
-					(video.onplay = () => {
-						console.log(video.duration);
-						const duration = `${parseInt((video.duration * 1000) / 3)}ms`;
-						animateCSS(video, start_animation, duration, () => {
-							animateCSS(video, mid_animation, duration, () => {
-								animateCSS(video, end_animation, duration);
-							});
-						});
-					}),
-						(video.onended = (_event) => {
-							video.pause();
-							video.src = '';
-							video.remove();
-						});
-					document.getElementById('video_div').appendChild(video);
-				}
-				break;
-			}
-
-			case 'VideoNow': {
-				let beefweb_value = value.replace('music/', '');
-				let video_value = convertPath(value);
-				if ((await beefwebPlaySongNow(beefweb_value)) === false) {
-					break;
-				}
-
-				const video = document.createElement('video');
-				video.setAttribute('id', 'NewVideo');
-				video.src = video_value;
-				video.autoplay = false;
-				video.controls = false;
-				video.muted = true;
-				document.getElementById('video_div').appendChild(video);
-
-				video.onended = () => {
-					clearInterval(video.interval);
-					video.pause();
-					video.src = '';
-					video.remove();
-				};
-				video.onplay = () => (video.isplaying = true);
-
-				video.interval = setInterval(async () => {
-					const video_file = decodeURI(basefilename(video.src));
-					const beefweb_file = await beefweb.getActiveItemFilename();
-					if (video_file !== beefweb_file) {
-						video.onended();
-						return;
-					}
-					let beefwebCurrentTime = await beefweb.getPosition();
-
-					if (video.isplaying !== true) {
-						console.log('first', beefwebCurrentTime - video.currentTime);
-						video.currentTime = beefwebCurrentTime;
-						video.play();
-					} else if (beefwebCurrentTime - video.currentTime > 0.2 || beefwebCurrentTime - video.currentTime < -0.2) {
-						console.log(beefwebCurrentTime - video.currentTime);
-						video.currentTime = beefwebCurrentTime;
-					}
-				}, 400);
-				break;
-			}
-			case 'TTS': {
-				playSoundQueued(value);
-				break;
-			}
-			case 'SplitSong': {
-				playSplitSound(`assets/music/${value}`);
-				break;
-			}
-			case 'Song': {
-				value = value.replace('music/', '');
-				beefwebPlaySongNow(value);
-				break;
-			}
-			case 'Sr': {
-				value.filename = value.filename.replace('music/', '');
-				beefwebQueueSong(value.filename);
-				break;
-			}
-			case 'Enable':
-			case 'Disable': {
-				const setting = key === 'Enable';
-				enable_song = setting;
-				console.log(enable_song, setting);
-				break;
-			}
-			default: {
-				console.log(`unsupported, ${key}: ${value}`);
-				break;
-			}
-		}
-	}
-
-	connection.onmessage = function (message) {
-		console.log('T:', message.data);
+	connection.onmessage = (message) => {
 		const object = JSON.parse(message.data);
-		if (Array.isArrayobject) {
-			for (let i = 0; i < object.length; i++) {
-				for (const [key, value] of Object.entries(object[i])) {
-					handleMessage(object[i], key, value);
-					console.log('T:', object[i]);
-				}
-			}
-		} else if (typeof object === 'object') {
-			Object.entries(object).forEach(function ([key, value]) {
-				handleMessage(object, key, value);
-				console.log('T:', key);
-				console.log('T:', value);
+		if (typeof object === 'object') {
+			Object.entries(object).forEach(([key, value]) => {
+				handleMessage(key, value);
+				console.log(`Received message: key='${key}', value='${value}'`);
 			});
 		} else {
 			console.log(`Unknown Data: ${object}`);
 		}
 	};
 
-	connection.onerror = function (error) {
+	connection.onerror = (error) => {
 		console.error(`WebSocket error: ${error.message} Closing socket`);
 		connection.close();
 	};
 }
 
-initWebSocket();
+async function handleMessage(key, value) {
+	function convertPath(path) {
+		if (path.match(`^(alerts|music)\/`) !== null) {
+			path = `assets/${path}`;
+		}
+
+		return path;
+	}
+
+	switch (key) {
+		case 'Message': {
+			console.log(`Received Message response: '${value}'`);
+			break;
+		}
+
+		//todo take care of paths properly.
+		//include direct paths for browser, not relative, not direct paths for server
+		case 'CustomAudio': {
+			let delay = 0;
+			const max_sound_cmds = 100;
+			let position = 0;
+			for (let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
+				const max_duration = 10000;
+				let cmd = value[i].split(',')[0];
+				cmd = convertPath(cmd);
+				const start = parseInt(value[i + 1]);
+				let duration = parseInt(value[i + 2]);
+				if (position + duration > max_duration) duration = max_duration - position;
+				else if (duration > max_duration) duration = max_duration;
+
+				if (delay !== 0)
+					//if there's a delay from the last sound
+					await new Promise((r) => setTimeout(r, delay));
+				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
+				playSoundSprite(cmd, start, duration);
+
+				position = position + duration;
+				if (position >= max_duration) break;
+
+				delay = duration;
+			}
+			return;
+		}
+		case 'Audio': {
+			value = convertPath(value);
+			playSound(value);
+			break;
+		}
+		case 'Lips': {
+			function lips(emote_url, scale_x, scale_y, position_x, position_y, rotation) {
+				let div = document.getElementById('Lips_Div');
+				let old_emote_img = document.getElementById('emote_img');
+				if (old_emote_img !== null) div.removeChild(old_emote_img);
+				let old_lips_img = document.getElementById('lips_img');
+				if (old_lips_img !== null) div.removeChild(old_lips_img);
+
+				let img = new Image();
+				img.id = 'emote_img';
+				img.src = 'images/why_tunak.png';
+				img.setAttribute(
+					'style',
+					`
+				position: absolute;
+				width: 1080px;
+				height: 1080px;
+				image-rendering: pixelated;`
+				);
+				div.appendChild(img);
+
+				img = new Image();
+				img.id = 'lips_img';
+				img.src = emote_url;
+				img.setAttribute(
+					'style',
+					`
+				position: absolute;
+				width: 224px;
+				height: 224px;
+				image-rendering: pixelated;
+				transform:
+				translate(${position_x}px, ${position_y}px)
+				scale(${scale_x},${scale_y})
+				rotate(${rotation}turn);"`
+				);
+				div.appendChild(img);
+			}
+			if (typeof value[1] === 'undefined') value[1] = 2.0;
+			if (typeof value[2] === 'undefined') value[2] = 2.0;
+			if (typeof value[3] === 'undefined') value[3] = 210;
+			if (typeof value[4] === 'undefined') value[4] = 270;
+			if (typeof value[5] === 'undefined') value[5] = 0.0;
+			lips(value[0], value[1], value[2], value[3], value[4], value[5]);
+			break;
+		}
+		case 'Video': {
+			const video = document.createElement('video');
+			video.setAttribute('id', 'NewVideo');
+			video.src = value;
+			video.autoplay = true;
+			video.controls = false;
+			video.muted = false;
+			video.onended = (_event) => {
+				const video = document.getElementById('NewVideo');
+				video.pause();
+				video.src = '';
+				video.remove();
+			};
+			document.getElementById('video_div').appendChild(video);
+			break;
+		}
+		case 'SongSprite': {
+			playSongSprite(value);
+			break;
+		}
+		case 'Alert': {
+			if (value.length !== 4) {
+				console.log(`"Alert" Message: Wrong amount of arguments: ${value.length}`);
+				console.log(`value_array: ${value}`);
+				break;
+			}
+			let [video_file, start_animation, mid_animation, end_animation] = value;
+			video_file = convertPath(video_file);
+			let audio_file = replaceExtension(video_file, '.gif', '.mp3');
+
+			async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
+				// We create a Promise and return it
+				return new Promise((resolve, reject) => {
+					const animationName = `${prefix}${animation}`;
+					console.log(JSON.stringify(node));
+
+					node.classList.add(`${prefix}animated`, animationName);
+					node.style.setProperty('--animate-duration', duration);
+
+					// When the animation ends, we clean the classes and resolve the Promise
+					function handleAnimationEnd(event) {
+						event.stopPropagation();
+						if (next_function === false) {
+							//remove img
+							node.parentNode.removeChild(node);
+							resolve('Animation removed');
+						} else {
+							//end animation
+							node.classList.remove(`${prefix}animated`, animationName);
+							next_function();
+							resolve('Animation ended');
+						}
+					}
+					node.addEventListener('animationend', handleAnimationEnd, { once: true });
+				});
+			}
+
+			if (video_file.endsWith('.gif')) {
+				const img = document.createElement('img');
+				img.setAttribute('id', 'NewImage');
+				img.src = video_file;
+				const sound = new Howl({
+					src: audio_file,
+					html5: true,
+					preload: true,
+					onplay: () => {
+						const duration = `${parseInt((sound.duration() * 1000) / 3)}ms`;
+						animateCSS(img, start_animation, duration, () => {
+							animateCSS(img, mid_animation, duration, () => {
+								animateCSS(img, end_animation, duration);
+							});
+						});
+						document.getElementById('video_div').appendChild(img);
+					},
+					onend: () => {
+						sound.unload();
+					},
+				});
+				sound.play();
+			} else {
+				const video = document.createElement('video');
+				video.setAttribute('id', 'NewImage');
+				video.src = video_file;
+				video.autoplay = true;
+				video.controls = false;
+				video.muted = false;
+				(video.onplay = () => {
+					console.log(video.duration);
+					const duration = `${parseInt((video.duration * 1000) / 3)}ms`;
+					animateCSS(video, start_animation, duration, () => {
+						animateCSS(video, mid_animation, duration, () => {
+							animateCSS(video, end_animation, duration);
+						});
+					});
+				}),
+					(video.onended = (_event) => {
+						video.pause();
+						video.src = '';
+						video.remove();
+					});
+				document.getElementById('video_div').appendChild(video);
+			}
+			break;
+		}
+
+		case 'VideoNow': {
+			let beefweb_value = value.replace('music/', '');
+			let video_value = convertPath(value);
+			if ((await beefwebPlaySongNow(beefweb_value)) === false) {
+				break;
+			}
+
+			const video = document.createElement('video');
+			video.setAttribute('id', 'NewVideo');
+			video.src = video_value;
+			video.autoplay = false;
+			video.controls = false;
+			video.muted = true;
+			document.getElementById('video_div').appendChild(video);
+
+			video.onended = () => {
+				clearInterval(video.interval);
+				video.pause();
+				video.src = '';
+				video.remove();
+			};
+			video.onplay = () => (video.isplaying = true);
+
+			video.interval = setInterval(async () => {
+				const video_file = decodeURI(basefilename(video.src));
+				const beefweb_file = await beefweb.getActiveItemFilename();
+				if (video_file !== beefweb_file) {
+					video.onended();
+					return;
+				}
+				let beefwebCurrentTime = await beefweb.getPosition();
+
+				if (video.isplaying !== true) {
+					console.log('first', beefwebCurrentTime - video.currentTime);
+					video.currentTime = beefwebCurrentTime;
+					video.play();
+				} else if (beefwebCurrentTime - video.currentTime > 0.2 || beefwebCurrentTime - video.currentTime < -0.2) {
+					console.log(beefwebCurrentTime - video.currentTime);
+					video.currentTime = beefwebCurrentTime;
+				}
+			}, 400);
+			break;
+		}
+		case 'TTS': {
+			playSoundQueued(value);
+			break;
+		}
+		case 'SplitSong': {
+			playSplitSound(`assets/music/${value}`);
+			break;
+		}
+		case 'Song': {
+			value = value.replace('music/', '');
+			beefwebPlaySongNow(value);
+			break;
+		}
+		case 'Sr': {
+			value.filename = value.filename.replace('music/', '');
+			beefwebQueueSong(value.filename);
+			break;
+		}
+		case 'Enable':
+		case 'Disable': {
+			const setting = key === 'Enable';
+			enable_song = setting;
+			console.log(enable_song, setting);
+			break;
+		}
+		default: {
+			console.log(`unsupported, ${key}: ${value}`);
+			break;
+		}
+	}
+}
+
+initWebSocket('ws://server.local:1338', handleMessage);
