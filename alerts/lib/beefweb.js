@@ -1,5 +1,9 @@
 /*global  */
+
 'use strict';
+
+import { log } from './log.js';
+
 //lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
 const isLinux = false; //win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
 let base_url = `http://${isLinux ? 'steamdeck.local' : 'derrick-desktop'}:8880/api`;
@@ -19,7 +23,7 @@ async function getJSON(url) {
 
 		return await response.json();
 	} catch (err) {
-		console.log(err);
+		log.error(err);
 		return '';
 	}
 }
@@ -38,7 +42,7 @@ async function postJSON(url, data) {
 		//not sure if this should just return false. throw new error is a mystery to me
 		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 	} catch (err) {
-		console.log(err);
+		log.error(err);
 		return false;
 	}
 
@@ -53,7 +57,7 @@ async function postSimple(url) {
 		//not sure if this should just return false. throw new error is a mystery to me
 		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 	} catch (err) {
-		console.log(err);
+		log.error(err);
 		return false;
 	}
 
@@ -159,7 +163,7 @@ async function addItems(playlist_id, index, play, items) {
 //curl -X GET "http://derrick-desktop.local:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
 async function getItems(playlist, range) {
 	const json = await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`);
-	console.log(json);
+	log.info('JSON response:', json);
 	json.playlistItems.items.forEach((element) => {
 		let temporary = element.columns;
 		element.columns = {
@@ -168,7 +172,6 @@ async function getItems(playlist, range) {
 			path: temporary[2],
 		};
 	});
-	console.log(json);
 	return json;
 }
 
