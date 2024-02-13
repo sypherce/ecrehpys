@@ -3,6 +3,7 @@
 'use strict';
 
 import * as beefweb from './lib/beefweb.js';
+import { log } from './lib/log.js';
 
 const local_music_path = 'assets/music';
 
@@ -63,7 +64,7 @@ async function beefwebQueueSong(file) {
 	}
 	const this_active_file = await beefweb.getActiveItemFilename();
 	const song_is_playing = play_now_active_file !== '' && basefilename(file) === this_active_file;
-	console.log('basefilename(file), this_active_file, file:::', basefilename(file), this_active_file, file);
+	log.temp('basefilename(file), this_active_file, file:::', basefilename(file), this_active_file, file);
 	if (song_is_playing || !enable_song) {
 		playSongSprite(file);
 		return;
@@ -121,18 +122,18 @@ export function sendMessage(address, id, contents) {
 
 	const message = `{"${id}" : ${contents}}`;
 
-	console.log('Sending message:', message);
+	log.info('Sending message:', message);
 	connection.send(message);
 }
 
 function playSplitSound(file) {
-	console.log(file);
+	log.info(`Playing split sound: ${file}`);
 	const sound = {
 		list: [],
 		play: (filename) => {
 			let playing = false;
 			this.list.forEach((item, index) => {
-				console.log(item, index);
+				log.temp(`Item at index ${index}:`, item);
 
 				if (item._src === filename) {
 					playing = true;
@@ -152,7 +153,7 @@ function playSplitSound(file) {
 				);
 				sound.play();
 			}
-			console.log('length', this.list.length);
+			log.temp('length', this.list.length);
 
 			//check if game changed, if it did, toss everything
 			//search [list] for filename
@@ -163,13 +164,13 @@ function playSplitSound(file) {
 	sound.play(file);
 }
 function playSound(file) {
-	console.log(file);
+	log.info(`Playing sound: ${file}`);
 	let sound = new Howl({
 		src: [file],
 		html5: true,
 		onend: () => {
 			sound.unload();
-			console.log('Unloaded!');
+			log.info(`Sound ${file} Unloaded!`);
 		},
 	});
 	sound.play();
@@ -210,7 +211,7 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 		html5: true,
 		onend: () => {
 			sound.unload();
-			console.log('Unloaded!');
+			log.info(`Sound sprite ${file} Unloaded!`);
 		},
 		onload: () => {
 			if (duration === -1) {
@@ -238,7 +239,7 @@ function initWebSocket(websocketAddress, handleMessage, reconnectDelay = 1000) {
 	};
 
 	connection.onclose = (event) => {
-		console.log(`Socket is closed. Reconnect will be attempted in ${reconnectDelay / 1000} second(s).`, event.reason);
+		log.info(`Socket is closed. Reconnect will be attempted in ${reconnectDelay / 1000} second(s).`, event.reason);
 
 		const index = connectionArray.findIndex((connection) => connection.address === websocketAddress);
 		if (index !== -1) {
@@ -256,10 +257,10 @@ function initWebSocket(websocketAddress, handleMessage, reconnectDelay = 1000) {
 		if (typeof object === 'object') {
 			Object.entries(object).forEach(([key, value]) => {
 				handleMessage(key, value);
-				console.log(`Received message: key='${key}', value='${value}'`);
+				log.info(`Received message: key='${key}', value='${value}'`);
 			});
 		} else {
-			console.log(`Unknown Data: ${object}`);
+			log.warning(`Unknown Data: ${object}`);
 		}
 	};
 
@@ -280,7 +281,7 @@ async function handleMessage(key, value) {
 
 	switch (key) {
 		case 'Message': {
-			console.log(`Received Message response: '${value}'`);
+			log.info(`Received Message response: '${value}'`);
 			break;
 		}
 
@@ -302,7 +303,7 @@ async function handleMessage(key, value) {
 				if (delay !== 0)
 					//if there's a delay from the last sound
 					await new Promise((r) => setTimeout(r, delay));
-				console.log(`!ca: ${cmd}: ${start}, ${duration}`);
+				log.info(`!ca: ${cmd}: ${start}, ${duration}`);
 				playSoundSprite(cmd, start, duration);
 
 				position = position + duration;
@@ -385,8 +386,8 @@ async function handleMessage(key, value) {
 		}
 		case 'Alert': {
 			if (value.length !== 4) {
-				console.log(`"Alert" Message: Wrong amount of arguments: ${value.length}`);
-				console.log(`value_array: ${value}`);
+				log.warning(`"Alert" Message: Wrong amount of arguments: ${value.length}`);
+				log.warning(`value_array: ${value}`);
 				break;
 			}
 			let [video_file, start_animation, mid_animation, end_animation] = value;
@@ -397,7 +398,7 @@ async function handleMessage(key, value) {
 				// We create a Promise and return it
 				return new Promise((resolve, reject) => {
 					const animationName = `${prefix}${animation}`;
-					console.log(JSON.stringify(node));
+					log.temp(JSON.stringify(node));
 
 					node.classList.add(`${prefix}animated`, animationName);
 					node.style.setProperty('--animate-duration', duration);
@@ -450,7 +451,7 @@ async function handleMessage(key, value) {
 				video.controls = false;
 				video.muted = false;
 				(video.onplay = () => {
-					console.log(video.duration);
+					log.info(`Video ${video_file} duration: ${video.duration} seconds`);
 					const duration = `${parseInt((video.duration * 1000) / 3)}ms`;
 					animateCSS(video, start_animation, duration, () => {
 						animateCSS(video, mid_animation, duration, () => {
@@ -501,11 +502,11 @@ async function handleMessage(key, value) {
 				let beefwebCurrentTime = await beefweb.getPosition();
 
 				if (video.isplaying !== true) {
-					console.log('first', beefwebCurrentTime - video.currentTime);
+					log.temp('first', beefwebCurrentTime - video.currentTime);
 					video.currentTime = beefwebCurrentTime;
 					video.play();
 				} else if (beefwebCurrentTime - video.currentTime > 0.2 || beefwebCurrentTime - video.currentTime < -0.2) {
-					console.log(beefwebCurrentTime - video.currentTime);
+					log.temp(beefwebCurrentTime - video.currentTime);
 					video.currentTime = beefwebCurrentTime;
 				}
 			}, 400);
@@ -533,11 +534,11 @@ async function handleMessage(key, value) {
 		case 'Disable': {
 			const setting = key === 'Enable';
 			enable_song = setting;
-			console.log(enable_song, setting);
+			log.info(`enable_song: ${enable_song}, setting: ${setting}`);
 			break;
 		}
 		default: {
-			console.log(`unsupported, ${key}: ${value}`);
+			log.warning(`Unsupported, ${key}: ${value}`);
 			break;
 		}
 	}
