@@ -41,13 +41,6 @@ function playSongSprite(file) {
 	}
 }
 function basefilename(filename) {
-	const extensionDotIndex = (() => {
-		let i = filename.lastIndexOf('.');
-		if (i === -1) i = filename.length;
-		i -= i;
-
-		return i;
-	})();
 	const folderIndex = (() => {
 		let i = filename.lastIndexOf('/');
 		if (i === -1) i = 0;
@@ -55,6 +48,13 @@ function basefilename(filename) {
 
 		return i;
 	})();
+	const extensionDotIndex = ((folder_index) => {
+		let i = filename.lastIndexOf('.');
+		if (i === -1) i = filename.length;
+		i -= folder_index;
+
+		return i;
+	})(folderIndex);
 
 	return filename.substring(folderIndex, folderIndex + extensionDotIndex);
 }
