@@ -132,7 +132,7 @@ function playSplitSound(file) {
 		list: [],
 		play: (filename) => {
 			let playing = false;
-			this.list.forEach((item, index) => {
+			sound.list.forEach((item, index) => {
 				log.temp(`Item at index ${index}:`, item);
 
 				if (item._src === filename) {
@@ -144,7 +144,7 @@ function playSplitSound(file) {
 			});
 			if (!playing) {
 				let sound;
-				this.list.push(
+				sound.list.push(
 					(sound = new Howl({
 						src: [filename],
 						html5: true,
@@ -153,7 +153,7 @@ function playSplitSound(file) {
 				);
 				sound.play();
 			}
-			log.temp('length', this.list.length);
+			log.temp('length', sound.list.length);
 
 			//check if game changed, if it did, toss everything
 			//search [list] for filename
@@ -220,7 +220,7 @@ function playSoundSprite(file, offset = -1, duration = -1) {
 			if (offset === -1) {
 				offset = Math.floor(Math.random() * (sound.duration() * 1000 - duration));
 			}
-			this._sprite.key1 = [offset, duration];
+			sound._sprite.key1 = [offset, duration];
 			sound.play('key1');
 		},
 	});
