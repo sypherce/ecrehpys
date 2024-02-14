@@ -41,14 +41,22 @@ function playSongSprite(file) {
 	}
 }
 function basefilename(filename) {
-	let ext_index = filename.lastIndexOf('.');
-	let folder_index = filename.lastIndexOf('/');
-	if (folder_index === -1) folder_index = 0;
-	else folder_index++;
-	if (ext_index === -1) ext_index = filename.length;
-	ext_index -= folder_index;
+	const extensionDotIndex = (() => {
+		let i = filename.lastIndexOf('.');
+		if (i === -1) i = filename.length;
+		i -= i;
 
-	return filename.substring(folder_index, folder_index + ext_index);
+		return i;
+	})();
+	const folderIndex = (() => {
+		let i = filename.lastIndexOf('/');
+		if (i === -1) i = 0;
+		else i++; //remove the slash
+
+		return i;
+	})();
+
+	return filename.substring(folderIndex, folderIndex + extensionDotIndex);
 }
 
 let queue_pos = 0;
