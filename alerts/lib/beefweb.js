@@ -6,14 +6,14 @@ import { log } from './log.js';
 
 //lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
 const isLinux = false; //win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
-let base_url = `http://${isLinux ? 'steamdeck.local' : 'derrick-desktop'}:8880/api`;
+const baseUrl = `http://${isLinux ? 'steamdeck.local' : 'derrick-desktop'}:8880/api`;
 //curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
 
-let music_path = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
+const musicPath = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
 
 async function getJSON(url) {
 	try {
-		const response = await fetch(`${base_url}/${url}`, {
+		const response = await fetch(`${baseUrl}/${url}`, {
 			method: 'GET',
 			headers: {
 				accept: 'application/json',
@@ -29,7 +29,7 @@ async function getJSON(url) {
 }
 async function postJSON(url, data) {
 	try {
-		const response = await fetch(`${base_url}/${url}`, {
+		const response = await fetch(`${baseUrl}/${url}`, {
 			method: 'POST',
 			headers: {
 				accept: 'application/json',
@@ -50,7 +50,7 @@ async function postJSON(url, data) {
 }
 async function postSimple(url) {
 	try {
-		const response = await fetch(`${base_url}/${url}`, {
+		const response = await fetch(`${baseUrl}/${url}`, {
 			method: 'POST',
 		});
 
@@ -77,19 +77,19 @@ async function setPosition(position, absolute = false) {
 
 async function isPlaying() {
 	const json = await getJSON('player');
-	const this_state = json.player.playbackState;
+	const thisState = json.player.playbackState;
 
-	return this_state === 'playing';
+	return thisState === 'playing';
 }
 async function getPlaybackState() {
 	getPlaybackState.state = getPlaybackState.state ?? 'stopped';
 
 	const json = await getJSON('player');
-	const this_state = json.player.playbackState;
+	const thisState = json.player.playbackState;
 
-	if (getPlaybackState.state === this_state) return false;
+	if (getPlaybackState.state === thisState) return false;
 
-	getPlaybackState.state = this_state;
+	getPlaybackState.state = thisState;
 	return getPlaybackState.state;
 }
 async function getActiveItemIndex() {
@@ -106,7 +106,7 @@ async function getPositionRelative() {
 }
 async function getCoverartURL(index) {
 	const playlist = await getActivePlaylistIndex();
-	return `${base_url}/artwork/${playlist}/${index}`;
+	return `${baseUrl}/artwork/${playlist}/${index}`;
 }
 async function getActiveItemFilename() {
 	const json = await getJSON('player?columns=%filename%');
@@ -130,8 +130,8 @@ async function getActivePlaylistIndex() {
 
 	return index;
 }
-async function addItems(playlist_id, index, play, items) {
-	return postJSON(`playlists/${playlist_id}/items/add`, {
+async function addItems(playlistId, index, play, items) {
+	return postJSON(`playlists/${playlistId}/items/add`, {
 		index: index,
 		async: false,
 		replace: false,
@@ -178,40 +178,40 @@ async function getItems(playlist, range) {
 async function _test() {
 	console.group('%cfoobar2000 test', 'color: white; background: blue;');
 	console.trace();
-	const active_playlist = await getActivePlaylistIndex();
-	console.log({ active_playlist: active_playlist });
+	const activePlaylist = await getActivePlaylistIndex();
+	console.log({ activePlaylist: activePlaylist });
 	console.log({ getJSON: await getJSON('player') });
 	console.log({ postSimple: [await postSimple('player?position=15'), await getPosition()] });
 	console.log({ setPosition: [await setPosition(25, true), await getPosition()] });
 	console.log({ getPlaybackState: await getPlaybackState() });
 	console.log({ isPlaying: await isPlaying() });
 
-	const active_item_index = await getActiveItemIndex();
-	console.log({ active_item_index: active_item_index });
+	const activeItemIndex = await getActiveItemIndex();
+	console.log({ activeItemIndex: activeItemIndex });
 	console.log({ getPosition: await getPosition() });
 	console.log({ getPositionRelative: await getPositionRelative() });
-	console.log({ getCoverartURL: await getCoverartURL(active_item_index) });
+	console.log({ getCoverartURL: await getCoverartURL(activeItemIndex) });
 	console.log({ getActiveItemFilename: await getActiveItemFilename() });
 	console.log({ getPlaylists: await getPlaylists() });
 	console.log({ getActivePlaylistIndex: await getActivePlaylistIndex() });
-	const get_items = await getItems(active_playlist, '0:10');
-	console.log(get_items);
-	get_items.playlistItems.items.forEach((element) => {
+	const getItems = await getItems(activePlaylist, '0:10');
+	console.log(getItems);
+	getItems.playlistItems.items.forEach((element) => {
 		console.log(element.columns);
 	});
 
 	await new Promise((r) => setTimeout(r, 1000));
-	const test_mp3_filename = music_path + '/0 - Other/Crabs- MrWeebl.mp3';
+	const testMp3Filename = musicPath + '/0 - Other/Crabs- MrWeebl.mp3';
 	console.log({
-		postJSON: await postJSON(`playlists/${active_playlist}/items/add`, {
+		postJSON: await postJSON(`playlists/${activePlaylist}/items/add`, {
 			index: 0,
 			async: false,
 			replace: false,
 			play: true,
-			items: [test_mp3_filename],
+			items: [testMp3Filename],
 		}),
 	});
-	console.log(`${active_playlist} -- ${test_mp3_filename}`);
+	console.log(`${activePlaylist} -- ${testMp3Filename}`);
 
 	console.groupEnd();
 }
@@ -229,5 +229,5 @@ export {
 	getActivePlaylistIndex,
 	addItems,
 	getItems,
-	music_path,
+	musicPath,
 };

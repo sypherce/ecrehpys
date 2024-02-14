@@ -5,7 +5,7 @@
 import * as beefweb from './lib/beefweb.js';
 import { log } from './lib/log.js';
 
-const local_music_path = 'assets/music';
+const LOCAL_MUSIC_PATH = 'assets/music';
 
 function replaceExtension(filename, original, replacement) {
 	if (filename.endsWith(original)) filename = filename.substring(0, filename.lastIndexOf(original)) + replacement;
@@ -28,7 +28,7 @@ function playSongSprite(file) {
 	function removeExt(filename) {
 		return filename.substring(0, filename.lastIndexOf('.') !== -1 ? filename.lastIndexOf('.') : filename.length);
 	}
-	file = `${local_music_path}/${file}`;
+	file = `${LOCAL_MUSIC_PATH}/${file}`;
 
 	//play a predefined sound bite if it exists
 	let soundfile = `${removeExt(file)}.sound.mp3`;
@@ -48,10 +48,10 @@ function basefilename(filename) {
 
 		return i;
 	})();
-	const extensionDotIndex = ((folder_index) => {
+	const extensionDotIndex = ((folderIndex) => {
 		let i = filename.lastIndexOf('.');
 		if (i === -1) i = filename.length;
-		i -= folder_index;
+		i -= folderIndex;
 
 		return i;
 	})(folderIndex);
@@ -59,9 +59,9 @@ function basefilename(filename) {
 	return filename.substring(folderIndex, folderIndex + extensionDotIndex);
 }
 
-let queue_pos = 0;
+let queuePos = 0;
 //let last_playlist = undefined;
-let enable_song = true;
+let enableSong = true;
 /*	todo
 	need to check if song is in queue and skip if it is
 */
@@ -70,51 +70,51 @@ async function beefwebQueueSong(file) {
 		beefwebPlaySongNow(file);
 		return;
 	}
-	const this_active_file = await beefweb.getActiveItemFilename();
-	const song_is_playing = play_now_active_file !== '' && basefilename(file) === this_active_file;
-	log.temp('basefilename(file), this_active_file, file:::', basefilename(file), this_active_file, file);
-	if (song_is_playing || !enable_song) {
+	const thisActiveFile = await beefweb.getActiveItemFilename();
+	const songIsPlaying = playNowActiveFile !== '' && basefilename(file) === thisActiveFile;
+	log.temp('basefilename(file), this_active_file, file:::', basefilename(file), thisActiveFile, file);
+	if (songIsPlaying || !enableSong) {
 		playSongSprite(file);
 		return;
 	}
 	if (!file.startsWith('https:')) {
-		file = `${beefweb.music_path}/${file}`;
+		file = `${beefweb.musicPath}/${file}`;
 	}
-	const current_playlist = await beefweb.getActivePlaylistIndex();
-	let next_index = (await beefweb.getActiveItemIndex()) + 1;
-	if (next_index == 0) next_index = 10000; //10000 is just temporary
+	const currentPlaylist = await beefweb.getActivePlaylistIndex();
+	let nextIndex = (await beefweb.getActiveItemIndex()) + 1;
+	if (nextIndex == 0) nextIndex = 10000; //10000 is just temporary
 
 	//no real queue for now, just next playing
-	queue_pos = next_index;
+	queuePos = nextIndex;
 	/*if(last_playlist !== current_playlist
 	|| next_index > queue_pos) {
 		queue_pos = next_index;
 		last_playlist = current_playlist;
 	}*/
-	await beefweb.addItems(current_playlist, queue_pos, false, [file]);
-	queue_pos++;
+	await beefweb.addItems(currentPlaylist, queuePos, false, [file]);
+	queuePos++;
 }
 
-let play_now_active_file = '';
+let playNowActiveFile = '';
 async function beefwebPlaySongNow(file) {
-	const this_active_file = await beefweb.getActiveItemFilename();
-	const song_is_playing = play_now_active_file !== '' && play_now_active_file === this_active_file;
+	const thisActiveFile = await beefweb.getActiveItemFilename();
+	const songIsPlaying = playNowActiveFile !== '' && playNowActiveFile === thisActiveFile;
 	//if a forced song is already playing
-	if (song_is_playing || !enable_song) {
+	if (songIsPlaying || !enableSong) {
 		playSongSprite(file);
 		return false;
 	}
 
-	play_now_active_file = basefilename(file);
+	playNowActiveFile = basefilename(file);
 
 	if (!file.startsWith('https:')) {
-		file = `${beefweb.music_path}/${file}`;
+		file = `${beefweb.musicPath}/${file}`;
 	}
 
-	let current_playlist = await beefweb.getActivePlaylistIndex();
-	let next_index = (await beefweb.getActiveItemIndex()) + 1;
-	if (next_index === 0) next_index = 10000; //10000 is just temporary
-	await beefweb.addItems(current_playlist, next_index, true, [file]);
+	let currentPlaylist = await beefweb.getActivePlaylistIndex();
+	let nextIndex = (await beefweb.getActiveItemIndex()) + 1;
+	if (nextIndex === 0) nextIndex = 10000; //10000 is just temporary
+	await beefweb.addItems(currentPlaylist, nextIndex, true, [file]);
 
 	return true;
 }
@@ -184,25 +184,25 @@ function playSound(file) {
 	sound.play();
 }
 
-const sound_queue = [];
+const soundQueue = [];
 function playSoundQueued(file) {
 	const MAX_QUEUE_LENGTH = 4;
-	if (sound_queue.length > MAX_QUEUE_LENGTH) return;
+	if (soundQueue.length > MAX_QUEUE_LENGTH) return;
 	let sound = new Howl({
 		src: [file],
 		html5: true,
 		onloaderror: () => {
-			if (sound_queue.length > 1) sound_queue[1].play();
-			sound_queue.shift();
+			if (soundQueue.length > 1) soundQueue[1].play();
+			soundQueue.shift();
 		},
 		onend: () => {
-			if (sound_queue.length > 1) sound_queue[1].play();
+			if (soundQueue.length > 1) soundQueue[1].play();
 			sound.unload();
-			sound_queue.shift();
+			soundQueue.shift();
 		},
 	});
-	sound_queue.push(sound);
-	if (sound_queue.length === 1) sound_queue[0].play();
+	soundQueue.push(sound);
+	if (soundQueue.length === 1) soundQueue[0].play();
 }
 
 //todo: gif needs handled elsewhere, proper console.log
@@ -297,16 +297,16 @@ async function handleMessage(key, value) {
 		//include direct paths for browser, not relative, not direct paths for server
 		case 'CustomAudio': {
 			let delay = 0;
-			const max_sound_cmds = 100;
+			const MAX_SOUND_CMDS = 100;
 			let position = 0;
-			for (let i = 0; i < value.length && i < max_sound_cmds * 3; i += 3) {
-				const max_duration = 10000;
+			for (let i = 0; i < value.length && i < MAX_SOUND_CMDS * 3; i += 3) {
+				const MAX_DURATION = 10000;
 				let cmd = value[i].split(',')[0];
 				cmd = convertPath(cmd);
 				const start = parseInt(value[i + 1]);
 				let duration = parseInt(value[i + 2]);
-				if (position + duration > max_duration) duration = max_duration - position;
-				else if (duration > max_duration) duration = max_duration;
+				if (position + duration > MAX_DURATION) duration = MAX_DURATION - position;
+				else if (duration > MAX_DURATION) duration = MAX_DURATION;
 
 				if (delay !== 0)
 					//if there's a delay from the last sound
@@ -315,7 +315,7 @@ async function handleMessage(key, value) {
 				playSoundSprite(cmd, start, duration);
 
 				position = position + duration;
-				if (position >= max_duration) break;
+				if (position >= MAX_DURATION) break;
 
 				delay = duration;
 			}
@@ -327,12 +327,12 @@ async function handleMessage(key, value) {
 			break;
 		}
 		case 'Lips': {
-			function lips(emote_url, scale_x, scale_y, position_x, position_y, rotation) {
+			function lips(emoteUrl, scaleX, scaleY, positionX, positionY, rotation) {
 				let div = document.getElementById('Lips_Div');
-				let old_emote_img = document.getElementById('emote_img');
-				if (old_emote_img !== null) div.removeChild(old_emote_img);
-				let old_lips_img = document.getElementById('lips_img');
-				if (old_lips_img !== null) div.removeChild(old_lips_img);
+				let oldEmoteImg = document.getElementById('emote_img');
+				if (oldEmoteImg !== null) div.removeChild(oldEmoteImg);
+				let oldLipsImg = document.getElementById('lips_img');
+				if (oldLipsImg !== null) div.removeChild(oldLipsImg);
 
 				let img = new Image();
 				img.id = 'emote_img';
@@ -349,7 +349,7 @@ async function handleMessage(key, value) {
 
 				img = new Image();
 				img.id = 'lips_img';
-				img.src = emote_url;
+				img.src = emoteUrl;
 				img.setAttribute(
 					'style',
 					`
@@ -358,8 +358,8 @@ async function handleMessage(key, value) {
 				height: 224px;
 				image-rendering: pixelated;
 				transform:
-				translate(${position_x}px, ${position_y}px)
-				scale(${scale_x},${scale_y})
+				translate(${positionX}px, ${positionY}px)
+				scale(${scaleX},${scaleY})
 				rotate(${rotation}turn);"`
 				);
 				div.appendChild(img);
@@ -398,11 +398,11 @@ async function handleMessage(key, value) {
 				log.warning(`value_array: ${value}`);
 				break;
 			}
-			let [video_file, start_animation, mid_animation, end_animation] = value;
-			video_file = convertPath(video_file);
-			let audio_file = replaceExtension(video_file, '.gif', '.mp3');
+			let [videoFile, startAnimation, midAnimation, endAnimation] = value;
+			videoFile = convertPath(videoFile);
+			let audioFile = replaceExtension(videoFile, '.gif', '.mp3');
 
-			async function animateCSS(node, animation, duration, next_function = false, prefix = 'animate__') {
+			async function animateCSS(node, animation, duration, nextFunction = false, prefix = 'animate__') {
 				// We create a Promise and return it
 				return new Promise((resolve, reject) => {
 					const animationName = `${prefix}${animation}`;
@@ -414,14 +414,14 @@ async function handleMessage(key, value) {
 					// When the animation ends, we clean the classes and resolve the Promise
 					function handleAnimationEnd(event) {
 						event.stopPropagation();
-						if (next_function === false) {
+						if (nextFunction === false) {
 							//remove img
 							node.parentNode.removeChild(node);
 							resolve('Animation removed');
 						} else {
 							//end animation
 							node.classList.remove(`${prefix}animated`, animationName);
-							next_function();
+							nextFunction();
 							resolve('Animation ended');
 						}
 					}
@@ -429,19 +429,19 @@ async function handleMessage(key, value) {
 				});
 			}
 
-			if (video_file.endsWith('.gif')) {
+			if (videoFile.endsWith('.gif')) {
 				const img = document.createElement('img');
 				img.setAttribute('id', 'NewImage');
-				img.src = video_file;
+				img.src = videoFile;
 				const sound = new Howl({
-					src: audio_file,
+					src: audioFile,
 					html5: true,
 					preload: true,
 					onplay: () => {
 						const duration = `${parseInt((sound.duration() * 1000) / 3)}ms`;
-						animateCSS(img, start_animation, duration, () => {
-							animateCSS(img, mid_animation, duration, () => {
-								animateCSS(img, end_animation, duration);
+						animateCSS(img, startAnimation, duration, () => {
+							animateCSS(img, midAnimation, duration, () => {
+								animateCSS(img, endAnimation, duration);
 							});
 						});
 						document.getElementById('video_div').appendChild(img);
@@ -454,16 +454,16 @@ async function handleMessage(key, value) {
 			} else {
 				const video = document.createElement('video');
 				video.setAttribute('id', 'NewImage');
-				video.src = video_file;
+				video.src = videoFile;
 				video.autoplay = true;
 				video.controls = false;
 				video.muted = false;
 				(video.onplay = () => {
-					log.info(`Video ${video_file} duration: ${video.duration} seconds`);
+					log.info(`Video ${videoFile} duration: ${video.duration} seconds`);
 					const duration = `${parseInt((video.duration * 1000) / 3)}ms`;
-					animateCSS(video, start_animation, duration, () => {
-						animateCSS(video, mid_animation, duration, () => {
-							animateCSS(video, end_animation, duration);
+					animateCSS(video, startAnimation, duration, () => {
+						animateCSS(video, midAnimation, duration, () => {
+							animateCSS(video, endAnimation, duration);
 						});
 					});
 				}),
@@ -478,15 +478,15 @@ async function handleMessage(key, value) {
 		}
 
 		case 'VideoNow': {
-			let beefweb_value = value.replace('music/', '');
-			let video_value = convertPath(value);
-			if ((await beefwebPlaySongNow(beefweb_value)) === false) {
+			let beefwebValue = value.replace('music/', '');
+			let videoValue = convertPath(value);
+			if ((await beefwebPlaySongNow(beefwebValue)) === false) {
 				break;
 			}
 
 			const video = document.createElement('video');
 			video.setAttribute('id', 'NewVideo');
-			video.src = video_value;
+			video.src = videoValue;
 			video.autoplay = false;
 			video.controls = false;
 			video.muted = true;
@@ -501,9 +501,9 @@ async function handleMessage(key, value) {
 			video.onplay = () => (video.isplaying = true);
 
 			video.interval = setInterval(async () => {
-				const video_file = decodeURI(basefilename(video.src));
-				const beefweb_file = await beefweb.getActiveItemFilename();
-				if (video_file !== beefweb_file) {
+				const videoFile = decodeURI(basefilename(video.src));
+				const beefwebFile = await beefweb.getActiveItemFilename();
+				if (videoFile !== beefwebFile) {
 					video.onended();
 					return;
 				}
@@ -541,8 +541,8 @@ async function handleMessage(key, value) {
 		case 'Enable':
 		case 'Disable': {
 			const setting = key === 'Enable';
-			enable_song = setting;
-			log.info(`enable_song: ${enable_song}, setting: ${setting}`);
+			enableSong = setting;
+			log.info(`enableSong: ${enableSong}, setting: ${setting}`);
 			break;
 		}
 		default: {
