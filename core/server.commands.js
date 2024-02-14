@@ -32,7 +32,7 @@ function loadCommands(filename = 'config/commands.json') {
 		//!this might be done elsewhere, idk
 		//set media_count to 0 if it's needed
 		for (const task of command.task) {
-			if (typeof task.media === 'object' && task.media_counter !== null) task.media_counter = 0;
+			if (typeof task.media === 'object') task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
 		}
 
 		//altkey takes priority
@@ -88,7 +88,7 @@ function saveCommands(filename = 'config/commands.json', command_array = global_
 		//!this might be done elsewhere, idk
 		//set media_count to 0 if it's needed
 		for (const task of command.task) {
-			if (typeof task.media !== 'undefined' && typeof task.media_counter !== 'undefined') delete task.media_counter;
+			if (typeof task.mediaShuffleBag === 'object') delete task.mediaShuffleBag;
 		}
 	}
 	fs.writeFileSync(`${filename}`, prettyStringify(command_array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
@@ -153,8 +153,7 @@ async function replaceVariablesInTaskString(user, query_string, task_string) {
 	return task_string;
 }
 
-const attacks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-const replyBag = new ShuffleBag(attacks);
+const replyBag = new ShuffleBag([...Array(9).keys()]); //[0, 1, 2, 3, etc.]
 let user_array = [];
 /**Processes the user's message and executes the corresponding commands.
  *
@@ -710,12 +709,7 @@ async function processMessage(username, message, flags, self, extra) {
 							return 'NaN';
 						}
 					}
-					let filename = task.media;
-					if (typeof task.media === 'object') {
-						if (typeOfNaN(task.media_counter) || task.media_counter >= task.media.length) task.media_counter = 0;
-						filename = task.media[task.media_counter];
-						task.media_counter++;
-					}
+					const filename = typeof task.media === 'object' ? task.media[task.mediaShuffleBag.next()] : task.media;
 
 					try {
 						if (filename?.endsWith('.mp4')) server.sendMessage('Video', filename);
