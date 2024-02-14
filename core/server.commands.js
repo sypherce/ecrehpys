@@ -29,8 +29,7 @@ function loadCommands(filename = 'config/commands.json') {
 		command.timestamp ??= 0;
 		command.active ??= true;
 
-		//!this might be done elsewhere, idk
-		//set media_count to 0 if it's needed
+		// setup the shuffle bag for media if it's an object
 		for (const task of command.task) {
 			if (typeof task.media === 'object') task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
 		}
@@ -80,15 +79,14 @@ function loadCommands(filename = 'config/commands.json') {
  */
 function saveCommands(filename = 'config/commands.json', command_array = global_command_array) {
 	for (const command of command_array) {
-		//set defaults that may not be defined
+		// remove defaults that are not needed
 		if (command.cooldown === 0) delete command.cooldown;
 		if (command.active === true) delete command.active;
 		if (typeof command.timestamp !== 'undefined') delete command.timestamp;
 
-		//!this might be done elsewhere, idk
-		//set media_count to 0 if it's needed
+		// remove the shuffle bag for media if it's defined
 		for (const task of command.task) {
-			if (typeof task.mediaShuffleBag === 'object') delete task.mediaShuffleBag;
+			if (typeof task.mediaShuffleBag !== 'undefined') delete task.mediaShuffleBag;
 		}
 	}
 	fs.writeFileSync(`${filename}`, prettyStringify(command_array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
