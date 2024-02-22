@@ -9,6 +9,8 @@ const twurple = require('../lib/twurple.js');
 const mp3Library = require('../lib/mp3Library.js');
 const prettyStringify = require('@aitodotai/json-stringify-pretty-compact');
 const tts = require('../lib/tts.js');
+const jsonArray = require('../lib/jsonArray.js');
+const ecrehpysGPT = require('../lib/ecrehpysGPT.js');
 
 let isSoundRequestsEnabled = true;
 
@@ -262,7 +264,7 @@ async function processMessage(username, message, flags, self, extra) {
 			//also clears user avatars for chat
 			//and resets "first"
 
-			if (['!clear_users', '!refresh_users', '!reload_users'].some((command) => message_lower.includes(command))) {
+			if (['!clear_users', '!refresh_users', '!reload_users', '!reset_users'].some((command) => message_lower.includes(command))) {
 				function deleteFile(filename) {
 					fs.unlink(filename, (err) => {
 						if (err) console.log(err);
@@ -278,8 +280,7 @@ async function processMessage(username, message, flags, self, extra) {
 						}
 					});
 				}
-				user_array = [];
-				deleteFile('config/chatters.json');
+				user_array = jsonArray.clear('config/chatters.json');
 				clearDirectory('../../users/icon');
 				twurple.eventsub.resetFirst();
 			}
@@ -415,41 +416,18 @@ async function processMessage(username, message, flags, self, extra) {
 			server.sayWrapper(`${user} says that ${item} is in the Library!`);
 		}
 		if (message_lower.includes('@ecrehpys')) {
-			switch (replyBag.next()) {
-				case 0:
-					server.sayWrapper(`Meow @${user}`);
-					server.sendMessage('Audio', `alerts/emil_mgow.mp3`);
-					break;
-				case 1:
-					server.sayWrapper(`@${user} sypher18Awkward`);
-					break;
-				case 2:
-					server.sayWrapper(`@${user} sypher18OMG`);
-					break;
-				case 3:
-					server.sendMessage('Audio', `alerts/muten_whaat.mp3`);
-					server.sayWrapper(`WHAT @${user.toUpperCase()}!?!??!!?!?`);
-					break;
-				case 4:
-					server.sayWrapper(`@${user} sypher18Cry`);
-					break;
-				case 5:
-					server.sendMessage('Audio', `alerts/generic_nice.mp3`);
-					server.sayWrapper(`NiCe @${user}`);
-					break;
-				case 6:
-					server.sayWrapper(`FIGHT ME @${user.toUpperCase()}!`);
-					server.sendMessage('Audio', `alerts/muten_whip.mp3`);
-					break;
-				case 7:
-					server.sayWrapper(`@${user} └(°□°└）`);
-					server.sendMessage('Audio', `alerts/xjrigsx_banshee.mp3`);
-					break;
-				case 8:
-					server.sayWrapper(`You know what? SHUT UP! D:`);
-					server.sendMessage('Audio', `alerts/office_shut_up.mp3`);
-					break;
-			}
+			const response = (await ecrehpysGPT.generateResponse(user, message_lower.replaceAll('@ecrehpys', '')))
+				.replaceAll('Sypher18', 'sypher18')
+				.replaceAll('sypher18Awkward', ' sypher18Awkward ')
+				.replaceAll('sypher18OMG', ' sypher18OMG ')
+				.replaceAll('sypher18Cry', ' sypher18Cry ')
+				.replaceAll('D:', ' D: ');
+
+			server.sayWrapper(response);
+		}
+		if (message_lower.includes('!haiku ')) {
+			const response = await ecrehpysGPT.generateResponse(user, message_lower.replace('!haiku ', ''), `You talk only in lengthy Haikus.`);
+			server.sayWrapper(response);
 		}
 		if (message_lower.includes('!sr ')) {
 			//disabled
@@ -795,12 +773,12 @@ async function processMessage(username, message, flags, self, extra) {
 	//#region MAIN_FUNCTION()
 
 	if (user_array.length === 0) {
-		user_array = loadUserArray();
+		user_array = jsonArray.load('config/chatters.json');
 	}
 	const isNewUser = !user_array.includes(username);
 	if (isNewUser) {
 		user_array.push(username);
-		saveUserArray(user_array);
+		jsonArray.save('config/chatters.json', user_array);
 
 		//handle intro
 		const alert = findIntroCommandByString(`!${username.toLowerCase()}`); //user commands all have !prefix
