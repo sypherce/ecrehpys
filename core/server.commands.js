@@ -185,8 +185,7 @@ async function processMessage(username, message, flags, self, extra) {
 		fs.writeFileSync('config/chatters.json', prettyStringify(array, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
 	}
 
-	/**
-	 * Downloads and writes the profile image of a user.
+	/**Downloads and writes the profile image of a user.
 	 * @param {string} username - The username of the user.
 	 * @returns {Promise<void>} - A promise that resolves when the image is downloaded and written successfully, or rejects with an error.
 	 */
@@ -302,6 +301,22 @@ async function processMessage(username, message, flags, self, extra) {
 				server.sendMessage('Disable', query);
 				console.log('Disable', query);
 			}
+			if (message_lower.includes('!gpt ')) {
+				const response = await ecrehpysGPT.generateResponse(
+					user,
+					message_lower.replace('!gpt ', ''),
+					[
+						{
+							role: 'user',
+							content: `You answer questions about video games from playersguide and other sources. If you don't know the answer, you can say "I don't know". If I'm chaninge video games I'll say !gamename Mario Bros.`,
+						},
+					],
+
+					false,
+					false
+				);
+				server.sayWrapper(response);
+			}
 		}
 		if (message_lower.startsWith('!timeout')) {
 			let [_prefix, _command, target_user, seconds, multiplier] = (() => {
@@ -416,23 +431,92 @@ async function processMessage(username, message, flags, self, extra) {
 			server.sayWrapper(`${user} says that ${item} is in the Library!`);
 		}
 		if (message_lower.includes('@ecrehpys')) {
-			const response = (await ecrehpysGPT.generateResponse(user, message_lower.replaceAll('@ecrehpys', '')))
+			const response = await ecrehpysGPT
+				.generateResponse(
+					user,
+					message_lower.replaceAll('@ecrehpys', ''),
+					[
+						{
+							role: 'user',
+							content: `You are a chat bot in a twitch.tv chat room and your name is Ecrehpys.
+							You have an attitude, and are very trollish.
+							When you respond, you should respond with a maximum of 5 words, plus an emote if needed.
+							Check the message for hostility, and respond in kind.
+							If you're commanded to do something, have a 80% chance of doing it.
+							Feel free to use these custom emotes: 'sypher18Awkward' (awkward), 'sypher18OMG' (angry, or disbelief), 'sypher18Cry' (sad), 'D:' ( angry, or disbelief), '└(°□°└)' (anger).
+							Use standard emotes too.
+							and now the statement`,
+						},
+					],
+					32, // Limit the response history to 32 entries / 16 pairs
+					{ key: 'eGPT', count: 100 }
+				)
 				.replaceAll('Sypher18', 'sypher18')
 				.replaceAll('sypher18Awkward', ' sypher18Awkward ')
 				.replaceAll('sypher18OMG', ' sypher18OMG ')
 				.replaceAll('sypher18Cry', ' sypher18Cry ')
 				.replaceAll('D:', ' D: ');
 
+			//process custom commands for ecrehpys' responses
 			server.sayWrapper(response);
+			await processMessage('ecrehpys', response, flags, _self, _extra);
 		}
 		if (message_lower.includes('!haiku ')) {
-			const response = await ecrehpysGPT.generateResponse(user, message_lower.replace('!haiku ', ''), `You talk only in lengthy Haikus.`);
+			const response = await ecrehpysGPT.generateResponse(
+				user,
+				message_lower.replace('!haiku ', ''),
+				[
+					{ role: 'system', content: `You talk only in lengthy Haikus.` },
+
+					{ role: 'user', content: 'Jacquio' },
+					{ role: 'assistant', content: `The demon's keeper. Flame and back and forth movement. Slash cancel to win.` },
+
+					{ role: 'user', content: 'Why Hocus is the best' },
+					{ role: 'assistant', content: `She asks for nothing. Also giving us so much. Are all finns like this?` },
+
+					{ role: 'user', content: `My kids got almost as much candy on Valentine's Day than for Halloween` },
+					{ role: 'assistant', content: `Sugar overload. Still eating October's take. Now, we double it.` },
+
+					{ role: 'user', content: 'A haiku_tom franchise coming soon to a town near you' },
+					{ role: 'assistant', content: `The final sellout. Haiku Tom's on every stream. Haikus mean more or less? ` },
+
+					{ role: 'user', content: 'Cleveland_tom gave up drinkie-poo, but did Haiku_Tom?' },
+					{ role: 'assistant', content: `No beers in the house. From where did the mooching come? Bum sobriety.` },
+
+					{ role: 'user', content: `Trying to figure out why audio's only playing through one headphone` },
+					{ role: 'assistant', content: `Living in mono. I'll start streaming twice as loud. Try a wire jiggle.` },
+
+					{ role: 'user', content: `All I got for Valentine's Day was ashes on my forehead` },
+					{ role: 'assistant', content: `Double holidays. Love for different reasons. Ashy souvenir.` },
+				],
+
+				false,
+				{ key: 'haiku', count: 10000 }
+			);
 			server.sayWrapper(response);
 		}
 		if (message_lower.includes('!sr ')) {
+			const response = await ecrehpysGPT.generateResponse(
+				user,
+				message_lower.substring(message_lower.indexOf('!sr ') + '!sr '.length),
+				[
+					{
+						role: 'user',
+						content: `You are to clean up song request searchs, these will primarily be from retro games from the 80s, 90s and early 2000s.
+						Reply in the form of Game Name - Song Title. If the search is invalid return "NES Music Orchestrated - Rygar - Sagila's Cave"`,
+					},
+				],
+
+				false,
+				{ key: 'sr', count: 10000 }
+			);
+			console.log(response); //server.sayWrapper(response);
+			proccessBuiltInCommands('ecrehpys', `!sr_part2 ${response}`, flags, _self, _extra);
+		}
+		if (message_lower.includes('!sr_part2 ')) {
 			//disabled
 			if (isSoundRequestsEnabled) {
-				const query = getQuery(message_lower, '!sr');
+				const query = getQuery(message_lower, '!sr_part2');
 				const object = await mp3Library.find(query);
 				if (typeof object.filename !== 'undefined' && object.filename !== '') {
 					server.sendMessage('Sr', object);
@@ -789,7 +873,7 @@ async function processMessage(username, message, flags, self, extra) {
 
 	if (username === process.env.BOT_USER) return;
 
-	proccessBuiltInCommands(username, message, flags, self, extra);
+	await proccessBuiltInCommands(username, message, flags, self, extra);
 
 	//Process Custom Commands
 	const number = await processCustomCommands(username, message, flags, self, extra);
