@@ -153,7 +153,6 @@ async function replaceVariablesInTaskString(user, query_string, task_string) {
 	return task_string;
 }
 
-const replyBag = new ShuffleBag([...Array(9).keys()]); //[0, 1, 2, 3, etc.]
 let user_array = [];
 /**Processes the user's message and executes the corresponding commands.
  *
