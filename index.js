@@ -29,7 +29,7 @@ switch (myArgs[0]) {
 (async () => {
 	await mp3Library.init('alerts/assets/music', force_refresh);
 	if (enable_livesplit) {
-		await livesplit_main.run('derrick-desktop:16834');
+		await livesplit_main.run('derrick-desktop.local:16834');
 		setTimeout(processLivesplit, 500);
 	}
 	await server.init();
