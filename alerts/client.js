@@ -41,20 +41,8 @@ function playSongSprite(file) {
 	}
 }
 function basefilename(filename) {
-	const folderIndex = (() => {
-		let i = filename.lastIndexOf('/');
-		if (i === -1) i = 0;
-		else i++; //remove the slash
-
-		return i;
-	})();
-	const extensionDotIndex = ((folderIndex) => {
-		let i = filename.lastIndexOf('.');
-		if (i === -1) i = filename.length;
-		i -= folderIndex;
-
-		return i;
-	})(folderIndex);
+	const folderIndex = filename.lastIndexOf('/') + 1;
+	const extensionDotIndex = filename.lastIndexOf('.') - folderIndex;
 
 	return filename.substring(folderIndex, folderIndex + extensionDotIndex);
 }
@@ -66,10 +54,10 @@ let enableSong = true;
 	need to check if song is in queue and skip if it is
 */
 async function beefwebQueueSong(file) {
-	if (!(await beefweb.isPlaying())) {
-		beefwebPlaySongNow(file);
-		return;
-	}
+	//if (!(await beefweb.isPlaying())) {
+	//	beefwebPlaySongNow(file);
+	//	return;
+	//}
 	const thisActiveFile = await beefweb.getActiveItemFilename();
 	const songIsPlaying = playNowActiveFile !== '' && basefilename(file) === thisActiveFile;
 	log.temp('basefilename(file), this_active_file, file:::', basefilename(file), thisActiveFile, file);
@@ -81,7 +69,7 @@ async function beefwebQueueSong(file) {
 		file = `${beefweb.musicPath}/${file}`;
 	}
 	const currentPlaylist = await beefweb.getActivePlaylistIndex();
-	let nextIndex = (await beefweb.getActiveItemIndex()) + 1;
+	let nextIndex = 0; //(await beefweb.getActiveItemIndex()) + 1;
 	if (nextIndex == 0) nextIndex = 10000; //10000 is just temporary
 
 	//no real queue for now, just next playing
@@ -134,41 +122,39 @@ export function sendMessage(address, id, contents) {
 	connection.send(message);
 }
 
+const sound = {
+	list: [],
+	play: (filename) => {
+		let isPlaying = false;
+		sound.list.forEach((item, index) => {
+			log.temp(`Item at index ${index}:`, item);
+
+			if (item._src === filename) {
+				isPlaying = true;
+				item.play();
+			} else {
+				item.pause();
+			}
+		});
+		if (!isPlaying) {
+			const howlSoundEntry = new Howl({
+				src: filename,
+				html5: true,
+				loop: true,
+			});
+			sound.list.push(howlSoundEntry);
+			howlSoundEntry.play();
+		}
+		log.temp('length', sound.list.length);
+
+		//check if game changed, if it did, toss everything
+		//search [list] for filename
+		//if it's in [list] continue playing song
+		//if not, start it
+	},
+};
 function playSplitSound(file) {
 	log.info(`Playing split sound: ${file}`);
-	const sound = {
-		list: [],
-		play: (filename) => {
-			let playing = false;
-			sound.list.forEach((item, index) => {
-				log.temp(`Item at index ${index}:`, item);
-
-				if (item._src === filename) {
-					playing = true;
-					item.play();
-				} else {
-					item.pause();
-				}
-			});
-			if (!playing) {
-				let sound;
-				sound.list.push(
-					(sound = new Howl({
-						src: [filename],
-						html5: true,
-						loop: true,
-					}))
-				);
-				sound.play();
-			}
-			log.temp('length', sound.list.length);
-
-			//check if game changed, if it did, toss everything
-			//search [list] for filename
-			//if it's in [list] continue playing song
-			//if not, start it
-		},
-	};
 	sound.play(file);
 }
 function playSound(file) {
