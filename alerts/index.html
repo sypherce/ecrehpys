@@ -20,8 +20,21 @@
 	</head>
 	<body>
 		<script type="text/javascript">
+			function getURLParameter(parameterName) {
+				const pageURL = window.location.search.substring(1);
+				console.log(pageURL);
+				const URLVariables = pageURL.split('&');
+				for (let i = 0; i < URLVariables.length; i++) {
+					const parameter = URLVariables[i].split('=');
+					if (parameter[0] == parameterName) {
+						return parameter[1];
+					}
+				}
+			}
+			const port = getURLParameter('port') ? getURLParameter('port') : 1338;
+
 			document.write(`<${'script'} src="howler.min.js?${now}"></${'script'}>`);
-			document.write(`<${'script'} type="module" src="client.js?${now}"></${'script'}>`);
+			document.write(`<${'script'} type="module" src="client.js?port=${port}&time=${now}"></${'script'}>`);
 		</script>
 		<div class="video_div_class" id="video_div"></div>
 		<div id="content"></div>

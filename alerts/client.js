@@ -538,4 +538,17 @@ async function handleMessage(key, value) {
 	}
 }
 
-initWebSocket('ws://server.local:1338', handleMessage);
+function getURLParameter(parameterName) {
+	const pageURL = window.location.search.substring(1);
+	console.log(pageURL);
+	const URLVariables = pageURL.split('&');
+	for (let i = 0; i < URLVariables.length; i++) {
+		const parameter = URLVariables[i].split('=');
+		if (parameter[0] == parameterName) {
+			return parameter[1];
+		}
+	}
+}
+const port = getURLParameter('port') ? getURLParameter('port') : 1338;
+
+initWebSocket(`ws://server.local:${port}`, handleMessage);
