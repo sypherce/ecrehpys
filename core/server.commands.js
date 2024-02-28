@@ -389,7 +389,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 	if (message_lower.includes('!haiku ')) {
 		const response = await ecrehpysGPT.generateResponse(
 			user,
-			message_lower.replace('!haiku ', ''),
+			message_lower.substring(message_lower.indexOf('!haiku ') + '!haiku '.length),
 			[
 				{ role: 'system', content: `You talk only in lengthy Haikus.` },
 
@@ -421,33 +421,28 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		server.sayWrapper(response);
 	}
 	if (message_lower.includes('!sr ')) {
-		const response = await ecrehpysGPT.generateResponse(
-			user,
-			message_lower.substring(message_lower.indexOf('!sr ') + '!sr '.length),
-			[
-				{
-					role: 'user',
-					content: `You are to clean up song request searchs, these will primarily be from retro games from the 80s, 90s and early 2000s.
-						Reply in the form of Game Name - Song Title. If the search is invalid return "NES Music Orchestrated - Rygar - Sagila's Cave"`,
-				},
-			],
-
-			false,
-			{ key: 'sr', count: 10000 }
-		);
-		console.log(response); //server.sayWrapper(response);
-		await proccessBuiltInCommands('ecrehpys', `!sr_part2 ${response}`, flags, _self, _extra);
-	}
-	if (message_lower.includes('!sr_part2 ')) {
-		//disabled
 		if (isSoundRequestsEnabled) {
-			const query = getQuery(message_lower, '!sr_part2');
-			const object = await mp3Library.find(query);
+			const response = await ecrehpysGPT.generateResponse(
+				user,
+				message_lower.substring(message_lower.indexOf('!sr ') + '!sr '.length),
+				[
+					{
+						role: 'user',
+						content: `You are to clean up song request searchs, these will primarily be from retro games from the 80s, 90s and early 2000s.
+						Reply in the form of Game Name - Song Title. If the search is invalid return "NES Music Orchestrated - Rygar - Sagila's Cave"`,
+					},
+				],
+
+				false,
+				{ key: 'sr', count: 10000 }
+			);
+			console.log(response); //server.sayWrapper(response);
+			const object = await mp3Library.find(response);
 			if (typeof object.filename !== 'undefined' && object.filename !== '') {
 				server.sendMessage('Sr', object);
 				server.sayWrapper(`Requested: ${object.album} - ${object.title}`);
 			} else {
-				server.sayWrapper(`Not Found: ${query}`);
+				server.sayWrapper(`Not Found: ${response}`);
 			}
 		} else {
 			server.sayWrapper(`Song requests disabled.`);
@@ -731,7 +726,7 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 			if (task.media) {
 				if (typeof task.media === 'object' && typeof task.mediaShuffleBag === 'undefined') {
 					task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
-					throw new Error(`task.mediaShuffleBag created for ${task.media}`);
+					console.log(`task.mediaShuffleBag created for ${task.media}`);
 				}
 				const filename = typeof task.media === 'object' ? task.media[task.mediaShuffleBag.next()] : task.media;
 

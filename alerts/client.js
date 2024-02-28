@@ -55,10 +55,10 @@ let enableSong = true;
 	need to check if song is in queue and skip if it is
 */
 async function beefwebQueueSong(file) {
-	//if (!(await beefweb.isPlaying())) {
-	//	beefwebPlaySongNow(file);
-	//	return;
-	//}
+	if (!(await beefweb.isPlaying())) {
+		beefwebPlaySongNow(file);
+		return;
+	}
 	const thisActiveFile = await beefweb.getActiveItemFilename();
 	const songIsPlaying = playNowActiveFile !== '' && basefilename(file) === thisActiveFile;
 	log.temp('basefilename(file), this_active_file, file:::', basefilename(file), thisActiveFile, file);
@@ -75,6 +75,11 @@ async function beefwebQueueSong(file) {
 
 	//no real queue for now, just next playing
 	queuePos = nextIndex;
+
+	// return if
+	const alreadyInPlaylist = await beefweb.itemIsInPlaylist(currentPlaylist, file.replace(/^https?:\/\//, ''));
+	console.log(alreadyInPlaylist);
+	if (alreadyInPlaylist !== -1) return;
 	/*if(last_playlist !== current_playlist
 	|| next_index > queue_pos) {
 		queue_pos = next_index;
@@ -84,10 +89,11 @@ async function beefwebQueueSong(file) {
 	queuePos++;
 }
 
+//playNowActiveFile probably needs removed
 let playNowActiveFile = '';
 async function beefwebPlaySongNow(file) {
 	const thisActiveFile = await beefweb.getActiveItemFilename();
-	const songIsPlaying = playNowActiveFile !== '' && playNowActiveFile === thisActiveFile;
+	const songIsPlaying = (playNowActiveFile !== '' && playNowActiveFile === thisActiveFile) || (await beefweb.isPlaying());
 	//if a forced song is already playing
 	if (songIsPlaying || !enableSong) {
 		playSongSprite(file);

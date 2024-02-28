@@ -35,7 +35,7 @@ function sendMessage(id, contents, port = MAIN_PORT) {
 	const message = `{"${id}" : ${contents}}`;
 
 	console.log('D:', `sendMessage(${message})`);
-	connection[port].sendUTF(message);
+	if (connection[port]?.sendUTF) connection[port].sendUTF(message);
 }
 function initConnection(port) {
 	const socket = new ws.server({

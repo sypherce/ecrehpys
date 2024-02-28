@@ -112,6 +112,10 @@ async function getActiveItemFilename() {
 	const json = await getJSON('player?columns=%filename%');
 	return json.player.activeItem.columns[0];
 }
+async function getActiveItemPath() {
+	const json = await getJSON('player?columns=%path%');
+	return json.player.activeItem.columns[0];
+}
 async function getPlaylists() {
 	const json = await getJSON('playlists');
 	return json.playlists;
@@ -159,7 +163,6 @@ async function addItems(playlistId, index, play, items) {
 		});
 	*/
 }
-
 //curl -X GET "http://derrick-desktop.local:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
 async function getItems(playlist, range) {
 	const json = await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`);
@@ -175,6 +178,20 @@ async function getItems(playlist, range) {
 	return json;
 }
 
+async function itemIsInPlaylist(playlist, item) {
+	//get active item index
+	//get items in playlist after active item
+	//search for item in items
+	//return index if found
+	//return -1 if not found
+	const activeItem = await getActiveItemIndex();
+	const items = await getItems(playlist, `${activeItem}:10000`);
+	const found = items.playlistItems.items.findIndex((element) => {
+		return element.columns.path === item;
+	});
+	return found;
+}
+
 async function _test() {
 	console.group('%cfoobar2000 test', 'color: white; background: blue;');
 	console.trace();
@@ -187,16 +204,18 @@ async function _test() {
 	console.log({ isPlaying: await isPlaying() });
 
 	const activeItemIndex = await getActiveItemIndex();
+	console.log({ itemIsInPlaylist: await itemIsInPlaylist(activePlaylist, await getActiveItemPath()) });
 	console.log({ activeItemIndex: activeItemIndex });
 	console.log({ getPosition: await getPosition() });
 	console.log({ getPositionRelative: await getPositionRelative() });
 	console.log({ getCoverartURL: await getCoverartURL(activeItemIndex) });
 	console.log({ getActiveItemFilename: await getActiveItemFilename() });
+	console.log({ getActiveItemPath: await getActiveItemPath() });
 	console.log({ getPlaylists: await getPlaylists() });
 	console.log({ getActivePlaylistIndex: await getActivePlaylistIndex() });
-	const getItems = await getItems(activePlaylist, '0:10');
-	console.log(getItems);
-	getItems.playlistItems.items.forEach((element) => {
+	const items = await getItems(activePlaylist, '0:10');
+	console.log(items);
+	items.playlistItems.items.forEach((element) => {
 		console.log(element.columns);
 	});
 
@@ -224,10 +243,12 @@ export {
 	getPositionRelative,
 	getCoverartURL,
 	getActiveItemFilename,
+	getActiveItemPath,
 	getPlaybackState,
 	isPlaying,
 	getActivePlaylistIndex,
 	addItems,
 	getItems,
+	itemIsInPlaylist,
 	musicPath,
 };
