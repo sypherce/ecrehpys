@@ -26,8 +26,8 @@ function streamerSayWrapper(message) {
 }
 
 let connection = [];
-function sendMessage(id, contents, port = 1338) {
-	if (connection[port] === null) return;
+function sendMessage(id, contents, port = MAIN_PORT) {
+	if (!connection[port]) return;
 
 	if (typeof contents === 'object') contents = JSON.stringify(contents);
 	else contents = `"${contents}"`;
