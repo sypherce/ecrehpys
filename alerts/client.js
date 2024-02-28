@@ -6,6 +6,7 @@ import * as beefweb from './lib/beefweb.js';
 import { log } from './lib/log.js';
 
 const LOCAL_MUSIC_PATH = 'assets/music';
+const MAIN_PORT = 1338;
 
 function replaceExtension(filename, original, replacement) {
 	if (filename.endsWith(original)) filename = filename.substring(0, filename.lastIndexOf(original)) + replacement;
@@ -549,6 +550,6 @@ function getURLParameter(parameterName) {
 		}
 	}
 }
-const port = getURLParameter('port') ? getURLParameter('port') : 1338;
+const port = getURLParameter('port') ? getURLParameter('port') : MAIN_PORT;
 
 initWebSocket(`ws://server.local:${port}`, handleMessage);
