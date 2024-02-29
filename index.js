@@ -3,13 +3,15 @@ require('dotenv').config();
 const server = require('./core/server.js');
 const mp3Library = require('./lib/mp3Library.js');
 const livesplit_main = require('./core/livesplit_main.js');
+const log = require('esm')(module)('./alerts/lib/log.js').log;
+
 async function processLivesplit() {
 	let splitIndex = livesplit_main.getSplitIndex();
 	if ((typeof processLivesplit.last_splitindex === 'undefined') | (splitIndex !== processLivesplit.last_splitindex)) {
 		processLivesplit.last_splitindex = splitIndex;
 
 		server.sendMessage('SplitSong', `livesplit/${livesplit_main.getTrack(splitIndex)}`);
-		console.log('D:', splitIndex);
+		log.debug(splitIndex);
 	}
 	setTimeout(processLivesplit, 500);
 }
@@ -34,6 +36,6 @@ switch (myArgs[0]) {
 	}
 	await server.init();
 
-	console.log('http://derrick-server/nodejs/main/alerts/');
-	if (enable_livesplit) console.log("Don't forget to actually start the livesplit server NotLikeThis");
+	log.info('http://derrick-server/nodejs/main/alerts/');
+	if (enable_livesplit) log.info("Don't forget to actually start the livesplit server NotLikeThis");
 })();

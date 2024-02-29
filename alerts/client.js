@@ -78,7 +78,7 @@ async function beefwebQueueSong(file) {
 
 	// return if
 	const alreadyInPlaylist = await beefweb.itemIsInPlaylist(currentPlaylist, file.replace(/^https?:\/\//, ''));
-	console.log(alreadyInPlaylist);
+	log.debug(alreadyInPlaylist);
 	if (alreadyInPlaylist !== -1) return;
 	/*if(last_playlist !== current_playlist
 	|| next_index > queue_pos) {
@@ -198,7 +198,7 @@ function playSoundQueued(file) {
 	if (soundQueue.length === 1) soundQueue[0].play();
 }
 
-//todo: gif needs handled elsewhere, proper console.log
+//todo: gif needs handled elsewhere, proper logging
 //research: do i need to sound.unload() the sound myself?
 function playSoundSprite(file, offset = -1, duration = -1) {
 	//we pass gifs into this for some reason. reason is laziness
@@ -547,7 +547,7 @@ async function handleMessage(key, value) {
 
 function getURLParameter(parameterName) {
 	const pageURL = window.location.search.substring(1);
-	console.log(pageURL);
+	log.debug(pageURL);
 	const URLVariables = pageURL.split('&');
 	for (let i = 0; i < URLVariables.length; i++) {
 		const parameter = URLVariables[i].split('=');

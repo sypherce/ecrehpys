@@ -3,6 +3,7 @@ require('dotenv').config();
 const twurple = require('../lib/twurple.js');
 const ws = require('websocket');
 const http = require('http');
+const log = require('esm')(module)('../alerts/lib/log.js').log;
 
 const MAIN_PORT = 1338;
 const LOCAL_AUDIO_PORT = 1340;
@@ -13,15 +14,15 @@ async function init() {
 }
 
 function sayWrapper(message) {
-	console.log('D:', message);
+	log.info(message);
 	twurple.sayWrapper(message); //bot.Say(message);
 }
 function actionWrapper(message) {
-	console.log('D:', message);
+	log.info(message);
 	twurple.actionWrapper(message); //bot.Say(message);
 }
 function streamerSayWrapper(message) {
-	console.log('D:', message);
+	log.info(message);
 	twurple.streamerSayWrapper(message); //streamer.Say(message);
 }
 
@@ -34,7 +35,7 @@ function sendMessage(id, contents, port = MAIN_PORT) {
 
 	const message = `{"${id}" : ${contents}}`;
 
-	console.log('D:', `sendMessage(${message})`);
+	log.debug(`sendMessage(${message})`);
 	if (connection[port]?.sendUTF) connection[port].sendUTF(message);
 }
 function initConnection(port) {
@@ -42,23 +43,23 @@ function initConnection(port) {
 		httpServer: http.createServer().listen(port),
 	}).on('request', (request) => {
 		connection[port] = request.accept(null, request.origin);
-		console.log(request.origin);
+		log.info(request.origin);
 
 		connection[port].on('message', (message) => {
 			const object = JSON.parse(message.utf8Data);
-			console.log(message.utf8Data);
+			log.info(message.utf8Data);
 			switch (object.Message) {
 				case 'Client':
 					sendMessage('Message', 'Server');
 					break;
 				default:
-					console.log('Unsupported!');
+					log.error('Unsupported!');
 					break;
 			}
 		});
 
 		connection[port].on('close', (_connection) => {
-			console.log('connection closed');
+			log.info('connection closed');
 		});
 	});
 }

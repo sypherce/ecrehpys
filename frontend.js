@@ -3,13 +3,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
+const log = require('esm')(module)('./alerts/lib/log.js').log;
 
 app.use(cors());
 
 const port = 3003;
 
 app.listen(port, () => {
-	console.log(`Application started and Listening on port ${port}`);
+	log.info(`Application started and Listening on port ${port}`);
 });
 
 app.use('/', express.static(path.join(__dirname, '/alerts')));

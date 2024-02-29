@@ -1,6 +1,7 @@
 'use strict';
 require('dotenv').config();
 const livesplit = require('../lib/liveSplit.js');
+const log = require('esm')(module)('../alerts/lib/log.js').log;
 
 const timeout_length = 500;
 
@@ -18,7 +19,7 @@ const tracklist = {
 		const basedir = 'assets/livesplit';
 		fs.access(`${basedir}/${filename}`, fs.F_OK, (doesnt_exist) => {
 			if (doesnt_exist) {
-				console.error(doesnt_exist);
+				log.error(doesnt_exist);
 				return;
 			}
 		});
@@ -30,17 +31,17 @@ const tracklist = {
 
 //test
 tracklist.load('ducktales/tracklist.json');
-console.log(JSON.stringify(tracklist));
-console.log(tracklist.get(0));
-console.log(tracklist.get(1));
-console.log(tracklist.get(40));
+log.debug(JSON.stringify(tracklist));
+log.debug(tracklist.get(0));
+log.debug(tracklist.get(1));
+log.debug(tracklist.get(40));
 
 let splitIndex = null;
 async function index_updater() {
 	splitIndex = await livesplit.getSplitIndex();
 	if (typeof index_updater.last === 'undefined' || index_updater.last !== splitIndex) {
 		index_updater.last = splitIndex;
-		console.log(splitIndex, tracklist.get(splitIndex));
+		log.debug(splitIndex, tracklist.get(splitIndex));
 	}
 	setTimeout(index_updater, timeout_length);
 }

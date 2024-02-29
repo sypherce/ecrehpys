@@ -11,6 +11,7 @@ const prettyStringify = require('@aitodotai/json-stringify-pretty-compact');
 const tts = require('../lib/tts.js');
 const jsonArray = require('../lib/jsonArray.js');
 const ecrehpysGPT = require('../lib/ecrehpysGPT.js');
+const log = require('esm')(module)('../alerts/lib/log.js').log;
 
 let isSoundRequestsEnabled = true;
 let global_command_array = loadCommands();
@@ -135,9 +136,9 @@ async function downloadAndWriteProfileImage(username) {
 					});
 				});
 		});
-		console.log(`"${username.toLowerCase()}.png" downloaded and written successfully.`);
+		log.info(`"${username.toLowerCase()}.png" downloaded and written successfully.`);
 	} catch (error) {
-		console.error(`Error downloading and writing image "${username.toLowerCase()}.png": `, error);
+		log.error(`Error downloading and writing image "${username.toLowerCase()}.png": `, error);
 	}
 
 	return isDownloadSuccessful;
@@ -172,11 +173,11 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			const saved_command_array = global_command_array;
 			try {
 				global_command_array = loadCommands();
-				console.log('Commands Reloaded.');
+				log.info('Commands Reloaded.');
 			} catch (e) {
 				global_command_array = saved_command_array;
-				console.error(e); // error in the above string (in this case, yes)!
-				console.log('Commands failed to reload.');
+				log.error(e); // error in the above string (in this case, yes)!
+				log.error('Commands failed to reload.');
 			}
 		}
 		//stop bot (restart if running in a loop)
@@ -190,8 +191,8 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		if (['!clear_users', '!refresh_users', '!reload_users', '!reset_users'].some((command) => message_lower.includes(command))) {
 			function deleteFile(filename) {
 				fs.unlink(filename, (err) => {
-					if (err) console.log(err);
-					else console.log(`Deleted file: ${filename}`);
+					if (err) log.error(err);
+					else log.info(`Deleted file: ${filename}`);
 				});
 			}
 			function clearDirectory(directory) {
@@ -216,14 +217,14 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			const query = getQuery(message_lower, '!enable');
 			isSoundRequestsEnabled = true;
 			server.sendMessage('Enable', query);
-			console.log('Enable', query);
+			log.info('!sr Enabled', query);
 		}
 		//play songsprites if disabled
 		if (message_lower.includes('!disable')) {
 			const query = getQuery(message_lower, '!disable');
 			isSoundRequestsEnabled = false;
 			server.sendMessage('Disable', query);
-			console.log('Disable', query);
+			log.info('!sr Disabled', query);
 		}
 		if (message_lower.includes('!gpt ')) {
 			const response = await ecrehpysGPT.generateResponse(
@@ -436,7 +437,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 				false,
 				{ key: 'sr', count: 10000 }
 			);
-			console.log(response); //server.sayWrapper(response);
+			log.debug(response); //server.sayWrapper(response);
 			const object = await mp3Library.find(response);
 			if (typeof object.filename !== 'undefined' && object.filename !== '') {
 				server.sendMessage('Sr', object);
@@ -711,7 +712,7 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 			//#region this may or may not work.
 			if (task.delay) {
 				await new Promise((resolve) => setTimeout(resolve, task.delay));
-				console.log('V:', `!delay ${parseInt(task.delay)}`);
+				log.debug(`!delay ${parseInt(task.delay)}`);
 			}
 			//#endregion this may or may not work.
 			if (task.chat) {
@@ -733,8 +734,8 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 					if (filename?.endsWith('.mp4')) server.sendMessage('Video', filename);
 					else server.sendMessage('Audio', filename);
 				} catch (e) {
-					console.log(e);
-					console.log(`filename: ${filename}, typeof filename: ${typeof filename}`);
+					log.error(e);
+					log.error(`filename: ${filename}, typeof filename: ${typeof filename}`);
 				}
 			}
 			//#endregion fix section
@@ -845,7 +846,7 @@ async function processMessage(username, message, flags, self, extra) {
 
 	//Process Custom Commands
 	const number = await processCustomCommands(username, message, flags, self, extra);
-	console.log('D:', `${username}(${number}): ${message}`);
+	log.debug(`${username}(${number}): ${message}`);
 }
 
 module.exports.process = processMessage;
