@@ -49,7 +49,6 @@ function basefilename(filename) {
 }
 
 let queuePos = 0;
-//let last_playlist = undefined;
 let enableSong = true;
 /*	todo
 	need to check if song is in queue and skip if it is
@@ -80,11 +79,6 @@ async function beefwebQueueSong(file) {
 	const alreadyInPlaylist = await beefweb.itemIsInPlaylist(currentPlaylist, file.replace(/^https?:\/\//, ''));
 	log.debug(alreadyInPlaylist);
 	if (alreadyInPlaylist !== -1) return;
-	/*if(last_playlist !== current_playlist
-	|| next_index > queue_pos) {
-		queue_pos = next_index;
-		last_playlist = current_playlist;
-	}*/
 	await beefweb.addItems(currentPlaylist, queuePos, false, [file]);
 	queuePos++;
 }

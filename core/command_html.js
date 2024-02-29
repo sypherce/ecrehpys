@@ -40,9 +40,9 @@ const html = [
 </html>`,
 ];
 
-//inserts command_list into html[1] and writes it out to the file
-async function writeHTMLFile(filename, command_list) {
-	html[1] = command_list;
+//inserts commandList into html[1] and writes it out to the file
+async function writeHTMLFile(filename, commandList) {
+	html[1] = commandList;
 	await fs.promises.writeFile(filename, html.join(''));
 }
 

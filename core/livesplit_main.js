@@ -3,7 +3,7 @@ require('dotenv').config();
 const livesplit = require('../lib/liveSplit.js');
 const log = require('esm')(module)('../alerts/lib/log.js').log;
 
-const timeout_length = 500;
+const timeoutLength = 500;
 
 const fs = require('fs');
 const path = require('path');
@@ -17,9 +17,9 @@ const tracklist = {
 	},
 	load: (filename) => {
 		const basedir = 'assets/livesplit';
-		fs.access(`${basedir}/${filename}`, fs.F_OK, (doesnt_exist) => {
-			if (doesnt_exist) {
-				log.error(doesnt_exist);
+		fs.access(`${basedir}/${filename}`, fs.F_OK, (doesntExist) => {
+			if (doesntExist) {
+				log.error(doesntExist);
 				return;
 			}
 		});
@@ -37,13 +37,13 @@ log.debug(tracklist.get(1));
 log.debug(tracklist.get(40));
 
 let splitIndex = null;
-async function index_updater() {
+async function indexUpdater() {
 	splitIndex = await livesplit.getSplitIndex();
-	if (typeof index_updater.last === 'undefined' || index_updater.last !== splitIndex) {
-		index_updater.last = splitIndex;
+	if (typeof indexUpdater.last === 'undefined' || indexUpdater.last !== splitIndex) {
+		indexUpdater.last = splitIndex;
 		log.debug(splitIndex, tracklist.get(splitIndex));
 	}
-	setTimeout(index_updater, timeout_length);
+	setTimeout(indexUpdater, timeoutLength);
 }
 
 // main
@@ -51,7 +51,7 @@ async function run(address) {
 	// Initialize client with LiveSplit Server's IP:PORT
 	await livesplit.init(address);
 
-	setTimeout(index_updater, timeout_length);
+	setTimeout(indexUpdater, timeoutLength);
 	// Job done, now we can close this connection
 	//client.disconnect();
 }
