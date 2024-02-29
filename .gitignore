@@ -1,4 +1,6 @@
-/alerts/assets
+/alerts/assets/alerts/audio-hooks
+/alerts/assets/alerts/tts
+/alerts/assets/alerts_linked
 .env
 node_modules
 server.twurple.js
