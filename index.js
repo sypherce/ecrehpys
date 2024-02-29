@@ -2,7 +2,7 @@
 require('dotenv').config();
 const server = require('./core/server.js');
 const mp3Library = require('./lib/mp3Library.js');
-const livesplitMain = require('./core/livesplit_main.js');
+const livesplitMain = require('./core/livesplitMain.js');
 const log = require('esm')(module)('./alerts/lib/log.js').log;
 
 async function processLivesplit() {
