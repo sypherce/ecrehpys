@@ -35,7 +35,7 @@ function loadCommands(filename = 'config/commands.json') {
 
 		// setup the shuffle bag for media if it's an object
 		for (const task of command.task) {
-			if (typeof task.media === 'object') task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
+			if (typeof task.media === 'object' && task.media.length > 1) task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
 		}
 
 		//altkey takes priority
@@ -725,8 +725,7 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 			//#region fix section
 			if (task.media) {
 				if (typeof task.media === 'object' && typeof task.mediaShuffleBag === 'undefined') {
-					task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
-					console.log(`task.mediaShuffleBag created for ${task.media}`);
+					throw `task.mediaShuffleBag not created for ${task.media}`;
 				}
 				const filename = typeof task.media === 'object' ? task.media[task.mediaShuffleBag.next()] : task.media;
 
@@ -774,7 +773,6 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 				server.sayWrapper(result);
 			}
 			commands_triggered++;
-			console.log(commands_triggered);
 		}
 		return false;
 	}
