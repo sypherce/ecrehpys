@@ -1,9 +1,31 @@
+const ESC = (number) => `\x1b[${number}m`;
+const FG = {
+	BLACK: ESC(30),
+	RED: ESC(31),
+	GREEN: ESC(32),
+	YELLOW: ESC(33),
+	BLUE: ESC(34),
+	MAGENTA: ESC(35),
+	CYAN: ESC(36),
+	WHITE: ESC(37),
+};
+const BG = {
+	BLACK: ESC(40),
+	RED: ESC(41),
+	GREEN: ESC(42),
+	YELLOW: ESC(43),
+	BLUE: ESC(44),
+	MAGENTA: ESC(45),
+	CYAN: ESC(46),
+	WHITE: ESC(47),
+};
+const RESET = ESC(0);
 const log = {
-	debug: console.debug.bind(console, '\x1b[34mD:\x1b[0m%s'),
-	info: console.info.bind(console, '%s'),
-	warning: console.warn.bind(console, '\x1b[33mW:\x1b[0m%s'),
-	temp: console.debug.bind(console, '\x1b[95mT:\x1b[0m%s'),
-	error: console.error.bind(console, '\x1b[91mE:\x1b[0m%s'),
+	debug: console.debug.bind(console, `${BG.MAGENTA}${FG.BLACK}D:${RESET}%s`),
+	info: console.info.bind(console, `%s`),
+	warning: console.warn.bind(console, `${BG.YELLOW}${FG.BLACK}W:${RESET}%s`),
+	temp: console.debug.bind(console, `${BG.WHITE}${FG.BLACK}T:${RESET}%s`),
+	error: console.error.bind(console, `${BG.RED}${FG.BLACK}E:${RESET}%s`),
 };
 
 export { log };
