@@ -29,13 +29,6 @@ const tracklist = {
 	},
 };
 
-//test
-tracklist.load('ducktales/tracklist.json');
-log.debug(JSON.stringify(tracklist));
-log.debug(tracklist.get(0));
-log.debug(tracklist.get(1));
-log.debug(tracklist.get(40));
-
 let splitIndex = null;
 async function indexUpdater() {
 	splitIndex = await livesplit.getSplitIndex();
@@ -48,6 +41,13 @@ async function indexUpdater() {
 
 // main
 async function run(address) {
+	//test
+	tracklist.load('ducktales/tracklist.json');
+	log.debug(JSON.stringify(tracklist));
+	log.debug(tracklist.get(0));
+	log.debug(tracklist.get(1));
+	log.debug(tracklist.get(40));
+
 	// Initialize client with LiveSplit Server's IP:PORT
 	await livesplit.init(address);
 

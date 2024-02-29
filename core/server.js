@@ -47,7 +47,7 @@ function initConnection(port) {
 
 		connection[port].on('message', (message) => {
 			const object = JSON.parse(message.utf8Data);
-			log.info(message.utf8Data);
+			log.info('Received:', message.utf8Data);
 			switch (object.Message) {
 				case 'Client':
 					sendMessage('Message', 'Server');

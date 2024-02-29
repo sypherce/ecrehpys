@@ -21,7 +21,7 @@ const BG = {
 };
 const RESET = ESC(0);
 const log = {
-	debug: console.debug.bind(console, `${BG.MAGENTA}${FG.BLACK}D:${RESET}%s`),
+	debug: console.debug.bind(console, `${BG.BLUE}${FG.BLACK}D:${RESET}%s`),
 	info: console.info.bind(console, `%s`),
 	warning: console.warn.bind(console, `${BG.YELLOW}${FG.BLACK}W:${RESET}%s`),
 	temp: console.debug.bind(console, `${BG.WHITE}${FG.BLACK}T:${RESET}%s`),
