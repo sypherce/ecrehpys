@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@aitodotai/json-stringify-pretty-compact": "^1.3.0",
+    "@stdlib/string-remove-punctuation": "^0.2.1",
     "@twurple/api": "^7.0.5",
     "@twurple/auth": "^7.0.5",
     "@twurple/easy-bot": "^7.0.5",
@@ -23,6 +24,7 @@
     "thize": "^0.2.2",
     "tiktok-tts": "^1.1.13",
     "tmi.js": "^1.5.0",
+    "twss": "^0.1.6",
     "websocket": "^1.0.34"
   },
   "devDependencies": {

@@ -12,6 +12,8 @@ const tts = require('../lib/tts.js');
 const jsonArray = require('../lib/jsonArray.js');
 const ecrehpysGPT = require('../lib/ecrehpysGPT.js');
 const log = require('esm')(module)('../alerts/lib/log.js').log;
+const twss = require('twss');
+const removePunctuation = require('@stdlib/string-remove-punctuation');
 
 let isSoundRequestsEnabled = true;
 let globalCommandArray = loadCommands();
@@ -36,7 +38,7 @@ function loadCommands(filename = 'config/commands.json') {
 
 		// setup the shuffle bag for media if it's an object
 		for (const task of command.task) {
-			if (typeof task.media === 'object' && task.media.length > 1) task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
+			if (typeof task.media === 'object' && task.media.length >= 1) task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
 		}
 
 		//altkey takes priority
@@ -220,6 +222,24 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			server.sendMessage('Disable', query);
 			log.info('!sr Disabled', query);
 		}
+		if (messageLower.includes('!hell')) {
+			for (const command of globalCommandArray) {
+				const keyword = (command.altkey ?? command.keyword).toString();
+
+				const firstKey = Object.keys(command.task[0]).find((key) => key !== 'chat');
+
+				//if (['videonow', 'alert', 'media', 'song', 'customaudio'].includes(firstKey)) {
+				//	//console.log(command.task[0][firstKey].toString());
+				//	break;
+				//}
+				if (['media'].includes(firstKey)) {
+					server.sendMessage('Audio', command.task[0][firstKey].toString());
+					//break;
+				}
+			}
+			console.log('end');
+			return undefined;
+		}
 		if (messageLower.includes('!gpt ')) {
 			const response = await ecrehpysGPT.generateResponse(
 				user,
@@ -280,6 +300,10 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 				twurple.setModerator(targetUser);
 			}, (seconds + 5) * 1000);
 	}
+	if (user === 'hardly_know_er_bot') {
+		const ttsFilename = `../${await tts.ttsToMP3(messageLower, `alerts/assets/alerts/tts`, 'tts')}`.replace('../alerts/', '');
+		server.sendMessage('TTS', `${ttsFilename}`);
+	}
 	if (messageLower.match(/^!so\s+(\S+)?/)) {
 		//!so muten_pizza
 		const query = messageLower.match(/^!so\s+(@?\S+)?/)[1]?.replace('@', '') || 'sypherce';
@@ -294,6 +318,13 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		} else if (channelInfo.gameName === '') channelInfo.game_and_title = 'FartNite';
 
 		server.sayWrapper(`Hey, you should check out twitch.tv/${channelInfo.displayName} ! They were last playing ${channelInfo.game_and_title}.`);
+
+		const ttsFilename = `../${await tts.ttsToMP3(
+			`Hey, you should check out ${channelInfo.displayName}! They were last playing ${channelInfo.game_and_title}.`,
+			`alerts/assets/alerts/tts`,
+			'tts'
+		)}`.replace('../alerts/', '');
+		server.sendMessage('TTS', `${ttsFilename}`);
 	}
 	if (messageLower.includes('!library')) {
 		const itemList = [
@@ -422,16 +453,17 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 				messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length),
 				[
 					{
-						role: 'user',
-						content: `You are to clean up song request searchs, these will primarily be from retro games from the 80s, 90s and early 2000s.
-						Reply in the form of Game Name - Song Title. If the search is invalid return "NES Music Orchestrated - Rygar - Sagila's Cave"`,
+						role: 'system',
+						content: `Your task is to reformat song request searches.
+						All results will be from video games and their soundtracks.
+						If the result is not likely to be from a video game, you can respond with "Video Game OST - Song Title".
+						Otherwise, respond strictly in the format: "Game Name - Song Title".`,
 					},
 				],
-
 				false,
 				{ key: 'sr', count: 10000 }
 			);
-			log.debug(response); //server.sayWrapper(response);
+			log.debug(`input: ${messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length)}, response: ${response}`);
 			const object = await mp3Library.find(response);
 			if (typeof object.filename !== 'undefined' && object.filename !== '') {
 				server.sendMessage('Sr', object);
@@ -719,6 +751,7 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 
 			//#region fix section
 			if (task.media) {
+				console.log(`task.media ${task.media}, typeof task.media ${typeof task.media}, typeof task.mediaShuffleBag ${typeof task.mediaShuffleBag}`);
 				if (typeof task.media === 'object' && typeof task.mediaShuffleBag === 'undefined') {
 					throw `task.mediaShuffleBag not created for ${task.media}`;
 				}
@@ -837,6 +870,16 @@ async function processMessage(username, message, flags, self, extra) {
 	if (username === process.env.BOT_USER) return;
 
 	await proccessBuiltInCommands(username, message, flags, self, extra);
+
+	//#region TWSS
+	twss.threshold = 0.99;
+	console.log(twss.prob(message));
+	if (twss.is(message)) {
+		const ttsFilename = `../${await tts.ttsToMP3(removePunctuation(message), `alerts/assets/alerts/tts`, 'tts')}`.replace('../alerts/', '');
+		server.sendMessage('TTS', `${ttsFilename}`);
+		server.sendMessage('TTS', `assets/alerts/thats_what_she_said.mp3`);
+	}
+	//#endregion
 
 	//Process Custom Commands
 	const number = await processCustomCommands(username, message, flags, self, extra);
