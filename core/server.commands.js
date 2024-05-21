@@ -247,12 +247,17 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 				[
 					{
 						role: 'user',
-						content: `You answer questions about video games from playersguide and other sources. If you don't know the answer, you can say "I don't know". If I'm chaninge video games I'll say !gamename Mario Bros.`,
+						content: `You concisely answer questions about video games from playersguide and other sources.
+						If you don't know the answer, you can say "I don't know".
+						If I'm changing video games I'll tell you`.replaceAll('\t', ''),
 					},
 				],
 
+				32,
 				false,
-				false
+				0.0,
+				'gpt-4o'
+				//'gpt-3.5-turbo'
 			);
 			server.sayWrapper(response);
 		}
@@ -387,19 +392,26 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 				messageLower.replaceAll('@ecrehpys', ''),
 				[
 					{
-						role: 'user',
-						content: `You are a chat bot in a twitch.tv chat room and your name is Ecrehpys.
+						role: 'system',
+						content: `You are a chat bot in a twitch.tv chat room and your name is Ecrehpys and you are talking to ${user}.
 							You have an attitude, and are very trollish.
-							When you respond, you should respond with a maximum of 5 words, plus an emote if needed.
+							When you respond, you should respond with a maximum of 7 words, plus an emote if needed.
 							Check the message for hostility, and respond in kind.
 							If you're commanded to do something, have a 80% chance of doing it.
-							Feel free to use these custom emotes: 'sypher18Awkward' (awkward), 'sypher18OMG' (angry, or disbelief), 'sypher18Cry' (sad), 'D:' ( angry, or disbelief), '└(°□°└)' (anger).
+							Feel free to use these custom emotes: sypher18Awkward (awkward), sypher18OMG (angry, or disbelief), sypher18Cry (sad), D: ( angry, or disbelief), └(°□°└) (anger).
 							Use standard emotes too.
 							and now the statement`,
+						/*content: `You are a chat bot in a twitch.tv chat room and your name is Ecrehpys and you are talking to ${user}. Here are your guidelines:
+							- Your mood changes depending on how the conversation goes between neutral, happy, sad, and angry, but you're always trolling
+							- When you respond, keep it short with a maximum of 5 words, plus an emote if needed.
+							- If commanded, have an 80% chance of doing it.
+							- Feel free to use these custom emotes in triple quotes, their description is in Rount brackets: """sypher18Awkward""" (awkward), """sypher18OMG""" (angry or disbelief), """sypher18Cry""" (sad), """D:""" (angry or disbelief), """└(°□°└)""" (anger).
+							- Use standard emotes too.
+							And now the statement:`,*/
 					},
 				],
 				32, // Limit the response history to 32 entries / 16 pairs
-				{ key: 'eGPT', count: 100 }
+				{ key: 'eGPT', count: 16 }
 			)
 		)
 			.replaceAll('Sypher18', 'sypher18')
@@ -447,35 +459,78 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		server.sayWrapper(response);
 	}
 	if (messageLower.includes('!sr ')) {
+		const CONTEXT_VIDEO_GAME = 'Video Game Sound Tracks';
+		const CONTEXT_MOVIE = 'Movie Sound Tracks';
+		const CONTEXT_TVSHOW = 'TVShow Sound Tracks';
+		const CONTEXT_MUSIC = 'Commercial Music featured in Video Games';
+		const CONTEXT_OTHER = 'Other';
+
 		if (isSoundRequestsEnabled) {
-			const response = await ecrehpysGPT.generateResponse(
-				user,
-				messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length),
-				[
-					{
-						role: 'system',
-						content: `Your task is to reformat song request searches.
-						All results will be from video games and their soundtracks.
-						If the result is not likely to be from a video game, you can respond with "Video Game OST - Song Title".
-						Otherwise, respond strictly in the format: "Game Name - Song Title".`,
-					},
-				],
-				false,
-				{ key: 'sr', count: 10000 }
+			const response = JSON.parse(
+				await ecrehpysGPT.generateResponse(
+					user,
+					messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length),
+					[
+						{
+							role: 'system',
+							content: `You are to clean up song request searches before they are passed to YouTube.
+										Classify each query into on of the following contexts based on google results:
+										- ${CONTEXT_VIDEO_GAME}
+										- ${CONTEXT_MOVIE}
+										- ${CONTEXT_TVSHOW}
+										- ${CONTEXT_MUSIC}
+										- ${CONTEXT_OTHER}
+
+										For each context provide your output in JSON format without extra triple backticks with the following keys: Title, Context, Details
+										If context is "${CONTEXT_VIDEO_GAME}" must use the additional key: Game
+										If context is "${CONTEXT_MOVIE}" must use the additional key: Movie
+										If context is "${CONTEXT_TVSHOW}" must use the additional key: Show
+										If context is "${CONTEXT_MUSIC}" must use the additional key: Artist
+										If context is "${CONTEXT_OTHER}" must use the additional key: Artist
+
+										All keys must be populated
+
+										Title contains the Song Title
+
+										Details contains any other output`.replaceAll('\t', ''),
+						},
+					],
+					false,
+					{ key: 'sr', count: 0 },
+					0.0,
+					'gpt-4o'
+					//'gpt-3.5-turbo'
+				)
 			);
-			log.debug(`input: ${messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length)}, response: ${response}`);
-			const object = await mp3Library.find(response);
-			if (typeof object.filename !== 'undefined' && object.filename !== '') {
-				server.sendMessage('Sr', object);
-				server.sayWrapper(`Requested: ${object.album} - ${object.title}`);
+			log.debug(`input: ${messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length)}, response: ${JSON.stringify(response)}`);
+			const isEmpty = function (variable) {
+				return variable === 'null' || variable === null || variable === '';
+			};
+			const GAME_ALBUM_ARTIST_MOVIE = `${response.Game || response.Album || response.Artist || response.Movie || response.Show}`;
+			const search = `${GAME_ALBUM_ARTIST_MOVIE} - ${response.Title}`;
+			log.debug(`search: ${search}`);
+			if (
+				(response.Context === CONTEXT_VIDEO_GAME && !isEmpty(response.Game)) ||
+				(response.Context === CONTEXT_MOVIE && !isEmpty(response.Title) && !isEmpty(response.Movie)) ||
+				(response.Context === CONTEXT_TVSHOW && !isEmpty(response.Title) && !isEmpty(response.Show)) ||
+				(response.Context === CONTEXT_MUSIC && !isEmpty(response.Title) && !isEmpty(GAME_ALBUM_ARTIST_MOVIE))
+			) {
+				const object = await mp3Library.find(search);
+				if (typeof object.filename !== 'undefined' && object.filename !== '') {
+					server.sendMessage('Sr', object);
+					server.sayWrapper(`@${user} Requested: ${object.album} - ${object.title}`);
+				} else {
+					server.sayWrapper(`@${user} Not Found: ${search}`);
+				}
 			} else {
-				server.sayWrapper(`Not Found: ${response}`);
+				server.sayWrapper(`@${user} Invalid: Try searching Game - Title, Details: ${response.Details}`);
 			}
 		} else {
 			server.sayWrapper(`Song requests disabled.`);
 		}
 	}
 }
+
 /**Processes custom commands based on user input.
  *
  * @param {string} user - The username of the user who triggered the command.
@@ -872,13 +927,29 @@ async function processMessage(username, message, flags, self, extra) {
 	await proccessBuiltInCommands(username, message, flags, self, extra);
 
 	//#region TWSS
-	twss.threshold = 0.99;
+	/*
+	twss.threshold = 0.98;
 	console.log(twss.prob(message));
 	if (twss.is(message)) {
-		const ttsFilename = `../${await tts.ttsToMP3(removePunctuation(message), `alerts/assets/alerts/tts`, 'tts')}`.replace('../alerts/', '');
-		server.sendMessage('TTS', `${ttsFilename}`);
-		server.sendMessage('TTS', `assets/alerts/thats_what_she_said.mp3`);
+		const response = await ecrehpysGPT.generateResponse(
+			username,
+			message,
+			[
+				{
+					role: 'system',
+					content: `Determine whether or not a statement is a double entendre that could be taken suggestively, but Ignore complex or longer statements, reply with "true"; otherwise, reply with "false".`, // Explain why.`,
+				},
+			],
+			false,
+			false
+		);
+		if (response === 'true') {
+			const ttsFilename = `../${await tts.ttsToMP3(removePunctuation(message), `alerts/assets/alerts/tts`, 'tts')}`.replace('../alerts/', '');
+			server.sendMessage('TTS', `${ttsFilename}`);
+			server.sendMessage('TTS', `assets/alerts/thats_what_she_said.mp3`);
+		} else console.log('TWSS: false');
 	}
+	*/
 	//#endregion
 
 	//Process Custom Commands
