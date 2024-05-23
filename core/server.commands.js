@@ -458,44 +458,161 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		const CONTEXT_MUSIC = 'Commercial Music featured in Video Games';
 		const CONTEXT_OTHER = 'Other';
 
+		const PROMPT_4O_ENABLED = false;
+		const PROMPT_35TURBO = [
+			{
+				role: 'system',
+				content: `You are to clean up song request searches before they are passed to YouTube.
+						For each context provide your output in JSON format without extra triple backticks with the following keys: Game, Movie, Show, Artist, Title, Context, Details.
+
+						Context will contain one of the following contexts:
+						- ${CONTEXT_VIDEO_GAME}
+						- ${CONTEXT_MOVIE}
+						- ${CONTEXT_TVSHOW}
+						- ${CONTEXT_MUSIC}
+						- ${CONTEXT_OTHER}
+
+						Each key will be populated with the following:
+						- Title : a valid song title.
+						- Game: the name of the game the song is from.
+						- Movie: the name of the movie the song is from.
+						- Show: the name of the show the song is from.
+						- Artist: the name of the artist who performed the song.
+						- Details: the details on the results were found.
+			`.replaceAll('\t', ''),
+			},
+
+			/*{ role: 'user', content: 'aladdin' },
+			{
+				role: 'assistant',
+				content: `
+			{
+				"Title": "A Whole New World",
+				"Movie": "Aladdin",
+				"Artist": "Peabo Bryson, Regina Belle",
+				"Context": "Movie Sound Tracks",
+				"Details": "The song 'A Whole New World' is from the movie Aladdin."
+			}`.replaceAll('\t', ''),
+			},*/
+
+			{ role: 'user', content: 'take me home tonight' },
+			{
+				role: 'assistant',
+				content: `
+			{
+				"Title": "Take Me Home Tonight",
+				"Movie": "Take Me Home Tonight",
+				"Artist": "Eddie Money",
+				"Context": "Movie Sound Tracks",
+				"Details": "The song 'Take Me Home Tonight' is featured in the movie 'Take Me Home Tonight' and performed by Eddie Money."
+			}`.replaceAll('\t', ''),
+			},
+
+			{ role: 'user', content: 'get low' },
+			{
+				role: 'assistant',
+				content: `
+			{
+				"Title": "Get Low",
+				"Game": "Need for Speed",
+				"Artist": "Dillon Francis, DJ Snake",
+				"Context": "Commercial Music featured in Video Games",
+				"Details": "Song 'Get Low' by Dillon Francis and DJ Snake featured in Need for Speed"
+			}`.replaceAll('\t', ''),
+			},
+			/*
+			{ role: 'user', content: `topman` },
+			{
+				role: 'assistant',
+				content: `
+			{
+				"Title": "Topman",
+				"Game": "Mega Man 3",
+				"Artist": "Yasuaki Fujita"
+				"Context": "Video Game Sound Tracks",
+				"Details": "Song from the video game Mega Man 3."
+			}`.replaceAll('\t', ''),
+			},
+			*/
+			{ role: 'user', content: `sagila's cave` },
+			{
+				role: 'assistant',
+				content: `
+			{
+				"Title": "Sagila's Cave",
+				"Game": "Rygar",
+				"Artist": "Michiharu Hasuya",
+				"Context": "Video Game Sound Tracks",
+				"Details": "Search results found for the song 'Sagila's Cave' from the game Rygar."
+			}`.replaceAll('\t', ''),
+			},
+			/*
+			{ role: 'user', content: `big blue` },
+			{
+				role: 'assistant',
+				content: `
+			{
+				"Title": "Big Blue",
+				"Game": "F-Zero",
+				"Artist": "Yumiko Kanki",
+				"Context": "Video Game Sound Tracks",
+				"Details": "Search results found for the song 'Big Blue' from the game F-Zero."
+			}`.replaceAll('\t', ''),
+			},
+			*/
+			{ role: 'user', content: `gummi bears` },
+			{
+				role: 'assistant',
+				content: `
+			{
+				"Show": "Gummi Bears",
+				"Title": "Gummi Bears Theme Song",
+				"Artist: "Michael Silversher and Patricia Silversher"
+				"Context": "TVShow Sound Tracks",
+				"Details": "The theme song from the Gummi Bears show."
+			}`.replaceAll('\t', ''),
+			},
+		];
+		const PROMPT_4O = [
+			{
+				role: 'system',
+				content: `You are to clean up song request searches before they are passed to YouTube.
+							Classify each query into on of the following contexts based on google results:
+							- ${CONTEXT_VIDEO_GAME}
+							- ${CONTEXT_MOVIE}
+							- ${CONTEXT_TVSHOW}
+							- ${CONTEXT_MUSIC}
+							- ${CONTEXT_OTHER}
+
+							For each context provide your output in JSON format without extra triple backticks with the following keys: Title, Context, Details
+							If context is "${CONTEXT_VIDEO_GAME}" must use the additional key: Game
+							If context is "${CONTEXT_MOVIE}" must use the additional key: Movie
+							If context is "${CONTEXT_TVSHOW}" must use the additional key: Show
+							If context is "${CONTEXT_MUSIC}" must use the additional key: Artist
+							If context is "${CONTEXT_OTHER}" must use the additional key: Artist
+
+							All keys must be populated
+
+							Title contains the Song Title
+
+							Details contains any other output`.replaceAll('\t', ''),
+			},
+		];
+
 		if (isSoundRequestsEnabled) {
 			const response = JSON.parse(
 				await ecrehpysGPT.generateResponse(
 					user,
 					messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length),
-					[
-						{
-							role: 'system',
-							content: `You are to clean up song request searches before they are passed to YouTube.
-										Classify each query into on of the following contexts based on google results:
-										- ${CONTEXT_VIDEO_GAME}
-										- ${CONTEXT_MOVIE}
-										- ${CONTEXT_TVSHOW}
-										- ${CONTEXT_MUSIC}
-										- ${CONTEXT_OTHER}
-
-										For each context provide your output in JSON format without extra triple backticks with the following keys: Title, Context, Details
-										If context is "${CONTEXT_VIDEO_GAME}" must use the additional key: Game
-										If context is "${CONTEXT_MOVIE}" must use the additional key: Movie
-										If context is "${CONTEXT_TVSHOW}" must use the additional key: Show
-										If context is "${CONTEXT_MUSIC}" must use the additional key: Artist
-										If context is "${CONTEXT_OTHER}" must use the additional key: Artist
-
-										All keys must be populated
-
-										Title contains the Song Title
-
-										Details contains any other output`.replaceAll('\t', ''),
-						},
-					],
+					PROMPT_4O_ENABLED ? PROMPT_4O : PROMPT_35TURBO,
 					false,
-					{ key: 'sr', count: 0 },
+					{ key: 'sr', count: 10000 },
 					0.0,
-					'gpt-4o'
-					//'gpt-3.5-turbo'
+					PROMPT_4O_ENABLED ? 'gpt-4o' : 'gpt-3.5-turbo'
 				)
 			);
-			log.debug(`input: ${messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length)}, response: ${JSON.stringify(response)}`);
+
+			log.debug(`input: ${messageLower.substring(messageLower.indexOf('!sr ') + '!sr '.length)}, JSON response: ${JSON.stringify(response)}`);
 			const isEmpty = function (variable) {
 				return variable === 'null' || variable === null || variable === '';
 			};
@@ -516,7 +633,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 					server.sayWrapper(`@${user} Not Found: ${search}`);
 				}
 			} else {
-				server.sayWrapper(`@${user} Invalid: Try searching Game - Title, Details: ${response.Details}`);
+				server.sayWrapper(`@${user} Invalid: Try including both the Title and Game/Show/Movie, Details Understood: ${response.Details}`);
 			}
 		} else {
 			server.sayWrapper(`Song requests disabled.`);
