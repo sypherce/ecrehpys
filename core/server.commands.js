@@ -12,8 +12,6 @@ const tts = require('../lib/tts.js');
 const jsonArray = require('../lib/jsonArray.js');
 const ecrehpysGPT = require('../lib/ecrehpysGPT.js');
 const log = require('esm')(module)('../alerts/lib/log.js').log;
-const twss = require('twss');
-const removePunctuation = require('@stdlib/string-remove-punctuation');
 
 let isSoundRequestsEnabled = true;
 let globalCommandArray = loadCommands();
