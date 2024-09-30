@@ -1045,32 +1045,6 @@ async function processMessage(username, message, flags, self, extra) {
 
 	await proccessBuiltInCommands(username, message, flags, self, extra);
 
-	//#region TWSS
-	/*
-	twss.threshold = 0.98;
-	console.log(twss.prob(message));
-	if (twss.is(message)) {
-		const response = await ecrehpysGPT.generateResponse(
-			username,
-			message,
-			[
-				{
-					role: 'system',
-					content: `Determine whether or not a statement is a double entendre that could be taken suggestively, but Ignore complex or longer statements, reply with "true"; otherwise, reply with "false".`, // Explain why.`,
-				},
-			],
-			false,
-			false
-		);
-		if (response === 'true') {
-			const ttsFilename = `../${await tts.ttsToMP3(removePunctuation(message), `alerts/assets/alerts/tts`, 'tts')}`.replace('../alerts/', '');
-			server.sendMessage('TTS', `${ttsFilename}`);
-			server.sendMessage('TTS', `assets/alerts/thats_what_she_said.mp3`);
-		} else console.log('TWSS: false');
-	}
-	*/
-	//#endregion
-
 	//Process Custom Commands
 	const number = await processCustomCommands(username, message, flags, self, extra);
 	log.debug(`${username}(${number}): ${message}`);
