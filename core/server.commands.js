@@ -1035,6 +1035,7 @@ async function processMessage(username, message, flags, self, extra) {
 		//handle intro
 		const alert = findIntroCommandByString(`!${username.toLowerCase()}`); //user commands all have !prefix
 		if (alert) server.sendMessage('Alert', alert);
+		else server.sendMessage('Audio', 'alerts/re4_merchant_welcome.mp3');
 		//setup profile image for chat overlay
 		await downloadAndWriteProfileImage(username);
 	}
