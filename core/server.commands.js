@@ -39,6 +39,7 @@ function loadCommands(filename = 'config/commands.json') {
 		// setup the shuffle bag for media if it's an object
 		for (const task of command.task) {
 			if (typeof task.media === 'object' && task.media.length >= 1) task.mediaShuffleBag = new ShuffleBag([...Array(task.media.length).keys()]);
+			else if (typeof task.media === 'object') log.debug(`"shuffle bag issue: ${task.media} ${task.media.length} ${task.mediaShuffleBag}`);
 		}
 
 		//altkey takes priority
@@ -608,7 +609,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 					false,
 					{ key: 'sr', count: 10000 },
 					0.0,
-					PROMPT_4O_ENABLED ? 'gpt-4o' : 'gpt-3.5-turbo'
+					PROMPT_4O_ENABLED ? 'gpt-4o-mini' : 'gpt-3.5-turbo' //'ft:gpt-3.5-turbo-0125:personal:sr:9st1JRcL' //'gpt-3.5-turbo'
 				)
 			);
 
@@ -623,7 +624,8 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 				(response.Context === CONTEXT_VIDEO_GAME && !isEmpty(response.Game)) ||
 				(response.Context === CONTEXT_MOVIE && !isEmpty(response.Title) && !isEmpty(response.Movie)) ||
 				(response.Context === CONTEXT_TVSHOW && !isEmpty(response.Title) && !isEmpty(response.Show)) ||
-				(response.Context === CONTEXT_MUSIC && !isEmpty(response.Title) && !isEmpty(GAME_ALBUM_ARTIST_MOVIE))
+				(response.Context === CONTEXT_MUSIC && !isEmpty(response.Title) && !isEmpty(GAME_ALBUM_ARTIST_MOVIE)) ||
+				(response.Context === CONTEXT_OTHER && !isEmpty(response.Title) && !isEmpty(GAME_ALBUM_ARTIST_MOVIE))
 			) {
 				const object = await mp3Library.find(search);
 				if (typeof object.filename !== 'undefined' && object.filename !== '') {
@@ -916,9 +918,15 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 
 			//#region fix section
 			if (task.media) {
-				console.log(`task.media ${task.media}, typeof task.media ${typeof task.media}, typeof task.mediaShuffleBag ${typeof task.mediaShuffleBag}`);
+				console.log(
+					`task.media ${
+						task.media
+					}, typeof task.media ${typeof task.media}, typeof task.mediaShuffleBag ${typeof task.mediaShuffleBag}, length of task.media ${
+						task.media.length
+					}`
+				);
 				if (typeof task.media === 'object' && typeof task.mediaShuffleBag === 'undefined') {
-					throw `task.mediaShuffleBag not created for ${task.media}`;
+					throw `task.mediaShuffleBag not created for ${task.media} length: ${task.media.length}`;
 				}
 				const filename = typeof task.media === 'object' ? task.media[task.mediaShuffleBag.next()] : task.media;
 
