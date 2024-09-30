@@ -59,13 +59,15 @@ async function beefwebQueueSong(file) {
 		return;
 	}
 	const thisActiveFile = await beefweb.getActiveItemFilename();
+	const thisActiveFileURL = await beefweb.getActiveItemPath();
+	//const thisActiveFileURL = await beefweb.getActiveItemURL();
 	const songIsPlaying = playNowActiveFile !== '' && basefilename(file) === thisActiveFile;
 	log.temp('basefilename(file), this_active_file, file:::', basefilename(file), thisActiveFile, file);
 	if (songIsPlaying || !enableSong) {
 		playSongSprite(file);
 		return;
 	}
-	if (!file.startsWith('https:')) {
+	if (!file.startsWith('https:') && !file.startsWith('http:')) {
 		file = `${beefweb.musicPath}/${file}`;
 	}
 	const currentPlaylist = await beefweb.getActivePlaylistIndex();
@@ -76,11 +78,15 @@ async function beefwebQueueSong(file) {
 	queuePos = nextIndex;
 
 	// return if
-	const alreadyInPlaylist = await beefweb.itemIsInPlaylist(currentPlaylist, file.replace(/^https?:\/\//, ''));
+	const alreadyInPlaylist = await beefweb.itemIsInPlaylist(currentPlaylist, file.replace(/^https?:\/\//, '').replace(/^http?:\/\//, ''));
 	log.debug(alreadyInPlaylist);
 	if (alreadyInPlaylist !== -1) return;
 	await beefweb.addItems(currentPlaylist, queuePos, false, [file]);
 	queuePos++;
+	if (thisActiveFileURL === `http://allrelays.rainwave.cc/game.mp3`) {
+		await beefweb.moveItems(currentPlaylist, [await beefweb.getActiveItemIndex()]);
+		await beefweb.next();
+	}
 }
 
 //playNowActiveFile probably needs removed
@@ -96,7 +102,7 @@ async function beefwebPlaySongNow(file) {
 
 	playNowActiveFile = basefilename(file);
 
-	if (!file.startsWith('https:')) {
+	if (!file.startsWith('https:') && !file.startsWith('http:')) {
 		file = `${beefweb.musicPath}/${file}`;
 	}
 
@@ -552,4 +558,4 @@ function getURLParameter(parameterName) {
 }
 const port = getURLParameter('port') ? getURLParameter('port') : MAIN_PORT;
 
-initWebSocket(`ws://server.local:${port}`, handleMessage);
+initWebSocket(`ws://192.168.1.20:${port}`, handleMessage);

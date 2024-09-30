@@ -6,10 +6,10 @@ import { log } from './log.js';
 
 //lin http://derrick-server.local/home/user/root/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
 const isLinux = false; //win http://derrick-server.local/mnt/g/media/music/Stream/0%20-%20Other/Tunak%20Tunak.mp4
-const baseUrl = `http://${isLinux ? 'steamdeck.local' : 'derrick-desktop'}:8880/api`;
+const baseUrl = `http://${isLinux ? 'desktop-linux.local' : 'derrick-desktop'}:8880/api`;
 //curl -X GET "http://localhost:8880/api/playlists" -H "accept: application/json"
 
-const musicPath = `${isLinux ? '/home/deck/root/mnt/g/' : 'G:/'}media/music/Stream`;
+const musicPath = `${isLinux ? '/home/user/root/mnt/g/' : 'G:/'}media/music/Stream`;
 
 async function getJSON(url) {
 	try {
@@ -163,6 +163,17 @@ async function addItems(playlistId, index, play, items) {
 		});
 	*/
 }
+async function moveItems(playlistId, items) {
+	console.log(`moving items: ${items} in playlist: ${playlistId}`);
+	return postJSON(`playlists/${playlistId}/items/move`, {
+		items: items,
+	});
+}
+async function next(string) {
+	return postJSON(`player/next`, {
+		by: string,
+	});
+}
 //curl -X GET "http://derrick-desktop.local:8880/api/playlists/p1/items/0:10?columns=%album%,%title%" -H "accept: application/json"
 async function getItems(playlist, range) {
 	const json = await getJSON(`playlists/${playlist}/items/${range}?columns=%album%,%title%,%path%`);
@@ -248,6 +259,8 @@ export {
 	isPlaying,
 	getActivePlaylistIndex,
 	addItems,
+	moveItems,
+	next,
 	getItems,
 	itemIsInPlaylist,
 	musicPath,
