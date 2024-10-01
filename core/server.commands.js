@@ -162,102 +162,8 @@ function findIntroCommandByString(string, commandArray = globalCommandArray) {
  */
 async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 	const messageLower = message.toLowerCase();
-	if (flags.broadcaster) {
-		//reload commands list, loadCommands()
-		if (messageLower.includes('!reload')) {
-			const savedCommandArray = globalCommandArray;
-			try {
-				globalCommandArray = loadCommands();
-				log.info('Commands Reloaded.');
-			} catch (e) {
-				globalCommandArray = savedCommandArray;
-				log.error(e); // error in the above string (in this case, yes)!
-				log.error('Commands failed to reload.');
-			}
-		}
-		//stop bot (restart if running in a loop)
-		else if (messageLower.includes('!halt')) {
-			process.exit();
-		}
-		//clear users enabling intros again
-		//also clears user avatars for chat
-		//and resets "first"
-		else if (['!clear_users', '!refresh_users', '!reload_users', '!reset_users'].some((command) => messageLower.includes(command))) {
-			function deleteFile(filename) {
-				fs.unlink(filename, (err) => {
-					if (err) log.error(err);
-					else log.info(`Deleted file: ${filename}`);
-				});
-			}
-			function clearDirectory(directory) {
-				fs.readdir(directory, (err, files) => {
-					if (err) throw err;
 
-					for (const file of files) {
-						deleteFile(path.join(directory, file));
-					}
-				});
-			}
-			userArray = jsonArray.clear('config/chatters.json');
-			clearDirectory('../../users/icon');
-			twurple.eventsub.resetFirst();
-		} else if (messageLower.includes('!debug')) debug = !debug;
-		else if (messageLower.includes('!test')) {
-			server.sayWrapper(message);
-		}
-		//play full length songs if enabled
-		else if (messageLower.includes('!enable')) {
-			const query = getQuery(messageLower, '!enable');
-			isSoundRequestsEnabled = true;
-			server.sendMessage('Enable', query);
-			log.info('!sr Enabled', query);
-		}
-		//play songsprites if disabled
-		else if (messageLower.includes('!disable')) {
-			const query = getQuery(messageLower, '!disable');
-			isSoundRequestsEnabled = false;
-			server.sendMessage('Disable', query);
-			log.info('!sr Disabled', query);
-		} else if (messageLower.includes('!hell')) {
-			for (const command of globalCommandArray) {
-				const keyword = (command.altkey ?? command.keyword).toString();
-
-				const firstKey = Object.keys(command.task[0]).find((key) => key !== 'chat');
-
-				//if (['videonow', 'alert', 'media', 'song', 'customaudio'].includes(firstKey)) {
-				//	//console.log(command.task[0][firstKey].toString());
-				//	break;
-				//}
-				if (['media'].includes(firstKey)) {
-					server.sendMessage('Audio', command.task[0][firstKey].toString());
-					//break;
-				}
-			}
-			console.log('end');
-			return undefined;
-		} else if (messageLower.includes('!gpt ')) {
-			const response = await ecrehpysGPT.generateResponse(
-				user,
-				messageLower.replace('!gpt ', ''),
-				[
-					{
-						role: 'user',
-						content: `You concisely answer questions about video games from playersguide and other sources.
-						If you don't know the answer, you can say "I don't know".
-						If I'm changing video games I'll tell you`.replaceAll('\t', ''),
-					},
-				],
-
-				32,
-				false,
-				0.0,
-				'gpt-4o'
-				//'gpt-3.5-turbo'
-			);
-			server.sayWrapper(response);
-		}
-	}
-
+	//process normal user commands
 	if (user === 'hardly_know_er_bot') {
 		const ttsFilename = `../${await tts.ttsToMP3(messageLower, `alerts/assets/alerts/tts`, 'tts')}`.replace('../alerts/', '');
 		server.sendMessage('TTS', `${ttsFilename}`);
@@ -629,6 +535,107 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		} else {
 			server.sayWrapper(`Song requests disabled.`);
 		}
+	}
+
+	//exit function if not broadcaster
+	if (!flags.broadcaster) return;
+
+	//
+	//process broadcaster commands
+	//
+
+	//reload commands list, loadCommands()
+	if (messageLower.includes('!reload')) {
+		const savedCommandArray = globalCommandArray;
+		try {
+			globalCommandArray = loadCommands();
+			log.info('Commands Reloaded.');
+		} catch (e) {
+			globalCommandArray = savedCommandArray;
+			log.error(e); // error in the above string (in this case, yes)!
+			log.error('Commands failed to reload.');
+		}
+	}
+	//stop bot (restart if running in a loop)
+	else if (messageLower.includes('!halt')) {
+		process.exit();
+	}
+	//1. clear users enabling intros again
+	//2. clears user avatars for chat
+	//3. resets "first"
+	else if (['!clear_users', '!refresh_users', '!reload_users', '!reset_users'].some((command) => messageLower.includes(command))) {
+		function deleteFile(filename) {
+			fs.unlink(filename, (err) => {
+				if (err) log.error(err);
+				else log.info(`Deleted file: ${filename}`);
+			});
+		}
+		function clearDirectory(directory) {
+			fs.readdir(directory, (err, files) => {
+				if (err) throw err;
+
+				for (const file of files) {
+					deleteFile(path.join(directory, file));
+				}
+			});
+		}
+		userArray = jsonArray.clear('config/chatters.json');
+		clearDirectory('../../users/icon');
+		twurple.eventsub.resetFirst();
+	} else if (messageLower.includes('!debug')) debug = !debug;
+	else if (messageLower.includes('!test')) {
+		server.sayWrapper(message);
+	}
+	//play full length songs if enabled
+	else if (messageLower.includes('!enable')) {
+		const query = getQuery(messageLower, '!enable');
+		isSoundRequestsEnabled = true;
+		server.sendMessage('Enable', query);
+		log.info('!sr Enabled', query);
+	}
+	//play songsprites if disabled
+	else if (messageLower.includes('!disable')) {
+		const query = getQuery(messageLower, '!disable');
+		isSoundRequestsEnabled = false;
+		server.sendMessage('Disable', query);
+		log.info('!sr Disabled', query);
+	} else if (messageLower.includes('!hell')) {
+		for (const command of globalCommandArray) {
+			const keyword = (command.altkey ?? command.keyword).toString();
+
+			const firstKey = Object.keys(command.task[0]).find((key) => key !== 'chat');
+
+			//if (['videonow', 'alert', 'media', 'song', 'customaudio'].includes(firstKey)) {
+			//	//console.log(command.task[0][firstKey].toString());
+			//	break;
+			//}
+			if (['media'].includes(firstKey)) {
+				server.sendMessage('Audio', command.task[0][firstKey].toString());
+				//break;
+			}
+		}
+		console.log('end');
+		return undefined;
+	} else if (messageLower.includes('!gpt ')) {
+		const response = await ecrehpysGPT.generateResponse(
+			user,
+			messageLower.replace('!gpt ', ''),
+			[
+				{
+					role: 'user',
+					content: `You concisely answer questions about video games from playersguide and other sources.
+						If you don't know the answer, you can say "I don't know".
+						If I'm changing video games I'll tell you`.replaceAll('\t', ''),
+				},
+			],
+
+			32,
+			false,
+			0.0,
+			'gpt-4o'
+			//'gpt-3.5-turbo'
+		);
+		server.sayWrapper(response);
 	}
 }
 
