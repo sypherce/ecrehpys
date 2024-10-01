@@ -209,7 +209,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			setTimeout(() => {
 				twurple.setModerator(targetUser);
 			}, (seconds + 5) * 1000);
-	} else if (messageLower.match(/^!so\s+(\S+)?/)) {
+	} else if (messageLower.startsWith('!so ')) {
 		//!so muten_pizza
 		const query = messageLower.match(/^!so\s+(@?\S+)?/)[1]?.replace('@', '') || 'sypherce';
 		const channelInfo = await twurple.getChannelInfoByUsername(`${query}`);
