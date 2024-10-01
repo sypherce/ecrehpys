@@ -176,14 +176,13 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			}
 		}
 		//stop bot (restart if running in a loop)
-		if (messageLower.includes('!halt')) {
+		else if (messageLower.includes('!halt')) {
 			process.exit();
 		}
 		//clear users enabling intros again
 		//also clears user avatars for chat
 		//and resets "first"
-
-		if (['!clear_users', '!refresh_users', '!reload_users', '!reset_users'].some((command) => messageLower.includes(command))) {
+		else if (['!clear_users', '!refresh_users', '!reload_users', '!reset_users'].some((command) => messageLower.includes(command))) {
 			function deleteFile(filename) {
 				fs.unlink(filename, (err) => {
 					if (err) log.error(err);
@@ -202,26 +201,24 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			userArray = jsonArray.clear('config/chatters.json');
 			clearDirectory('../../users/icon');
 			twurple.eventsub.resetFirst();
-		}
-		if (messageLower.includes('!debug')) debug = !debug;
-		if (messageLower.includes('!test')) {
+		} else if (messageLower.includes('!debug')) debug = !debug;
+		else if (messageLower.includes('!test')) {
 			server.sayWrapper(message);
 		}
 		//play full length songs if enabled
-		if (messageLower.includes('!enable')) {
+		else if (messageLower.includes('!enable')) {
 			const query = getQuery(messageLower, '!enable');
 			isSoundRequestsEnabled = true;
 			server.sendMessage('Enable', query);
 			log.info('!sr Enabled', query);
 		}
 		//play songsprites if disabled
-		if (messageLower.includes('!disable')) {
+		else if (messageLower.includes('!disable')) {
 			const query = getQuery(messageLower, '!disable');
 			isSoundRequestsEnabled = false;
 			server.sendMessage('Disable', query);
 			log.info('!sr Disabled', query);
-		}
-		if (messageLower.includes('!hell')) {
+		} else if (messageLower.includes('!hell')) {
 			for (const command of globalCommandArray) {
 				const keyword = (command.altkey ?? command.keyword).toString();
 
@@ -238,8 +235,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			}
 			console.log('end');
 			return undefined;
-		}
-		if (messageLower.includes('!gpt ')) {
+		} else if (messageLower.includes('!gpt ')) {
 			const response = await ecrehpysGPT.generateResponse(
 				user,
 				messageLower.replace('!gpt ', ''),
@@ -261,7 +257,11 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			server.sayWrapper(response);
 		}
 	}
-	if (messageLower.startsWith('!timeout')) {
+
+	if (user === 'hardly_know_er_bot') {
+		const ttsFilename = `../${await tts.ttsToMP3(messageLower, `alerts/assets/alerts/tts`, 'tts')}`.replace('../alerts/', '');
+		server.sendMessage('TTS', `${ttsFilename}`);
+	} else if (messageLower.startsWith('!timeout')) {
 		let [_prefix, _command, targetUser, seconds, multiplier] = (() => {
 			const regex = /(!timeout)\s*(\w*)\s*(\d*)([mhdwMHDW])*/;
 			let match = message.match(regex);
@@ -303,12 +303,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			setTimeout(() => {
 				twurple.setModerator(targetUser);
 			}, (seconds + 5) * 1000);
-	}
-	if (user === 'hardly_know_er_bot') {
-		const ttsFilename = `../${await tts.ttsToMP3(messageLower, `alerts/assets/alerts/tts`, 'tts')}`.replace('../alerts/', '');
-		server.sendMessage('TTS', `${ttsFilename}`);
-	}
-	if (messageLower.match(/^!so\s+(\S+)?/)) {
+	} else if (messageLower.match(/^!so\s+(\S+)?/)) {
 		//!so muten_pizza
 		const query = messageLower.match(/^!so\s+(@?\S+)?/)[1]?.replace('@', '') || 'sypherce';
 		const channelInfo = await twurple.getChannelInfoByUsername(`${query}`);
@@ -329,8 +324,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			'tts'
 		)}`.replace('../alerts/', '');
 		server.sendMessage('TTS', `${ttsFilename}`);
-	}
-	if (messageLower.includes('!library')) {
+	} else if (messageLower.includes('!library')) {
 		const itemList = [
 			"The Fighter's Sword",
 			'The Master Sword',
@@ -383,8 +377,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		];
 		const item = itemList[Math.floor(Math.random() * itemList.length)];
 		server.sayWrapper(`${user} says that ${item} is in the Library!`);
-	}
-	if (messageLower.includes('@ecrehpys')) {
+	} else if (messageLower.includes('@ecrehpys')) {
 		const response = (
 			await ecrehpysGPT.generateResponse(
 				user,
@@ -415,8 +408,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 		//process custom commands for ecrehpys' responses
 		server.sayWrapper(response);
 		await processMessage('ecrehpys', response, flags, _self, _extra);
-	}
-	if (messageLower.includes('!haiku ')) {
+	} else if (messageLower.includes('!haiku ')) {
 		const response = await ecrehpysGPT.generateResponse(
 			user,
 			messageLower.substring(messageLower.indexOf('!haiku ') + '!haiku '.length),
@@ -449,8 +441,7 @@ async function proccessBuiltInCommands(user, message, flags, _self, _extra) {
 			{ key: 'haiku', count: 10000 }
 		);
 		server.sayWrapper(response);
-	}
-	if (messageLower.includes('!sr ')) {
+	} else if (messageLower.includes('!sr ')) {
 		const CONTEXT_VIDEO_GAME = 'Video Game Sound Tracks';
 		const CONTEXT_MOVIE = 'Movie Sound Tracks';
 		const CONTEXT_TVSHOW = 'TVShow Sound Tracks';
