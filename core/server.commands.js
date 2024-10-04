@@ -91,6 +91,9 @@ function saveCommands(filename = 'config/commands.json', commandArray = globalCo
 	}
 	fs.writeFileSync(`${filename}`, prettyStringify(commandArray, { indent: '\t', maxLength: 1000, maxNesting: 2 }));
 
+	//reload the commands
+	commandArray = loadCommands();
+
 	return commandArray;
 }
 /**Retrieves the query from a string by removing the prefix.
@@ -911,16 +914,7 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 			if (task.alert) {
 				server.sendMessage('Alert', task.alert);
 			}
-
-			//#region fix section
 			if (task.media) {
-				console.log(
-					`task.media ${
-						task.media
-					}, typeof task.media ${typeof task.media}, typeof task.mediaShuffleBag ${typeof task.mediaShuffleBag}, length of task.media ${
-						task.media.length
-					}`
-				);
 				if (typeof task.media === 'object' && typeof task.mediaShuffleBag === 'undefined') {
 					throw `task.mediaShuffleBag not created for ${task.media} length: ${task.media.length}`;
 				}
@@ -934,8 +928,6 @@ async function processCustomCommands(user, message, _flags, _self, extra, comman
 					log.error(`filename: ${filename}, typeof filename: ${typeof filename}`);
 				}
 			}
-			//#endregion fix section
-
 			if (task.song) {
 				server.sendMessage('Song', task.song);
 			}
