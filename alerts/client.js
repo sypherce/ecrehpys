@@ -198,34 +198,84 @@ function playSoundQueued(file) {
 	if (soundQueue.length === 1) soundQueue[0].play();
 }
 
-//todo: gif needs handled elsewhere, proper logging
-//research: do i need to sound.unload() the sound myself?
-function playSoundSprite(file, offset = -1, duration = -1) {
+const spriteList = [];
+async function preloadSoundSprite(file) {
 	//we pass gifs into this for some reason. reason is laziness
 	file = replaceExtension(file, '.gif', '.mp3');
 
-	let sound = new Howl({
+	//find the sound sprite in the list if it exists
+	let sound = spriteList.find((sprite) => sprite._src === file);
+
+	//if it already exists, return it
+	if (sound !== undefined) {
+		log.debug('Sound sprite already loaded:', file);
+		return sound;
+	}
+
+	//load the sound sprite
+	sound = new Howl({
 		src: [file],
-		sprite: {
-			key1: [offset, duration],
-		},
-		html5: true,
-		onend: () => {
-			sound.unload();
-			log.info(`Sound sprite ${file} Unloaded!`);
-		},
-		onload: () => {
-			if (duration === -1) {
-				duration = Math.floor(Math.random() * 7000) + 3000;
-			}
-			if (offset === -1) {
-				offset = Math.floor(Math.random() * (sound.duration() * 1000 - duration));
-			}
-			sound._sprite.key1 = [offset, duration];
-			sound.play('key1');
-		},
+		html5: false,
+		intervalId: undefined,
+	});
+
+	//add the sound sprite to the list
+	spriteList.push(sound);
+
+	//return a promise that resolves once the sound is loaded
+	return new Promise((resolve) => {
+		sound.once('load', () => {
+			resolve(sound);
+		});
 	});
 }
+
+const CUSTOM_AUDIO_MAX_DURATION = 10000;
+//todo: gif needs handled elsewhere, proper logging
+async function playSoundSprite(file, offset = -1, duration = -1) {
+	// Constants for duration and offset setup
+	const MIN_DURATION = 3000;
+	const MAX_DURATION = 10000;
+	const MS_1000 = 1000;
+
+	//we pass gifs into this for some reason. reason is laziness
+	file = replaceExtension(file, '.gif', '.mp3');
+
+	//preload the sound sprite
+	let sound = await preloadSoundSprite(file);
+
+	//setup offset and duration
+	if (duration === -1) duration = Math.floor(Math.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION;
+	if (offset === -1) offset = Math.floor(Math.random() * (sound.duration() * MS_1000 - duration));
+
+	//find the next unused key or the key that matches the offset and duration
+	let key = 1;
+	while (sound._sprite[`key${key}`] !== undefined) {
+		if (sound._sprite[`key${key}`][0] === offset && sound._sprite[`key${key}`][1] === duration) break;
+		key++;
+	}
+
+	//set the key to the offset and duration
+	sound._sprite[`key${key}`] = [offset, duration];
+	sound.play(`key${key}`);
+
+	//set a interval to check if the sound is still playing
+	//if it's not, unload it
+	if (sound.intervalId === undefined)
+		sound.intervalId = setInterval(() => {
+			if (sound?.playing() === false) {
+				let index = spriteList.find((sprite) => sprite === sound);
+				if (index !== -1) {
+					spriteList.splice(index, 1);
+					sound.unload();
+					clearInterval(sound.intervalId);
+					sound.intervalId = undefined;
+					log.debug(`Sound sprite ${file} Unloaded!, spriteListLength: ${spriteList.length}`);
+				}
+			}
+		}, CUSTOM_AUDIO_MAX_DURATION);
+}
+
 const connectionArray = [];
 
 function initWebSocket(websocketAddress, handleMessage, reconnectDelay = 1000) {
@@ -292,25 +342,30 @@ async function handleMessage(key, value) {
 			let delay = 0;
 			const MAX_SOUND_CMDS = 100;
 			let position = 0;
+			const processedCommands = [];
+
+			//parse and preload the sound sprites
 			for (let i = 0; i < value.length && i < MAX_SOUND_CMDS * 3; i += 3) {
-				const MAX_DURATION = 10000;
-				let cmd = value[i].split(',')[0];
-				cmd = convertPath(cmd);
-				const start = parseInt(value[i + 1]);
-				let duration = parseInt(value[i + 2]);
-				if (position + duration > MAX_DURATION) duration = MAX_DURATION - position;
-				else if (duration > MAX_DURATION) duration = MAX_DURATION;
+				let command = value[i].split(',')[0];
+				command = convertPath(command);
+				preloadSoundSprite(command);
+				processedCommands.push({ command, start: parseInt(value[i + 1]), duration: parseInt(value[i + 2]) });
+			}
 
-				if (delay !== 0)
-					//if there's a delay from the last sound
-					await new Promise((r) => setTimeout(r, delay));
-				log.info(`!ca: ${cmd}: ${start}, ${duration}`);
-				playSoundSprite(cmd, start, duration);
+			//play the sound sprites
+			for (const { command, start, duration } of processedCommands) {
+				const adjustedDuration = Math.min(duration, CUSTOM_AUDIO_MAX_DURATION - position);
 
-				position = position + duration;
-				if (position >= MAX_DURATION) break;
+				//if there's a delay from the last sound, wait for it
+				if (delay !== 0) await new Promise((r) => setTimeout(r, delay));
 
-				delay = duration;
+				log.info(`!ca: ${command}: ${start}, ${adjustedDuration}`);
+				playSoundSprite(command, start, adjustedDuration);
+
+				position += adjustedDuration;
+				if (position >= CUSTOM_AUDIO_MAX_DURATION) break;
+
+				delay = adjustedDuration;
 			}
 			return;
 		}
