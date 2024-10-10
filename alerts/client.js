@@ -130,7 +130,7 @@ export function sendMessage(address, id, contents) {
 }
 
 function playLivesplitsSong(file) {
-	log.info(`Playing split song: ${file}`);
+	log.info(`Playing Livesplits song: ${file}`);
 	const sound = {
 		list: [],
 		play: (filename) => {
