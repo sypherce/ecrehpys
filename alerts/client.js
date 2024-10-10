@@ -32,7 +32,7 @@ function playSongSprite(file) {
 	file = `${LOCAL_MUSIC_PATH}/${file}`;
 
 	//play a predefined sound bite if it exists
-	let soundfile = `${removeExt(file)}.sound.mp3`;
+	const soundfile = `${removeExt(file)}.sound.mp3`;
 	if (urlExists(soundfile)) {
 		playSound(soundfile);
 	}
@@ -129,44 +129,44 @@ export function sendMessage(address, id, contents) {
 	connection.send(message);
 }
 
-const sound = {
-	list: [],
-	play: (filename) => {
-		let isPlaying = false;
-		sound.list.forEach((item, index) => {
-			log.temp(`Item at index ${index}:`, item);
+function playLivesplitsSong(file) {
+	log.info(`Playing split song: ${file}`);
+	const sound = {
+		list: [],
+		play: (filename) => {
+			let isPlaying = false;
+			sound.list.forEach((item, index) => {
+				log.temp(`Item at index ${index}:`, item);
 
-			if (item._src === filename) {
-				isPlaying = true;
-				item.play();
-			} else {
-				item.pause();
-			}
-		});
-		if (!isPlaying) {
-			const howlSoundEntry = new Howl({
-				src: filename,
-				html5: true,
-				loop: true,
+				if (item._src === filename) {
+					isPlaying = true;
+					item.play();
+				} else {
+					item.pause();
+				}
 			});
-			sound.list.push(howlSoundEntry);
-			howlSoundEntry.play();
-		}
-		log.temp('length', sound.list.length);
+			if (!isPlaying) {
+				const howlSoundEntry = new Howl({
+					src: filename,
+					html5: true,
+					loop: true,
+				});
+				sound.list.push(howlSoundEntry);
+				howlSoundEntry.play();
+			}
+			log.temp('length', sound.list.length);
 
-		//check if game changed, if it did, toss everything
-		//search [list] for filename
-		//if it's in [list] continue playing song
-		//if not, start it
-	},
-};
-function playSplitSound(file) {
-	log.info(`Playing split sound: ${file}`);
+			//check if game changed, if it did, toss everything
+			//search [list] for filename
+			//if it's in [list] continue playing song
+			//if not, start it
+		},
+	};
 	sound.play(file);
 }
 function playSound(file) {
 	log.info(`Playing sound: ${file}`);
-	let sound = new Howl({
+	const sound = new Howl({
 		src: [file],
 		html5: true,
 		onend: () => {
@@ -181,7 +181,7 @@ const soundQueue = [];
 function playSoundQueued(file) {
 	const MAX_QUEUE_LENGTH = 4;
 	if (soundQueue.length > MAX_QUEUE_LENGTH) return;
-	let sound = new Howl({
+	const sound = new Howl({
 		src: [file],
 		html5: true,
 		onloaderror: () => {
@@ -242,7 +242,7 @@ async function playSoundSprite(file, offset = -1, duration = -1) {
 	file = replaceExtension(file, '.gif', '.mp3');
 
 	//preload the sound sprite
-	let sound = await preloadSoundSprite(file);
+	const sound = await preloadSoundSprite(file);
 
 	//setup offset and duration
 	if (duration === -1) duration = Math.floor(Math.random() * (MAX_DURATION - MIN_DURATION)) + MIN_DURATION;
@@ -573,7 +573,7 @@ async function handleMessage(key, value) {
 			break;
 		}
 		case 'SplitSong': {
-			playSplitSound(`assets/music/${value}`);
+			playLivesplitsSong(`assets/music/${value}`);
 			break;
 		}
 		case 'Song': {
