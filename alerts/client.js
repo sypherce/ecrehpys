@@ -273,7 +273,7 @@ function initWebSocket(websocketAddress, handleMessage, reconnectDelay = 1000) {
 
 async function handleMessage(key, value) {
 	function convertPath(path) {
-		if (path.match(`^(alerts|music)\/`) !== null) {
+		if (path.startsWith('alerts/') || path.startsWith('music/')) {
 			path = `assets/${path}`;
 		}
 
